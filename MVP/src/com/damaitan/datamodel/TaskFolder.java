@@ -11,6 +11,14 @@ public class TaskFolder extends Model {
 	private int allTaskNumber;
 	private int completedTaskNumber;
 	private Task[] tasks;
+	
+	
+	public TaskFolder() {
+		super();
+		allTaskNumber = 0;
+		completedTaskNumber = 0;
+	}
+	
 	/**
 	 * @return the allTaskNumber
 	 */
@@ -20,9 +28,9 @@ public class TaskFolder extends Model {
 	/**
 	 * @param allTaskNumber the allTaskNumber to set
 	 */
-	public void setAllTaskNumber(int allTaskNumber) {
+	/*public void setAllTaskNumber(int allTaskNumber) {
 		this.allTaskNumber = allTaskNumber;
-	}
+	}*/
 	/**
 	 * @return the completedTaskNumber
 	 */
@@ -32,9 +40,9 @@ public class TaskFolder extends Model {
 	/**
 	 * @param completedTaskNumber the completedTaskNumber to set
 	 */
-	public void setCompletedTaskNumber(int completedTaskNumber) {
+	/*public void setCompletedTaskNumber(int completedTaskNumber) {
 		this.completedTaskNumber = completedTaskNumber;
-	}
+	}*/
 	/**
 	 * @return the tasks
 	 */
@@ -46,5 +54,11 @@ public class TaskFolder extends Model {
 	 */
 	public void setTasks(Task[] tasks) {
 		this.tasks = tasks;
+		this.allTaskNumber = tasks.length;
+	}
+	
+	public void setTask(Task task){
+		this.tasks[allTaskNumber] = task;
+		this.allTaskNumber++;
 	}
 }

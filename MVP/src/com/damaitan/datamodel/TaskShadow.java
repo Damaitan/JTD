@@ -7,6 +7,6 @@ package com.damaitan.datamodel;
  * @author admin
  *
  */
-public class System extends Model{
-
+public class TaskShadow extends Model {
+	
 }
