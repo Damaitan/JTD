@@ -17,6 +17,11 @@ package com.damaitan.datamodel;
  *
  */
 public class Task extends Model {
+	
+	public enum Status{
+		ongoing,finished
+	}
+	
 	private boolean urgent;
 	private String expired;
 	private int calendarType;
@@ -24,7 +29,14 @@ public class Task extends Model {
 	private int priority;
 	private String[] tags;
 	private TaskFolder taskFolder;
+	private Status status;
 	
+	
+
+	public Task() {
+		super();
+		status = Status.ongoing;
+	}
 	
 	/**
 	 * @return the urgent
@@ -116,8 +128,31 @@ public class Task extends Model {
 	 * @param taskFolder the taskFolder to set
 	 */
 	public void setTaskFolder(TaskFolder taskFolder) {
+		if(this.taskFolder != null){
+			//Whether needs validation
+			this.taskFolder.removeTask(this);
+		}
 		this.taskFolder = taskFolder;
+		taskFolder.addTask(this);
+	}
+	
+	public void finish(){
+		this.taskFolder.finishTask(this);
+		this.status = Status.finished;
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public Status getStatus() {
+		return status;
 	}
 
+	/**
+	 * @param status the status to set
+	 */
+	/*public void setStatus(Status status) {
+		this.status = status;
+	}*/
 
 }

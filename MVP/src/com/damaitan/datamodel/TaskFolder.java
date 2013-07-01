@@ -3,27 +3,34 @@
  */
 package com.damaitan.datamodel;
 
+import java.util.ArrayList;
+
+import com.damaitan.datamodel.Task.Status;
+
 /**
  * @author admin
  *
  */
 public class TaskFolder extends Model {
-	private int allTaskNumber;
-	private int completedTaskNumber;
-	private Task[] tasks;
+	//private int allTaskNumber;
+	//private int completedTaskNumber;
+	private ArrayList<Task> tasks;
+	private ArrayList<Task> finishedTasks;
 	
 	
 	public TaskFolder() {
 		super();
-		allTaskNumber = 0;
-		completedTaskNumber = 0;
+		//allTaskNumber = 0;
+		//completedTaskNumber = 0;
+		tasks = new ArrayList<Task>();
+		finishedTasks = new ArrayList<Task>();
 	}
 	
 	/**
 	 * @return the allTaskNumber
 	 */
 	public int getAllTaskNumber() {
-		return allTaskNumber;
+		return tasks.size() + finishedTasks.size();
 	}
 	/**
 	 * @param allTaskNumber the allTaskNumber to set
@@ -35,7 +42,8 @@ public class TaskFolder extends Model {
 	 * @return the completedTaskNumber
 	 */
 	public int getCompletedTaskNumber() {
-		return completedTaskNumber;
+		//return completedTaskNumber;
+		return finishedTasks.size();
 	}
 	/**
 	 * @param completedTaskNumber the completedTaskNumber to set
@@ -46,19 +54,39 @@ public class TaskFolder extends Model {
 	/**
 	 * @return the tasks
 	 */
-	public Task[] getTasks() {
+	/*public Task[] getTasks() {
 		return tasks;
-	}
+	}*/
 	/**
 	 * @param tasks the tasks to set
 	 */
-	public void setTasks(Task[] tasks) {
+	/*public void setTasks(Task[] tasks) {
 		this.tasks = tasks;
 		this.allTaskNumber = tasks.length;
+	}*/
+	
+	public void addTask(Task task){
+		
+		if(task.getStatus() == Status.finished){
+			this.finishedTasks.add(task);
+		}else{
+			this.tasks.add(task);
+		}
+		
 	}
 	
-	public void setTask(Task task){
-		this.tasks[allTaskNumber] = task;
-		this.allTaskNumber++;
+	public void finishTask(Task task){
+		this.tasks.remove(task);
+		this.finishedTasks.add(task);
 	}
+	
+	public void removeTask(Task task){
+		if(task.getStatus() == Status.finished){
+			this.finishedTasks.remove(task);
+		}else{
+			this.tasks.remove(task);
+		}
+		
+	}
+
 }
