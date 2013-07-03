@@ -53,4 +53,15 @@ final public class ModelManager {
 		
 	}
 	
+	public void createTask(){
+		
+	}
+	
+	public void deleteTask(){
+	
+	}
+	
+	public void changeTask(){
+		
+	}
 }

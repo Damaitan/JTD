@@ -128,7 +128,7 @@ public class Task extends Model {
 	 * @param taskFolder the taskFolder to set
 	 */
 	public void setTaskFolder(TaskFolder taskFolder) {
-		if(this.taskFolder != null){
+		if(this.taskFolder != null && this.taskFolder.getId() != taskFolder.getId()){
 			//Whether needs validation
 			this.taskFolder.removeTask(this);
 		}
