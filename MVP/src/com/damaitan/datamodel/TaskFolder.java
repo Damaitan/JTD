@@ -86,7 +86,10 @@ public class TaskFolder extends Model {
 		}else{
 			this.tasks.remove(task);
 		}
-		
+	}
+	
+	public ArrayList<Task> getTasks(){
+		return this.tasks;
 	}
 
 }
