@@ -8,6 +8,6 @@ package com.damaitan.datamodel;
  *
  */
 final public class System extends Model{
-	public static String defaultTaskFolder = "All Tasks";
+	public static String defaultTaskFolder = "Uncatagory";
 	public static String defaultTag = "Default";
 }

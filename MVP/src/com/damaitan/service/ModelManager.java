@@ -15,7 +15,7 @@ import com.damaitan.datamodel.TaskFolder;
  */
 final public class ModelManager {
 	private ArrayList<TaskFolder> taskFolders;
-	private ArrayList<Task> allTasks;
+	private ArrayList<Task> allTasks; //Tasks are got from all task folders.
 	private ArrayList<String> tags;
 	
 	public ModelManager(IDataAccess handler){
