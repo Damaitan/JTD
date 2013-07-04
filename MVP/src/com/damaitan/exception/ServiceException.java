@@ -20,5 +20,15 @@ public class ServiceException extends BaseException {
 		// TODO Auto-generated constructor stub
 		super("ServiceException" + string);
 	}
+	
+	public ServiceException(String message,Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("ServiceException:" + message,cause);
+	}
+	
+	public ServiceException(Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("ServiceException",cause);
+	}
 
 }

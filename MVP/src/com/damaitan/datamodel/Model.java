@@ -10,6 +10,10 @@ package com.damaitan.datamodel;
 public class Model {
 	private String name;
 	private int id;
+	
+	public Model(){
+		id = -1;
+	}
 
 	/**
 	 * @return the name

@@ -20,5 +20,15 @@ public class AccessException extends BaseException {
 		// TODO Auto-generated constructor stub
 		super("AccessException:" + string);
 	}
+	
+	public AccessException(String message,Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("AccessException:" + message,cause);
+	}
+	
+	public AccessException(Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("AccessException",cause);
+	}
 
 }

@@ -22,4 +22,15 @@ public class BaseException extends Exception {
 		// TODO Auto-generated constructor stub
 		super("BaseException:" + string);
 	}
+	
+	public BaseException(String message,Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("BaseException:" + message,cause);
+	}
+	
+	public BaseException(Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("BaseException",cause);
+	}
+	
 }

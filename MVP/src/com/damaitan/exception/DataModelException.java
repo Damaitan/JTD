@@ -13,4 +13,14 @@ public class DataModelException extends BaseException {
 		// TODO Auto-generated constructor stub
 		super("DataModelException" + string);
 	}
+	
+	public DataModelException(String message,Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("DataModelException:" + message,cause);
+	}
+	
+	public DataModelException(Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("DataModelException",cause);
+	}
 }

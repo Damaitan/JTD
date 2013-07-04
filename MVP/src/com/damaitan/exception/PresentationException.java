@@ -20,5 +20,15 @@ public class PresentationException extends BaseException {
 		// TODO Auto-generated constructor stub
 		super("PresentationException" + string);
 	}
+	
+	public PresentationException(String message,Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("PresentationException:" + message,cause);
+	}
+	
+	public PresentationException(Throwable cause) {
+		// TODO Auto-generated constructor stub
+		super("PresentationException",cause);
+	}
 
 }
