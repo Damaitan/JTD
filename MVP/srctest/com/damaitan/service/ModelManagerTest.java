@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.damaitan.exception.ServiceException;
+import com.damaitan.service.AccessMock.MockType;
+
 /**
  * @author admin
  *
@@ -18,6 +21,7 @@ import org.junit.Test;
 public class ModelManagerTest {
 
 	AccessMock accessMock = new AccessMock();
+	ModelManager manager;
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -37,6 +41,7 @@ public class ModelManagerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		manager = new ModelManager();
 	}
 
 	/**
@@ -45,21 +50,27 @@ public class ModelManagerTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
-	/**
-	 * Test method for {@link com.damaitan.service.ModelManager#ModelManager()}.
-	 */
-	@Test
-	public void testModelManager() {
-		fail("Not yet implemented");
-	}
+	
 
 	/**
 	 * Test method for {@link com.damaitan.service.ModelManager#construct(com.damaitan.access.IDataAccess)}.
 	 */
 	@Test
 	public void testConstruct() {
-		fail("Not yet implemented");
+		accessMock.setType(MockType.normal);
+		try {
+			manager.construct(accessMock);
+		} catch (Exception e) {
+			fail("Failed to test construction without exception");
+		}
+		
+	}
+	
+	@Test(expected = ServiceException .class )
+	public void testConstructException() throws Exception{
+		accessMock.setType(MockType.exception);
+		manager.construct(accessMock);
+		
 	}
 
 	/**
