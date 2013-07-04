@@ -14,6 +14,11 @@ public class Model {
 	public Model(){
 		id = -1;
 	}
+	
+	public Model(int id, String name){
+		setId(id);
+		setName(name);
+	}
 
 	/**
 	 * @return the name

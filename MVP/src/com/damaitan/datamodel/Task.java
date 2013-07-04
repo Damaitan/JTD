@@ -34,7 +34,11 @@ public class Task extends Model {
 	
 
 	public Task() {
-		super();
+		status = Status.ongoing;
+	}
+	
+	public Task(int id,String name) {
+		super(id,name);
 		status = Status.ongoing;
 	}
 	

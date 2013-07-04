@@ -26,6 +26,10 @@ public class TaskFolder extends Model {
 		finishedTasks = new ArrayList<Task>();
 	}
 	
+	public TaskFolder(int i, String name) {
+		super(i,name);
+	}
+
 	/**
 	 * @return the allTaskNumber
 	 */
@@ -65,6 +69,10 @@ public class TaskFolder extends Model {
 		this.allTaskNumber = tasks.length;
 	}*/
 	
+	/**
+	 * @param task
+	 * 
+	 */
 	public void addTask(Task task){
 		
 		if(task.getStatus() == Status.finished){
