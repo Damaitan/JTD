@@ -14,6 +14,6 @@ import com.damaitan.exception.ServiceException;
 public interface IModelHandler {
 	void construct(IDataAccess handler) throws ServiceException;
 	TaskFolder createFolder(String name) throws ServiceException;
-	TaskFolder modifyFolder(int id, String newName) throws ServiceException;
-	TaskFolder deleteFolder(int id, boolean includeTask) throws ServiceException;
+	TaskFolder modifyFolder(long id, String newName) throws ServiceException;
+	TaskFolder deleteFolder(long id, boolean includeTask) throws ServiceException;
 }

@@ -4,6 +4,7 @@
 package com.damaitan.service;
 
 import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,7 +19,7 @@ import com.damaitan.service.AccessMock.MockType;
  * @author admin
  *
  */
-public class ModelManagerTest {
+public class ModelManagerTest extends TestCase{
 
 	AccessMock accessMock = new AccessMock();
 	ModelManager manager;
@@ -66,7 +67,7 @@ public class ModelManagerTest {
 		
 	}
 	
-	@Test(expected = ServiceException .class )
+	@Test(expected=ServiceException.class)
 	public void testConstructException() throws Exception{
 		accessMock.setType(MockType.exception);
 		manager.construct(accessMock);

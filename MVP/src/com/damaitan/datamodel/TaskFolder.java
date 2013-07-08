@@ -14,19 +14,15 @@ import com.damaitan.datamodel.Task.Status;
 public class TaskFolder extends Model {
 	//private int allTaskNumber;
 	//private int completedTaskNumber;
-	private ArrayList<Task> tasks;
-	private ArrayList<Task> finishedTasks;
+	private ArrayList<Task> tasks = new ArrayList<Task>();
+	private ArrayList<Task> finishedTasks = new ArrayList<Task>();
 	
 	
 	public TaskFolder() {
 		super();
-		//allTaskNumber = 0;
-		//completedTaskNumber = 0;
-		tasks = new ArrayList<Task>();
-		finishedTasks = new ArrayList<Task>();
 	}
 	
-	public TaskFolder(int i, String name) {
+	public TaskFolder(long i, String name) {
 		super(i,name);
 	}
 

@@ -9,13 +9,13 @@ package com.damaitan.datamodel;
  */
 public class Model {
 	private String name;
-	private int id;
+	private long id;
 	
 	public Model(){
 		id = -1;
 	}
 	
-	public Model(int id, String name){
+	public Model(long id, String name){
 		setId(id);
 		setName(name);
 	}
@@ -37,14 +37,14 @@ public class Model {
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	
