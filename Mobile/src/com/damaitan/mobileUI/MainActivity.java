@@ -129,6 +129,7 @@ public class MainActivity extends FragmentActivity {
 					ARG_SECTION_NUMBER)));*/
 			
 			GridView gridview = (GridView) rootView.findViewById(R.id.gridView1);
+			gridview.setAdapter(new ImageAdapter(dummyTextView.getContext()));
 			ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String,Object>>();
 	        for (int i = 0; i < 10; i++) {
 	        	HashMap<String, Object> item = new HashMap<String, Object>();
