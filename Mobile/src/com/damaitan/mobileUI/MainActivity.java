@@ -1,6 +1,8 @@
 package com.damaitan.mobileUI;
 
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.SimpleAdapter;
 
 public class MainActivity extends FragmentActivity {
 
@@ -121,8 +125,19 @@ public class MainActivity extends FragmentActivity {
 					container, false);
 			TextView dummyTextView = (TextView) rootView
 					.findViewById(R.id.section_label);
-			dummyTextView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
+			/*dummyTextView.setText(Integer.toString(getArguments().getInt(
+					ARG_SECTION_NUMBER)));*/
+			
+			GridView gridview = (GridView) rootView.findViewById(R.id.gridView1);
+			ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String,Object>>();
+	        for (int i = 0; i < 10; i++) {
+	        	HashMap<String, Object> item = new HashMap<String, Object>();
+	            item.put("imageItem", R.drawable.ic_launcher);
+	            item.put("textItem", "text" + i);
+	            items.add(item);
+	        }
+	        //SimpleAdapter adapter = new SimpleAdapter(this, items, R.id.gridView1, new String[]{"imageItem", "textItem"}, new int[]{R.id., R.id.text_item});
+	        //gridview.setAdapter(adapter);
 			return rootView;
 		}
 	}
