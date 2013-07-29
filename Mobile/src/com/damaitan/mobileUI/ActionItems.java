@@ -18,13 +18,14 @@ package com.damaitan.mobileUI;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
+//import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.damaitan.mobileUI.R;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ActionItems extends SherlockActivity {
-	 public static int THEME = R.style.Theme_Sherlock;
+public class ActionItems extends SherlockListActivity {
+	 public static int THEME = R.style.Theme_Sherlock_Light;
 	 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -49,8 +50,8 @@ public class ActionItems extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(ActionItems.THEME); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.text);
-        //setContent((TextView)findViewById(R.id.text));
+        setContentView(R.layout.text);
+        setContent((TextView)findViewById(R.id.text));
     }
 
     protected void setContent(TextView view) {
