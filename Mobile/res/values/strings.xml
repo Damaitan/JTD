@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+	<string name="application_name">ActionBarSherlock Demos</string>
+    <string name="activity_name">ABS: Demos</string>
     <string name="app_name">JTD</string>
     <string name="action_settings">Settings</string>
     <string name="title_section1">摘要</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
-
+    <string name="action_modes">Action Modes</string>
+    <string name="action_modes_content">Action modes are used to display contextual information based on some interaction made by the user (long press, checkbox selection, etc). Like the normal action bar they also support splitting the action items to the bottom of the screen on small devices.</string>
+     <string name="action_items">Action Items</string>
+    <string name="action_items_content">The action bar creates a unified and persistant navigation experience for your application and action items are a great way to provide a clear indication of what the user can do.</string>
+    <string name="split">Split Action Items</string>
+    <string name="split_content">This activity is a demonstration of how split action items work. When you are concerned about the available room for items on small screens you should use this feature.</string>
 </resources>
