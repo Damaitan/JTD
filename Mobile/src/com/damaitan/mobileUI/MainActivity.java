@@ -18,25 +18,20 @@ package com.damaitan.mobileUI;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 public class MainActivity extends SherlockListActivity {
     public static int THEME = R.style.Theme_Sherlock;
@@ -45,43 +40,57 @@ public class MainActivity extends SherlockListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         String path = intent.getStringExtra("com.example.android.apis.Path");
 
         if (path == null) {
             path = "";
+        }*/
+        
+        ArrayList<HashMap<String, Object>> users = new ArrayList<HashMap<String, Object>>();
+        for (int i = 0; i < 10; i++) {
+        	HashMap<String, Object> user = new HashMap<String, Object>();
+        	user.put("username", "–’√˚(" + i+")");
+            //user.put("age", (20 + i) + "");
+            users.add(user);
         }
 
-        setListAdapter(new SimpleAdapter(this, getData(path),
-                android.R.layout.simple_list_item_1, new String[] { "title" },
+        setListAdapter(new SimpleAdapter(this, getData(),
+                android.R.layout.simple_list_item_1, new String[] { "title"},
                 new int[] { android.R.id.text1 }));
         getListView().setTextFilterEnabled(true);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        SubMenu sub = menu.addSubMenu("Theme");
+        /*SubMenu sub = menu.addSubMenu("Theme");
         sub.add(0, R.style.Theme_Sherlock, 0, "Default");
         sub.add(0, R.style.Theme_Sherlock_Light, 0, "Light");
         sub.add(0, R.style.Theme_Sherlock_Light_DarkActionBar, 0, "Light (Dark Action Bar)");
-        sub.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        sub.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
+        
+        boolean isLight = ActionItems.THEME == R.style.Theme_Sherlock_Light;
+
+        menu.add("Save")
+            .setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        menu.add("Search")
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+        menu.add("Refresh")
+            .setIcon(isLight ? R.drawable.ic_refresh_inverse : R.drawable.ic_refresh)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
         return true;
+        
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
-            return false;
-        }
-        THEME = item.getItemId();
-        Toast.makeText(this, "Theme changed to \"" + item.getTitle() + "\"", Toast.LENGTH_SHORT).show();
-        return true;
-    }
 
-    protected List<Map<String, Object>> getData(String prefix) {
+    protected List<Map<String, Object>> getData() {
         List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
 
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        /*Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory("com.actionbarsherlock.sample.demos.EXAMPLE");
 
         PackageManager pm = getPackageManager();
@@ -130,7 +139,10 @@ public class MainActivity extends SherlockListActivity {
             }
         }
 
-        Collections.sort(myData, sDisplayNameComparator);
+        Collections.sort(myData, sDisplayNameComparator);*/
+        addItem(myData, "¡ΩÕÚ”¢≥ﬂ - Projects", activityIntent(
+                "Damai",
+                "Hello"));
 
         return myData;
     }
@@ -169,7 +181,7 @@ public class MainActivity extends SherlockListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Map<String, Object> map = (Map<String, Object>)l.getItemAtPosition(position);
 
-        Intent intent = (Intent) map.get("intent");
-        startActivity(intent);
+        //Intent intent = (Intent) map.get("intent");
+        //startActivity(intent);
     }
 }
