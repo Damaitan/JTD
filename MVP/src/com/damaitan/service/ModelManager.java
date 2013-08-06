@@ -16,18 +16,37 @@ import com.damaitan.exception.ServiceException;
  * @author admin
  *
  */
-final public class ModelManager implements IModelHandler{
+final class ModelManager{
 	private ArrayList<TaskFolder> taskFolders;
-	private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
+	/*private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
 	private ArrayList<String> tags = new ArrayList<String>(); // Tags are got from all taks tags
 	
 	private long taskId = 0;
-	private long taskFolderId = 0;
+	private long taskFolderId = 0;*/
 	
-	public ModelManager(){
+	private static ModelManager uniqueInstance = null;
+	
+	private ModelManager(){
+		
+	}
+	public static ModelManager getInstance() {
+		 if (uniqueInstance == null) {
+			 uniqueInstance = new ModelManager();
+		 }
+		 return uniqueInstance;
 	}
 	
-	private void tag(Task task){
+	public ArrayList<TaskFolder> getCopiedFolder(){
+		if(taskFolders == null){
+			return null;
+		}
+		ArrayList<TaskFolder> clone = (ArrayList<TaskFolder>)taskFolders.clone();
+		return clone;
+	}
+	 
+	
+	
+	/*private void tag(Task task){
 		if(task.getTags() == null)
 			return;
 		for(String item : task.getTags()){
@@ -112,5 +131,5 @@ final public class ModelManager implements IModelHandler{
 			
 		}
 		return folder;
-	}
+	}*/
 }

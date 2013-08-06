@@ -9,10 +9,10 @@ package com.damaitan.datamodel;
  */
 public class Model {
 	private String name;
-	private long id;
+	private long id;  
 	
 	public Model(){
-		id = -1;
+		id = 0;
 	}
 	
 	public Model(long id, String name){
