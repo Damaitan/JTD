@@ -42,7 +42,7 @@ public class ModelManagerTest extends TestCase{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		manager = new ModelManager();
+		manager = ModelManager.getInstance();
 	}
 
 	/**

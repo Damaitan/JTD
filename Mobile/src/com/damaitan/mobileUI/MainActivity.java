@@ -16,6 +16,8 @@
 
 package com.damaitan.mobileUI;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,32 +34,33 @@ import android.widget.SimpleAdapter;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.damaitan.datamodel.TaskFolder;
+import com.damaitan.exception.PresentationException;
+import com.damaitan.presentation.IViewMain;
+import com.damaitan.presentation.MainViewPresenter;
 
-public class MainActivity extends SherlockListActivity {
+public class MainActivity extends SherlockListActivity implements IViewMain{
     public static int THEME = R.style.Theme_Sherlock;
+    public MainViewPresenter presenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*Intent intent = getIntent();
-        String path = intent.getStringExtra("com.example.android.apis.Path");
-
-        if (path == null) {
-            path = "";
-        }*/
         
-        ArrayList<HashMap<String, Object>> users = new ArrayList<HashMap<String, Object>>();
-        for (int i = 0; i < 10; i++) {
-        	HashMap<String, Object> user = new HashMap<String, Object>();
-        	user.put("username", "ÐÕÃû(" + i+")");
-            //user.put("age", (20 + i) + "");
-            users.add(user);
-        }
-
-        setListAdapter(new SimpleAdapter(this, getData(),
-                android.R.layout.simple_list_item_1, new String[] { "title"},
-                new int[] { android.R.id.text1 }));
+        presenter = new MainViewPresenter(this);
+        try {
+        	FileInputStream  stream = openFileInput("JTD.json");
+			presenter.initialization(new JsonFiler(stream));
+			setListAdapter(new SimpleAdapter(this,presenter.getData(),
+			        android.R.layout.simple_list_item_1, new String[] { "title"},
+			        new int[] { android.R.id.text1 }));
+		} catch (PresentationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         getListView().setTextFilterEnabled(true);
     }
 
@@ -184,4 +187,13 @@ public class MainActivity extends SherlockListActivity {
         //Intent intent = (Intent) map.get("intent");
         //startActivity(intent);
     }
+
+	@Override
+	public List<Map<String, Object>> listItems(ArrayList<TaskFolder> folders) {
+		List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
+		for (TaskFolder folder : folders) {
+			addItem(myData, folder.getSimpleInfo(), activityIntent("Damai", "Hello"));
+		}
+		return myData;
+	}
 }

@@ -6,7 +6,6 @@ package com.damaitan.service;
 import java.util.ArrayList;
 
 import com.damaitan.access.IDataAccess;
-import com.damaitan.datamodel.Model;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.AccessException;
@@ -18,11 +17,10 @@ import com.damaitan.exception.ServiceException;
  */
 final class ModelManager{
 	private ArrayList<TaskFolder> taskFolders;
-	/*private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
+	private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
 	private ArrayList<String> tags = new ArrayList<String>(); // Tags are got from all taks tags
-	
 	private long taskId = 0;
-	private long taskFolderId = 0;*/
+	private long taskFolderId = 0;
 	
 	private static ModelManager uniqueInstance = null;
 	
@@ -46,7 +44,7 @@ final class ModelManager{
 	 
 	
 	
-	/*private void tag(Task task){
+	private void tag(Task task){
 		if(task.getTags() == null)
 			return;
 		for(String item : task.getTags()){
@@ -56,7 +54,7 @@ final class ModelManager{
 		}
 	}
 
-	@Override
+	
 	public void construct(IDataAccess handler) throws ServiceException {
 		try {
 			this.taskFolders = handler.construct();
@@ -78,7 +76,8 @@ final class ModelManager{
 			}
 		}
 	}
-	
+
+	/*
 	private TaskFolder findFolderById(long id){
 		if(this.taskFolders == null) return null;
 		for(int i = 0; i < this.taskFolders.size();i++){

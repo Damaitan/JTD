@@ -97,4 +97,13 @@ public class TaskFolder extends Model {
 		return this.tasks;
 	}
 
+	public String getSimpleInfo(){
+		return this.getName() + "(" + this.getCompletedTaskNumber() + "/" + this.getAllTaskNumber() + "0"; 
+	}
+
+	
+	
+
+	
+
 }
