@@ -16,8 +16,11 @@
 
 package com.damaitan.mobileUI;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,6 +30,7 @@ import java.util.Map;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -41,28 +45,66 @@ import com.damaitan.presentation.MainViewPresenter;
 
 public class MainActivity extends SherlockListActivity implements IViewMain{
     public static int THEME = R.style.Theme_Sherlock;
+    public static String JTDFile = "JTD.json";
     public MainViewPresenter presenter;
+    
+    public static boolean isFileExist(String path) {
+		if (path == null) {
+			return false;
+		}
+		try {
+			File f = new File(path);
+			if (!f.exists()) {
+				return false;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return true;
+	}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         presenter = new MainViewPresenter(this);
+        Log.i("Mobile", "MainActivity is starting....");
         try {
-        	FileInputStream  stream = openFileInput("JTD.json");
+			if (!isFileExist(JTDFile)) {
+				String content = "[\n"
+						+ "{\"type\":0,\"name\":\"所有任务\",\"id\":0},\n"
+						+ "{\"type\":0,\"name\":\"待办事项\",\"id\":1},\n" 
+						+ "{\"type\":0,\"name\":\"项目事务\",\"id\":1},\n" 
+						+ "{\"type\":0,\"name\":\"短期目标\",\"id\":1},\n" 
+						+ "{\"type\":0,\"name\":\"长期目标\",\"id\":1},\n" 
+						+ "{\"type\":0,\"name\":\"愿景方向\",\"id\":1},\n" 
+						+ "{\"type\":0,\"name\":\"六万英尺\",\"id\":2}\n" + "]";
+				FileOutputStream fout = openFileOutput(JTDFile, MODE_PRIVATE);
+				byte[] bytes = content.getBytes();
+				fout.write(bytes);
+				fout.close();
+				Log.i("Mobile", "Create new file : " + JTDFile);
+			}
+        	FileInputStream stream;
+			stream = openFileInput(JTDFile);
 			presenter.initialization(new JsonFiler(stream));
 			setListAdapter(new SimpleAdapter(this,presenter.getData(),
 			        android.R.layout.simple_list_item_1, new String[] { "title"},
 			        new int[] { android.R.id.text1 }));
 		} catch (PresentationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			 Log.e("Mobile", "PresentationException",e);
+		}catch (FileNotFoundException e){ // File is not found
+			 Log.i("Mobile", "It must be something wrong, this file shall be created if existed",e);
 		}
+        catch (IOException e) { // comes from file writing
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
         getListView().setTextFilterEnabled(true);
     }
+
+	
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

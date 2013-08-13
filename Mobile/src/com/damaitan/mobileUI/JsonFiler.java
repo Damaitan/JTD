@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -47,24 +48,27 @@ public class JsonFiler implements IDataAccess {
 		} catch (IOException e) {
 			throw new AccessException("JsonFiler:construct() failed in File reading.",e);
 		}
-        
 		JSONTokener jsonParser = new JSONTokener(content);
-		JSONObject json;
+		JSONArray jsonArray;
 		int type = -1;
 		ArrayList<TaskFolder> folders = new ArrayList<TaskFolder>();
 		try {
-			json = (JSONObject) jsonParser.nextValue();
-			while (json != null) {
-				type = json.getInt(Type);
-				switch (type) {
-				case 0:
-					TaskFolder folder = new TaskFolder();
-					folder.setName(json.getString(Name));
-					folder.setId(json.getLong(Id));
-					folders.add(folder);
-					break;
-				default:
-					break;
+			jsonArray = (JSONArray ) jsonParser.nextValue();
+			if(jsonArray != null){
+				JSONObject json;
+				for(int i = 0 ; i < jsonArray.length();i++){
+					json = jsonArray.getJSONObject(i);
+					type = json.getInt(Type);
+					switch (type) {
+					case 0:
+						TaskFolder folder = new TaskFolder();
+						folder.setName(json.getString(Name));
+						folder.setId(json.getLong(Id));
+						folders.add(folder);
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		} catch (JSONException e) {
