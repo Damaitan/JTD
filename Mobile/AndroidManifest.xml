@@ -23,10 +23,10 @@
             </intent-filter>
         </activity>
         
-        <activity android:label="@string/activity_name" android:name=".SplitActionItems" android:theme="@style/Theme.Sherlock" android:uiOptions="splitActionBarWhenNarrow">
+        <activity android:label="@string/activity_name" android:name=".TaskActivity" android:theme="@style/Theme.Sherlock" android:uiOptions="splitActionBarWhenNarrow">
              <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-                <category android:name="com.actionbarsherlock.sample.demos.EXAMPLE"/>
+                <category android:name="com.damaitan.mobileUI"/>
             </intent-filter>
         </activity>
         

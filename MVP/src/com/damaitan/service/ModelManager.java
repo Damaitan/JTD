@@ -105,6 +105,11 @@ final class ModelManager{
 		}
 	}
 	
+	public TaskFolder getTaskFolderCopied(int index){
+		
+		return modelStruct.getFolders().get(index);
+	}
+	
 	
 
 	/*

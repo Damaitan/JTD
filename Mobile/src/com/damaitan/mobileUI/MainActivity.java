@@ -44,8 +44,9 @@ import com.damaitan.presentation.MainViewPresenter;
 
 public class MainActivity extends SherlockListActivity implements IViewMain{
     public static int THEME = R.style.Theme_Sherlock;
-    public static String JTDFile = "JTD.json";
-    public MainViewPresenter presenter;
+    private static String JTDFile = "JTD.json";
+    private MainViewPresenter presenter;
+    
     
     public static boolean isFileExist(String path) {
 		if (path == null) {
@@ -82,7 +83,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 			}
 			setListAdapter(new SimpleAdapter(this, presenter.getData(),
 					android.R.layout.simple_list_item_1,
-					new String[] { "title" }, new int[] { android.R.id.text1 }));
+					new String[] { Name.Title }, new int[] { android.R.id.text1 }));
 		} catch (PresentationException e) {
 			Log.e("Mobile", "PresentationException", e);
 		} catch (FileNotFoundException e) { // File is not found
@@ -127,13 +128,13 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         sub.add(0, R.style.Theme_Sherlock_Light_DarkActionBar, 0, "Light (Dark Action Bar)");
         sub.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         
-        boolean isLight = ActionItems.THEME == R.style.Theme_Sherlock_Light;
+        boolean isLight = TaskActivity.THEME == R.style.Theme_Sherlock_Light;
 
-        menu.add("Save")
+        menu.add("New")
             .setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        menu.add("Search")
+        menu.add("Delete")
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
         menu.add("Refresh")
@@ -144,75 +145,6 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         
     }
 
-
-    /*protected List<Map<String, Object>> getData() {
-        List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
-
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory("com.actionbarsherlock.sample.demos.EXAMPLE");
-
-        PackageManager pm = getPackageManager();
-        List<ResolveInfo> list = pm.queryIntentActivities(mainIntent, 0);
-
-        if (null == list)
-            return myData;
-
-        String[] prefixPath;
-        String prefixWithSlash = prefix;
-
-        if (prefix.equals("")) {
-            prefixPath = null;
-        } else {
-            prefixPath = prefix.split("/");
-            prefixWithSlash = prefix + "/";
-        }
-
-        int len = list.size();
-
-        Map<String, Boolean> entries = new HashMap<String, Boolean>();
-
-        for (int i = 0; i < len; i++) {
-            ResolveInfo info = list.get(i);
-            CharSequence labelSeq = info.loadLabel(pm);
-            String label = labelSeq != null
-                    ? labelSeq.toString()
-                    : info.activityInfo.name;
-
-            if (prefixWithSlash.length() == 0 || label.startsWith(prefixWithSlash)) {
-
-                String[] labelPath = label.split("/");
-
-                String nextLabel = prefixPath == null ? labelPath[0] : labelPath[prefixPath.length];
-
-                if ((prefixPath != null ? prefixPath.length : 0) == labelPath.length - 1) {
-                    addItem(myData, nextLabel, activityIntent(
-                            info.activityInfo.applicationInfo.packageName,
-                            info.activityInfo.name));
-                } else {
-                    if (entries.get(nextLabel) == null) {
-                        addItem(myData, nextLabel, browseIntent(prefix.equals("") ? nextLabel : prefix + "/" + nextLabel));
-                        entries.put(nextLabel, true);
-                    }
-                }
-            }
-        }
-
-        Collections.sort(myData, sDisplayNameComparator);
-        addItem(myData, "Á½ÍòÓ¢³ß - Projects", activityIntent(
-                "Damai",
-                "Hello"));
-
-        return myData;
-    }*/
-
-    /*private final static Comparator<Map<String, Object>> sDisplayNameComparator =
-        new Comparator<Map<String, Object>>() {
-        private final Collator   collator = Collator.getInstance();
-
-        public int compare(Map<String, Object> map1, Map<String, Object> map2) {
-            return collator.compare(map1.get("title"), map2.get("title"));
-        }
-    };*/
 
     protected Intent activityIntent(String pkg, String componentName) {
         Intent result = new Intent();
@@ -227,10 +159,10 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         return result;
     }
 
-    protected void addItem(List<Map<String, Object>> data, String name, Intent intent) {
+    protected void addItem(List<Map<String, Object>> data, String name, int index) {
         Map<String, Object> temp = new HashMap<String, Object>();
-        temp.put("title", name);
-        temp.put("intent", intent);
+        temp.put(Name.Title, name);
+        temp.put(Name.Index, Integer.valueOf(index));
         data.add(temp);
     }
 
@@ -239,15 +171,19 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Map<String, Object> map = (Map<String, Object>)l.getItemAtPosition(position);
 
-        //Intent intent = (Intent) map.get("intent");
-        //startActivity(intent);
+        Intent intent = new Intent(this,TaskActivity.class);
+        Integer index = (Integer)map.get(Name.Index);
+        intent.putExtra(Name.Index, index.intValue());
+        startActivity(intent);
     }
 
 	@Override
 	public List<Map<String, Object>> listItems(ArrayList<TaskFolder> folders) {
 		List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
-		for (TaskFolder folder : folders) {
-			addItem(myData, folder.getSimpleInfo(), activityIntent("Damai", "Hello"));
+		TaskFolder folder;
+		for (int index = 0; index < folders.size();index++){
+			folder = folders.get(index);
+			addItem(myData, folder.getSimpleInfo(), index);
 		}
 		return myData;
 	}

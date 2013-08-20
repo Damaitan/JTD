@@ -37,5 +37,10 @@ public class TaskFolderHandler {
 		return clone;
 	}
 	
+	public TaskFolder getIndex(int index){
+		ModelManager dm = ModelManager.getInstance();
+		return dm.getTaskFolderCopied(index);
+	}
+	
 	
 }

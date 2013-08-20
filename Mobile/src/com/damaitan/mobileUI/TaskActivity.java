@@ -15,22 +15,29 @@
  */
 package com.damaitan.mobileUI;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import android.os.Bundle;
-import android.widget.TextView;
+import android.widget.SimpleAdapter;
 
 //import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.damaitan.mobileUI.R;
+import com.damaitan.presentation.TaskViewPresenter;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class ActionItems extends SherlockListActivity {
+public class TaskActivity extends SherlockListActivity {
 	 public static int THEME = R.style.Theme_Sherlock_Light;
+	 private int _folderIndex;
+	 private TaskViewPresenter presenter = new TaskViewPresenter();
 	 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Used to put dark icons on light action bar
-        boolean isLight = ActionItems.THEME == R.style.Theme_Sherlock_Light;
+        boolean isLight = TaskActivity.THEME == R.style.Theme_Sherlock_Light;
 
         menu.add("Save")
             .setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
@@ -48,13 +55,19 @@ public class ActionItems extends SherlockListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ActionItems.THEME); //Used for theme switching in samples
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.text);
-        setContent((TextView)findViewById(R.id.text));
+        _folderIndex = this.getIntent().getIntExtra(Name.Index, 0);
+        presenter.setFolder(_folderIndex);
+        this.setTitle(presenter.getViewName());
+        setListAdapter(new SimpleAdapter(this, getData(),
+				android.R.layout.simple_list_item_1,
+				new String[] { "title" }, new int[] { android.R.id.text1 }));
+ 
+    }
+    
+    private List<Map<String, Object>> getData(){
+    	return new ArrayList<Map<String, Object>>();
     }
 
-    protected void setContent(TextView view) {
-        view.setText(R.string.action_items_content);
-    }
+   
 }
