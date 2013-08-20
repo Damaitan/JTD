@@ -5,8 +5,12 @@ package com.damaitan.service;
 
 import java.util.ArrayList;
 
+import com.damaitan.datamodel.ModelStruct;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author admin
@@ -32,4 +36,6 @@ public class TaskFolderHandler {
 			throw new ServiceException("TaskFolderHandler:getCopied - Get NULL of Folders",new NullPointerException());
 		return clone;
 	}
+	
+	
 }

@@ -3,8 +3,8 @@
  */
 package com.damaitan.service;
 
-import com.damaitan.access.IDataAccess;
 import com.damaitan.exception.ServiceException;
+
 
 /**
  * @author admin
@@ -12,8 +12,14 @@ import com.damaitan.exception.ServiceException;
  */
 public class ServiceHandler {
 
-	public static void initialization(IDataAccess handler) throws ServiceException{
+	public static void initialization(String json) throws ServiceException{
 		ModelManager dm = ModelManager.getInstance();
-		dm.construct(handler);
+		dm.construct(json);
 	}
+	
+	public static String initJsonString(){
+		return ModelManager.initJsonString();
+	}
+	
+	
 }

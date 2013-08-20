@@ -13,8 +13,6 @@ import com.damaitan.datamodel.Task.Status;
  */
 public class TaskFolder extends Model {
 	public final static long HideFolderId = 0;
-	//private int allTaskNumber;
-	//private int completedTaskNumber;
 	private ArrayList<Task> tasks = new ArrayList<Task>();
 	private ArrayList<Task> finishedTasks = new ArrayList<Task>();
 	

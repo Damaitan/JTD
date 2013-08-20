@@ -6,7 +6,6 @@ package com.damaitan.presentation;
 import java.util.List;
 import java.util.Map;
 
-import com.damaitan.access.IDataAccess;
 import com.damaitan.exception.PresentationException;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.ServiceHandler;
@@ -24,11 +23,11 @@ public class MainViewPresenter {
 		this.mainView = mainView;
 
 	}
-	public void initialization(IDataAccess access) throws PresentationException{
+	public void initialization(String json) throws PresentationException{
 		
 		handler = new TaskFolderHandler();
 		try {
-			ServiceHandler.initialization(access);
+			ServiceHandler.initialization(json);
 		} catch (ServiceException e) {
 			throw new PresentationException("MainViewPresenter:initialization() - wrong!",e);
 		}
@@ -39,9 +38,12 @@ public class MainViewPresenter {
 		try {
 			return mainView.listItems(handler.getCopied());
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			throw new PresentationException("MainViewPresenter:getData() can not get folders",e);
 		}
+	}
+	
+	public String initJsonString(){
+		return ServiceHandler.initJsonString();
 	}
 
 }

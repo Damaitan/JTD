@@ -16,14 +16,13 @@
 
 package com.damaitan.mobileUI;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,41 +68,55 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         
         presenter = new MainViewPresenter(this);
         Log.i("Mobile", "MainActivity is starting....");
-        try {
+		try {
 			if (!isFileExist(JTDFile)) {
-				String content = "[\n"
-						+ "{\"type\":0,\"name\":\"所有任务\",\"id\":0},\n"
-						+ "{\"type\":0,\"name\":\"待办事项\",\"id\":1},\n" 
-						+ "{\"type\":0,\"name\":\"项目事务\",\"id\":1},\n" 
-						+ "{\"type\":0,\"name\":\"短期目标\",\"id\":1},\n" 
-						+ "{\"type\":0,\"name\":\"长期目标\",\"id\":1},\n" 
-						+ "{\"type\":0,\"name\":\"愿景方向\",\"id\":1},\n" 
-						+ "{\"type\":0,\"name\":\"六万英尺\",\"id\":2}\n" + "]";
+				String content = presenter.initJsonString();
 				FileOutputStream fout = openFileOutput(JTDFile, MODE_PRIVATE);
 				byte[] bytes = content.getBytes();
 				fout.write(bytes);
 				fout.close();
 				Log.i("Mobile", "Create new file : " + JTDFile);
+				presenter.initialization(content);
+			}else{
+				presenter.initialization(getJsonString());
 			}
-        	FileInputStream stream;
-			stream = openFileInput(JTDFile);
-			presenter.initialization(new JsonFiler(stream));
-			setListAdapter(new SimpleAdapter(this,presenter.getData(),
-			        android.R.layout.simple_list_item_1, new String[] { "title"},
-			        new int[] { android.R.id.text1 }));
+			setListAdapter(new SimpleAdapter(this, presenter.getData(),
+					android.R.layout.simple_list_item_1,
+					new String[] { "title" }, new int[] { android.R.id.text1 }));
 		} catch (PresentationException e) {
-			 Log.e("Mobile", "PresentationException",e);
-		}catch (FileNotFoundException e){ // File is not found
-			 Log.i("Mobile", "It must be something wrong, this file shall be created if existed",e);
-		}
-        catch (IOException e) { // comes from file writing
+			Log.e("Mobile", "PresentationException", e);
+		} catch (FileNotFoundException e) { // File is not found
+			Log.i("Mobile",
+					"It must be something wrong, this file shall be created if existed",
+					e);
+		} catch (IOException e) { // comes from file writing
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-        getListView().setTextFilterEnabled(true);
-    }
-
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		getListView().setTextFilterEnabled(true);
+	}
+    
 	
+
+	private String getJsonString() throws Exception{
+		FileInputStream stream;
+
+		stream = openFileInput(JTDFile);
+		String json;
+
+		byte[] bytes = new byte[1024];
+		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+		while (stream.read(bytes) != -1) {
+			arrayOutputStream.write(bytes, 0, bytes.length);
+		}
+		arrayOutputStream.close();
+		stream.close();
+		json = new String(arrayOutputStream.toByteArray());
+		return json.trim();
+	}
 
 
     @Override
@@ -132,10 +145,10 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
     }
 
 
-    protected List<Map<String, Object>> getData() {
+    /*protected List<Map<String, Object>> getData() {
         List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
 
-        /*Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory("com.actionbarsherlock.sample.demos.EXAMPLE");
 
         PackageManager pm = getPackageManager();
@@ -184,22 +197,22 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
             }
         }
 
-        Collections.sort(myData, sDisplayNameComparator);*/
+        Collections.sort(myData, sDisplayNameComparator);
         addItem(myData, "两万英尺 - Projects", activityIntent(
                 "Damai",
                 "Hello"));
 
         return myData;
-    }
+    }*/
 
-    private final static Comparator<Map<String, Object>> sDisplayNameComparator =
+    /*private final static Comparator<Map<String, Object>> sDisplayNameComparator =
         new Comparator<Map<String, Object>>() {
         private final Collator   collator = Collator.getInstance();
 
         public int compare(Map<String, Object> map1, Map<String, Object> map2) {
             return collator.compare(map1.get("title"), map2.get("title"));
         }
-    };
+    };*/
 
     protected Intent activityIntent(String pkg, String componentName) {
         Intent result = new Intent();

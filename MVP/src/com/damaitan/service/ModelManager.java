@@ -5,18 +5,21 @@ package com.damaitan.service;
 
 import java.util.ArrayList;
 
-import com.damaitan.access.IDataAccess;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
-import com.damaitan.exception.AccessException;
 import com.damaitan.exception.ServiceException;
+import com.damaitan.datamodel.ModelStruct;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author admin
  *
  */
 final class ModelManager{
-	private ArrayList<TaskFolder> taskFolders;
+	private ModelStruct modelStruct = new ModelStruct();
+	//private ArrayList<TaskFolder> taskFolders;
 	private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
 	private ArrayList<String> tags = new ArrayList<String>(); // Tags are got from all taks tags
 	private long taskId = 0;
@@ -33,12 +36,40 @@ final class ModelManager{
 		 }
 		 return uniqueInstance;
 	}
+
+	public static Gson getGson() {
+		Gson gson = new GsonBuilder()
+		// .excludeFieldsWithoutExposeAnnotation() //不导出实体中没有用@Expose注解的属性
+				.enableComplexMapKeySerialization() // 支持Map的key为复杂对象的形式
+				.serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss:SSS")// 时间转化为特定格式
+				.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)// 会把字段首字母大写,注:对于实体上使用了@SerializedName注解的不会生效.
+				.setPrettyPrinting() // 对json结果格式化.
+				.setVersion(1.0) // 有的字段不是一开始就有的,会随着版本的升级添加进来,那么在进行序列化和返序列化的时候就会根据版本号来选择是否要序列化.
+									// @Since(版本号)能完美地实现这个功能.还的字段可能,随着版本的升级而删除,那么
+									// @Until(版本号)也能实现这个功能,GsonBuilder.setVersion(double)方法需要调用.
+				.create();
+		return gson;
+	}
+	
+	public static String initJsonString(){
+		String content[] = new String[]{"所有任务","待办事项","项目事务","短期目标","长期目标","愿景方向","六万英尺"};
+		ArrayList<TaskFolder> folders = new ArrayList<TaskFolder>();
+		for(int i = 0; i< content.length; i++){
+			TaskFolder folder = new TaskFolder();
+			folder.setId(i);
+			folder.setName(content[i]);
+			folders.add(folder);
+		}
+		ModelStruct modelStruct = new ModelStruct();
+		modelStruct.setFolders(folders);
+		return getGson().toJson(modelStruct);
+	}
 	
 	public ArrayList<TaskFolder> getCopiedFolder(){
-		if(taskFolders == null){
+		if(modelStruct.getFolders() == null){
 			return null;
 		}
-		ArrayList<TaskFolder> clone = (ArrayList<TaskFolder>)taskFolders.clone();
+		ArrayList<TaskFolder> clone = (ArrayList<TaskFolder>)modelStruct.getFolders().clone();
 		return clone;
 	}
 	 
@@ -55,13 +86,10 @@ final class ModelManager{
 	}
 
 	
-	public void construct(IDataAccess handler) throws ServiceException {
-		try {
-			this.taskFolders = handler.construct();
-		} catch (AccessException e) {
-			throw new ServiceException("construct()",e);
-		}
-		for(TaskFolder item : this.taskFolders){
+	public void construct(String json) throws ServiceException {
+		Gson gson = getGson();
+		this.modelStruct = gson.fromJson(json, ModelStruct.class);
+		for(TaskFolder item : modelStruct.getFolders()){
 			if(item.getTasks() != null){
 				allTasks.addAll(item.getTasks());
 			}
@@ -76,6 +104,8 @@ final class ModelManager{
 			}
 		}
 	}
+	
+	
 
 	/*
 	private TaskFolder findFolderById(long id){

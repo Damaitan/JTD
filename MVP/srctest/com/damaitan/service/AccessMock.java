@@ -5,7 +5,7 @@ package com.damaitan.service;
 
 import java.util.ArrayList;
 
-import com.damaitan.access.IDataAccess;
+import com.damaitan.datamodel.ModelStruct;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.AccessException;
@@ -14,7 +14,7 @@ import com.damaitan.exception.AccessException;
  * @author admin
  *
  */
-public class AccessMock implements IDataAccess{
+public class AccessMock{
 
 	enum MockType{
 		normal,
@@ -25,9 +25,10 @@ public class AccessMock implements IDataAccess{
 	public void setType(MockType type){
 		this.mockType = type;
 	}
-	@Override
-	public ArrayList<TaskFolder> construct() throws AccessException {
+	
+	public ModelStruct construct() throws AccessException {
 		if(mockType == MockType.normal){
+			ModelStruct modelStruct = new ModelStruct();
 			ArrayList<TaskFolder> folders = new ArrayList<TaskFolder>();
 			for(int i = 0; i < 2 ; i++){
 				TaskFolder folder = new TaskFolder(i,String.valueOf(i));
@@ -37,7 +38,8 @@ public class AccessMock implements IDataAccess{
 					task.setTaskFolder(folder);
 				}
 			}
-			return folders;
+			modelStruct.setFolders(folders);
+			return modelStruct;
 		} else if(mockType == MockType.exception){
 			throw new AccessException();
 		} else{
@@ -46,10 +48,5 @@ public class AccessMock implements IDataAccess{
 		
 	}
 
-	@Override
-	public System getSystem() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 }
