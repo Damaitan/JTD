@@ -16,14 +16,18 @@
 package com.damaitan.mobileUI;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.os.Bundle;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 //import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockListActivity;
+import com.damaitan.datamodel.TaskFolder;
+import com.damaitan.datamodel.Task;
 import com.damaitan.mobileUI.R;
 import com.damaitan.presentation.TaskViewPresenter;
 import com.actionbarsherlock.view.Menu;
@@ -39,7 +43,7 @@ public class TaskActivity extends SherlockListActivity {
         //Used to put dark icons on light action bar
         boolean isLight = TaskActivity.THEME == R.style.Theme_Sherlock_Light;
 
-        menu.add("Save")
+        menu.add("New")
             .setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -61,13 +65,40 @@ public class TaskActivity extends SherlockListActivity {
         this.setTitle(presenter.getViewName());
         setListAdapter(new SimpleAdapter(this, getData(),
 				android.R.layout.simple_list_item_1,
-				new String[] { "title" }, new int[] { android.R.id.text1 }));
+				new String[] { Name.Title }, new int[] { android.R.id.text1 }));
  
     }
     
     private List<Map<String, Object>> getData(){
-    	return new ArrayList<Map<String, Object>>();
+    	List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
+    	TaskFolder folder = presenter.getFolder();
+    	for(Task task : folder.getTasks()){
+    		Map<String, Object> item = new HashMap<String, Object>();
+    		item.put(Name.Title, task.getName());
+    		//item.put(Name.Id, Long.valueOf(task.getId()));
+    		item.put(Name.Id, task);
+    		myData.add(item);
+    	}
+    	return myData;
     }
+
+	/* (non-Javadoc)
+	 * @see com.actionbarsherlock.app.SherlockListActivity#onOptionsItemSelected(com.actionbarsherlock.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
+            return false;
+        }
+        //THEME = item.getItemId();
+        //Toast.makeText(this, "Theme changed to \"" + item.getTitle() + "\"", Toast.LENGTH_SHORT).show();
+		if(item.getTitle().toString().trim() == "New"){
+			
+		}
+		
+        return true;
+        
+	}
 
    
 }

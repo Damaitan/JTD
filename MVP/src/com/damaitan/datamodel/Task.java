@@ -28,7 +28,7 @@ public class Task extends Model {
 	private String note;
 	private int priority;
 	private String[] tags;
-	private TaskFolder taskFolder;
+	private long taskFolderId;
 	private Status status;
 	
 	
@@ -125,25 +125,20 @@ public class Task extends Model {
 	/**
 	 * @return the taskFolder
 	 */
-	public TaskFolder getTaskFolder() {
-		return taskFolder;
+	public long getTaskFolderId() {
+		return taskFolderId;
 	}
 	/**
 	 * @param taskFolder the taskFolder to set
 	 */
-	public void setTaskFolder(TaskFolder taskFolder) {
-		if(this.taskFolder != null && this.taskFolder.getId() != taskFolder.getId()){
-			//Whether needs validation
-			this.taskFolder.removeTask(this);
-		}
-		this.taskFolder = taskFolder;
-		taskFolder.addTask(this);
+	public void setTaskFolderId(long id) {
+		this.taskFolderId = id;
 	}
 	
-	public void finish(){
+	/*public void finish(){
 		this.taskFolder.finishTask(this);
 		this.status = Status.finished;
-	}
+	}*/
 	
 	/**
 	 * @return the status
@@ -152,11 +147,40 @@ public class Task extends Model {
 		return status;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone(),×¢ÒâcloneµÄÏÝÚå
+	 */
+	@Override
+	public Task clone(){
+		Task task = new Task();
+		task.setCalendarType(this.getCalendarType());
+		task.setExpired(this.getExpired());
+		task.setId(this.getId());
+		task.setName(this.getName());
+		task.setNote(this.getNote());
+		task.setPriority(this.getPriority());
+		task.setTags(this.getTags().clone());
+		task.setTaskFolderId(this.getTaskFolderId());
+		task.setUrgent(this.isUrgent());
+		return task;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object arg0) {
+		// TODO Auto-generated method stub
+		return super.equals(arg0);
+	}
+
 	/**
 	 * @param status the status to set
 	 */
 	/*public void setStatus(Status status) {
 		this.status = status;
 	}*/
+	
 
 }

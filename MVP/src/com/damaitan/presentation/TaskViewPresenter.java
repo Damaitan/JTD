@@ -11,16 +11,22 @@ import com.damaitan.service.TaskFolderHandler;
  *
  */
 public class TaskViewPresenter {
-	private TaskFolder folder;
+	private TaskFolder copiedfolder;
 	
 	public void setFolder(int index){
 		TaskFolderHandler handler = new TaskFolderHandler();
-		folder =  handler.getIndex(index);
+		copiedfolder =  handler.getIndex(index).clone();
 	}
 	
 	public String getViewName(){
-		return folder.getName();
+		return copiedfolder.getName();
 	}
+	
+	public TaskFolder getFolder(){
+		return copiedfolder;
+	}
+	
+	
 	
 	//public Task getTask
 }

@@ -52,7 +52,7 @@ final class ModelManager{
 	}
 	
 	public static String initJsonString(){
-		String content[] = new String[]{"所有任务","待办事项","项目事务","短期目标","长期目标","愿景方向","六万英尺"};
+		String content[] = new String[]{"所有任务","待办事项","项目事务","短期目标","长期目标","愿景方向","六万英尺","未来清单"};
 		ArrayList<TaskFolder> folders = new ArrayList<TaskFolder>();
 		for(int i = 0; i< content.length; i++){
 			TaskFolder folder = new TaskFolder();

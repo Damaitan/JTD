@@ -98,6 +98,29 @@ public class TaskFolder extends Model {
 	public String getSimpleInfo(){
 		return this.getName() + " - " + this.getCompletedTaskNumber() + "/" + this.getAllTaskNumber(); 
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public TaskFolder clone() {
+		TaskFolder folder = new TaskFolder();
+		folder.setId(this.getId());
+		folder.setName(this.getName());
+		for(Task task : this.tasks){
+			folder.addTask(task.clone());
+		}
+		return folder;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
 	
 	 
 

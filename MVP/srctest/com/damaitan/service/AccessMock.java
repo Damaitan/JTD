@@ -35,7 +35,7 @@ public class AccessMock{
 				folders.add(folder);
 				for(int j = 0;j < 2;j++){
 					Task task = new Task(i*2 + j, String.valueOf(i*2 + j));
-					task.setTaskFolder(folder);
+					task.setTaskFolderId(folder.getId());
 				}
 			}
 			modelStruct.setFolders(folders);
