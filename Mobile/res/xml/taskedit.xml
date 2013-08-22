@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <EditTextPreference
+                android:key="taskedit_name"
+                android:title="@string/title_taskedit_name"
+                android:summary="@string/content_taskedit_name"
+                android:dialogTitle="@string/dialog_taskedit_name" />
+        
+        <CheckBoxPreference
+                android:key="taskedit_urgent"
+                android:title="@string/title_taskedit_urgent"
+                android:summary="@string/summary_taskedit_urgent" />
+        
+        <EditTextPreference
+                android:key="taskedit_tag"
+                android:title="@string/title_taskedit_tag"
+                android:summary="@string/content_taskedit_tag"
+                android:dialogTitle="@string/dialog_taskedit_tag" />
+        
+        <ListPreference
+                android:key="taskedit_priority"
+                android:title="@string/title_taskedit_priority"
+                android:summary="@string/summary_taskedit_priority"
+                android:entries="@array/entries_taskedit_priority"
+                android:entryValues="@array/entryvalues_taskedit_priority"
+                android:dialogTitle="@string/dialog_title_taskedit_priority" />
+        
+        <EditTextPreference
+                android:key="taskedit_note"
+                android:title="@string/title_taskedit_note"
+                android:summary="@string/content_taskedit_note"
+                android:dialogTitle="@string/dialog_taskedit_note" />
+        
+        <ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_sync_frequency_titles"
+        android:entryValues="@array/pref_sync_frequency_values"
+        android:key="sync_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sync_frequency" />
+
+    <!--
+         This preference simply launches an intent when selected. Use this UI sparingly, per
+         design guidelines.
+    -->
+    <Preference android:title="@string/pref_title_system_sync_settings" >
+        <intent android:action="android.settings.SYNC_SETTINGS" />
+    </Preference><ListPreference
+        android:defaultValue="180"
+        android:entries="@array/pref_sync_frequency_titles"
+        android:entryValues="@array/pref_sync_frequency_values"
+        android:key="sync_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_sync_frequency" />
+
+    <!--
+         This preference simply launches an intent when selected. Use this UI sparingly, per
+         design guidelines.
+    -->
+    <Preference android:title="@string/pref_title_system_sync_settings" >
+        <intent android:action="android.settings.SYNC_SETTINGS" />
+    </Preference>
+        
+
+</PreferenceScreen>

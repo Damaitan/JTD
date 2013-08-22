@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -87,13 +88,14 @@ public class TaskActivity extends SherlockListActivity {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
+		/*if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
             return false;
-        }
+        }*/
         //THEME = item.getItemId();
-        //Toast.makeText(this, "Theme changed to \"" + item.getTitle() + "\"", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
 		if(item.getTitle().toString().trim() == "New"){
-			
+			Intent intent = new Intent(this,TaskEditActivity.class);
+	        startActivity(intent);
 		}
 		
         return true;

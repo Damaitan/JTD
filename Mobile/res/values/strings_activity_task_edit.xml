@@ -1,0 +1,59 @@
+<resources>
+
+    <string name="title_activity_task_edit">New Task</string>
+
+    <!-- Strings related to Settings -->
+ 
+	<string name="title_taskedit_name">名称</string>
+	<string name="content_taskedit_name">点击修改名称</string>
+	<string name="dialog_taskedit_name">修改名称</string>
+	
+	<string name="title_taskedit_urgent">紧急</string>
+	<string name="summary_taskedit_urgent">紧急任务</string>
+	
+	<string name="title_taskedit_tag">标签</string>
+	<string name="content_taskedit_tag">输入标签</string>
+	<string name="dialog_taskedit_tag">输入标签</string>
+	
+	<string name="title_taskedit_priority">优先级</string>
+	<string name="summary_taskedit_priority">选择优先级</string>
+	<string name="dialog_title_taskedit_priority">选择优先级</string>
+    <string-array name="entries_taskedit_priority">
+        <item>低级</item>
+        <item>普通</item>
+        <item>较高</item>
+        <item>最高</item>
+    </string-array>
+    <string-array name="entryvalues_taskedit_priority">
+        <item>低级</item>
+        <item>普通</item>
+        <item>较高</item>
+        <item>最高</item>
+    </string-array>
+    <string name="title_taskedit_note">备注</string>
+	<string name="content_taskedit_note">点击修改名称</string>
+	<string name="dialog_taskedit_note">备注</string>
+	
+	<string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+    
+</resources>
