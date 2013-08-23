@@ -6,18 +6,18 @@
  
 	<string name="title_taskedit_name">名称</string>
 	<string name="content_taskedit_name">点击修改名称</string>
-	<string name="dialog_taskedit_name">修改名称</string>
+	<string name="dialog_taskedit_name">输入名称</string>
 	
 	<string name="title_taskedit_urgent">紧急</string>
 	<string name="summary_taskedit_urgent">紧急任务</string>
 	
 	<string name="title_taskedit_tag">标签</string>
-	<string name="content_taskedit_tag">输入标签</string>
+	<string name="content_taskedit_tag">点击增加或修改标签</string>
 	<string name="dialog_taskedit_tag">输入标签</string>
 	
 	<string name="title_taskedit_priority">优先级</string>
 	<string name="summary_taskedit_priority">选择优先级</string>
-	<string name="dialog_title_taskedit_priority">选择优先级</string>
+	<string name="dialog_title_taskedit_priority">优先级选择</string>
     <string-array name="entries_taskedit_priority">
         <item>低级</item>
         <item>普通</item>
