@@ -31,7 +31,7 @@
         <item>最高</item>
     </string-array>
     <string name="title_taskedit_note">备注</string>
-	<string name="content_taskedit_note">点击修改名称</string>
+	<string name="content_taskedit_note">点击修改备注</string>
 	<string name="dialog_taskedit_note">备注</string>
 	
 	<string name="pref_header_data_sync">Data &amp; sync</string>

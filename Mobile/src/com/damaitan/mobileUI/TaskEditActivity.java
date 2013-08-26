@@ -15,13 +15,11 @@
  */
 package com.damaitan.mobileUI;
 
-import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceScreen;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -30,6 +28,11 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class TaskEditActivity extends SherlockPreferenceActivity  implements Preference.OnPreferenceChangeListener{
 	private EditTextPreference namePreference;
+	private CheckBoxPreference urgentPreference;
+	private EditTextPreference tagPreference;
+	private ListPreference priorityPreference;
+	private EditTextPreference notePreference; 
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Used to put dark icons on light action bar
@@ -56,40 +59,37 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.taskedit);
         namePreference = (EditTextPreference)findPreference("taskedit_name");
+        urgentPreference = (CheckBoxPreference)findPreference("taskedit_urgent");
+        tagPreference = (EditTextPreference)findPreference("taskedit_tag");
+        priorityPreference = (ListPreference)findPreference("taskedit_priority");
+        notePreference = (EditTextPreference)findPreference("taskedit_note");
+        
         namePreference.setOnPreferenceChangeListener(this);
+        urgentPreference.setOnPreferenceChangeListener(this);
+        tagPreference.setOnPreferenceChangeListener(this);
+        priorityPreference.setOnPreferenceChangeListener(this);
+        notePreference.setOnPreferenceChangeListener(this);
+        
         
     }
 
-	/*@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-			String key) {
-		Toast.makeText(this, sharedPreferences.getString(key, "HahaTest"), Toast.LENGTH_SHORT).show();
-		if(key.equals("taskedit_name")){
-			Preference namePref = findPreference(key);
-            // Set summary to be the user-description for the selected value
-			//namePref.setSummary(sharedPreferences.getString(key, ""));
-			String test = sharedPreferences.getString(key, "");
-			namePref.setTitle(sharedPreferences.getString(key, ""));
-		}
-		
-	}*/
-
-	/* (non-Javadoc)
-	 * @see android.preference.PreferenceActivity#onPreferenceTreeClick(android.preference.PreferenceScreen, android.preference.Preference)
-	 */
-	
-	/*@Override
-	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
-			Preference preference) {
-		
-		Toast.makeText(this, preference.getTitle(), Toast.LENGTH_SHORT).show();
-		preference.notifyDependencyChange(true);
-		return super.onPreferenceTreeClick(preferenceScreen, preference);
-	}*/
-	
-	 public boolean onPreferenceChange(Preference preference, Object objValue) { 
-		 Toast.makeText(this, preference.getTitle(), Toast.LENGTH_SHORT).show();
-		 preference.setTitle((String)objValue);
+	 public boolean onPreferenceChange(Preference preference, Object objValue) {
+		 Toast.makeText(this, "Preference Key:" + preference.getKey(), Toast.LENGTH_SHORT).show();
+		 if(preference.getKey().equals("taskedit_name")){
+			 preference.setTitle(this.getString(R.string.title_taskedit_name) + ":" + (String)objValue);
+		 }else if(preference.getKey().equals("taskedit_urgent"))
+		 {
+		 }else if(preference.getKey().equals("taskedit_tag"))
+		 {
+			 preference.setSummary((String)objValue);
+		 }else if(preference.getKey().equals("taskedit_priority"))
+		 {
+			 preference.setTitle(this.getString(R.string.title_taskedit_priority) + ":" + (String)objValue);
+		 }
+		 else if(preference.getKey().equals("taskedit_note"))
+		 {
+			 preference.setSummary((String)objValue);
+		 }
 		 return true;
 	 }
 	
