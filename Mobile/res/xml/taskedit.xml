@@ -33,6 +33,12 @@
                 android:summary="@string/content_taskedit_note"
                 android:dialogTitle="@string/dialog_taskedit_note" />
         
+        <com.damaitan.mobileUI.TimePreference 
+            	android:key="taskedit_expire" 
+            	android:title="@string/title_taskedit_expire"
+            	android:dialogTitle="@string/dialog_taskedit_expire" /> 
+        
+        
         <ListPreference
         android:defaultValue="180"
         android:entries="@array/pref_sync_frequency_titles"

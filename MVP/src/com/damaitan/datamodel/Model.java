@@ -8,11 +8,13 @@ package com.damaitan.datamodel;
  *
  */
 public class Model {
+	public final static long invalidId = 0xFFFF; // 
+	
 	private String name;
 	private long id;  
 	
 	public Model(){
-		id = 0;
+		id = invalidId;
 	}
 	
 	public Model(long id, String name){

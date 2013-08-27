@@ -39,6 +39,7 @@ public class TaskActivity extends SherlockListActivity {
 	 private int _folderIndex;
 	 private TaskViewPresenter presenter = new TaskViewPresenter();
 	 
+	 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Used to put dark icons on light action bar
@@ -77,7 +78,7 @@ public class TaskActivity extends SherlockListActivity {
     		Map<String, Object> item = new HashMap<String, Object>();
     		item.put(Name.Title, task.getName());
     		//item.put(Name.Id, Long.valueOf(task.getId()));
-    		item.put(Name.Id, task);
+    		item.put(Name.Id, presenter);
     		myData.add(item);
     	}
     	return myData;
@@ -95,6 +96,10 @@ public class TaskActivity extends SherlockListActivity {
         Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
 		if(item.getTitle().toString().trim() == "New"){
 			Intent intent = new Intent(this,TaskEditActivity.class);
+			Task task = new Task();
+			task.setTaskFolderId(presenter.getFolder().getId());
+			intent.putExtra(Name.TASK_KEY, TaskViewPresenter.toJson(task));
+			intent.putExtra(Name.Index, _folderIndex);
 	        startActivity(intent);
 		}
 		
