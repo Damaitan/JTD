@@ -15,6 +15,8 @@
  */
 package com.damaitan.mobileUI;
 
+import java.io.FileOutputStream;
+
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -27,7 +29,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.damaitan.datamodel.Model;
 import com.damaitan.datamodel.Task;
-import com.damaitan.presentation.TaskViewPresenter;
+import com.damaitan.exception.ServiceException;
+import com.damaitan.service.ServiceHandler;
+import com.damaitan.service.TaskFolderHandler;
 
 public class TaskEditActivity extends SherlockPreferenceActivity  implements Preference.OnPreferenceChangeListener{
 	private EditTextPreference namePreference;
@@ -35,6 +39,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private EditTextPreference tagPreference;
 	private ListPreference priorityPreference;
 	private EditTextPreference notePreference;
+	
 	private Task task = null;
 	private int folderindex = -1;
 	
@@ -74,7 +79,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         
         String json = this.getIntent().getStringExtra(Name.TASK_KEY);
         this.folderindex = this.getIntent().getIntExtra(Name.Index, -1);
-        this.task = TaskViewPresenter.fromJson(json, Task.class);
+        this.task = ServiceHandler.fromJson(json, Task.class);
         
         addPreferencesFromResource(R.xml.taskedit);
         namePreference = (EditTextPreference)findPreference("taskedit_name");
@@ -106,7 +111,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		 }else if(preference.getKey().equals("taskedit_priority"))
 		 {
 			 preference.setTitle(this.getString(R.string.title_taskedit_priority) + ":" + (String)objValue);
-			 this.task.setPriority(1);
+			 this.task.setPriority(1);//this code must be changed
 		 }
 		 else if(preference.getKey().equals("taskedit_note"))
 		 {
@@ -121,12 +126,37 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
 		if(item.getTitle().toString().trim().equals(this.getResources().getString(R.string.create))){
+			Toast.makeText(this, ServiceHandler.toJson(this.task), Toast.LENGTH_SHORT).show();
+			try {
+				TaskFolderHandler.saveTask(folderindex, task, true);
+				saveJsonStringToFile(ServiceHandler.modelString());
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		return true;
 	}
+	
+	private boolean saveJsonStringToFile(String json) throws Exception{
+		try {
+			FileOutputStream fout = openFileOutput("JTD.json", MODE_PRIVATE);
+			byte[] bytes = json.getBytes();
+			fout.write(bytes);
+			fout.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return true;
+	}
+	
 	 
 	 
 	

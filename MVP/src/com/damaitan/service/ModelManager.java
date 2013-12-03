@@ -18,8 +18,8 @@ import com.google.gson.GsonBuilder;
  *
  */
 final class ModelManager{
+	Gson gson = null;
 	private ModelStruct modelStruct = new ModelStruct();
-	//private ArrayList<TaskFolder> taskFolders;
 	private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
 	private ArrayList<String> tags = new ArrayList<String>(); // Tags are got from all taks tags
 	private long taskId = 0;
@@ -28,17 +28,7 @@ final class ModelManager{
 	private static ModelManager uniqueInstance = null;
 	
 	private ModelManager(){
-		
-	}
-	public static ModelManager getInstance() {
-		 if (uniqueInstance == null) {
-			 uniqueInstance = new ModelManager();
-		 }
-		 return uniqueInstance;
-	}
-
-	public static Gson getGson() {
-		Gson gson = new GsonBuilder()
+		gson = new GsonBuilder()
 		// .excludeFieldsWithoutExposeAnnotation() //不导出实体中没有用@Expose注解的属性
 				.enableComplexMapKeySerialization() // 支持Map的key为复杂对象的形式
 				.serializeNulls().setDateFormat("yyyy-MM-dd HH:mm:ss:SSS")// 时间转化为特定格式
@@ -48,10 +38,21 @@ final class ModelManager{
 									// @Since(版本号)能完美地实现这个功能.还的字段可能,随着版本的升级而删除,那么
 									// @Until(版本号)也能实现这个功能,GsonBuilder.setVersion(double)方法需要调用.
 				.create();
+		
+	}
+	public static ModelManager getInstance() {
+		 if (uniqueInstance == null) {
+			 uniqueInstance = new ModelManager();
+		 }
+		 return uniqueInstance;
+	}
+
+	public Gson getGson() {
+		
 		return gson;
 	}
 	
-	public static String initJsonString(){
+	public String initJsonString(){
 		String content[] = new String[]{"所有任务","待办事项","项目事务","短期目标","长期目标","愿景方向","六万英尺","未来清单"};
 		ArrayList<TaskFolder> folders = new ArrayList<TaskFolder>();
 		for(int i = 0; i< content.length; i++){
@@ -65,12 +66,13 @@ final class ModelManager{
 		return getGson().toJson(modelStruct);
 	}
 	
-	public ArrayList<TaskFolder> getCopiedFolder(){
-		if(modelStruct.getFolders() == null){
-			return null;
-		}
-		ArrayList<TaskFolder> clone = (ArrayList<TaskFolder>)modelStruct.getFolders().clone();
-		return clone;
+	public String jsonString(){
+		return getGson().toJson(modelStruct);
+	}
+	
+	public ArrayList<TaskFolder> getFolders(){
+		return modelStruct.getFolders();
+
 	}
 	 
 	
@@ -105,9 +107,17 @@ final class ModelManager{
 		}
 	}
 	
-	public TaskFolder getTaskFolderCopied(int index){
+	public TaskFolder getTaskFolder(int index){
 		
 		return modelStruct.getFolders().get(index);
+	}
+	
+	public long getNewTaskId(boolean updateId){
+		if(updateId){
+			taskId++;
+			return taskId;
+		}
+		return taskId+1;
 	}
 	
 	

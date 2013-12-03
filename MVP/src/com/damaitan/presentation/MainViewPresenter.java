@@ -17,7 +17,7 @@ import com.damaitan.service.TaskFolderHandler;
  */
 public class MainViewPresenter {
 	private IViewMain mainView;
-	private TaskFolderHandler handler;
+	
 	
 	public MainViewPresenter(IViewMain mainView){
 		this.mainView = mainView;
@@ -25,7 +25,6 @@ public class MainViewPresenter {
 	}
 	public void initialization(String json) throws PresentationException{
 		
-		handler = new TaskFolderHandler();
 		try {
 			ServiceHandler.initialization(json);
 		} catch (ServiceException e) {
@@ -36,7 +35,7 @@ public class MainViewPresenter {
 
 	public List<Map<String, Object>> getData() throws PresentationException{
 		try {
-			return mainView.listItems(handler.getCopied());
+			return mainView.listItems(TaskFolderHandler.getFolders());
 		} catch (ServiceException e) {
 			throw new PresentationException("MainViewPresenter:getData() can not get folders",e);
 		}

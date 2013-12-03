@@ -29,15 +29,17 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.datamodel.Task;
+import com.damaitan.exception.ServiceException;
 import com.damaitan.mobileUI.R;
-import com.damaitan.presentation.TaskViewPresenter;
+import com.damaitan.service.ServiceHandler;
+import com.damaitan.service.TaskFolderHandler;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 public class TaskActivity extends SherlockListActivity {
 	 public static int THEME = R.style.Theme_Sherlock_Light;
 	 private int _folderIndex;
-	 private TaskViewPresenter presenter = new TaskViewPresenter();
+	 private TaskFolder _folder;
 	 
 	 
     @Override
@@ -63,8 +65,13 @@ public class TaskActivity extends SherlockListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _folderIndex = this.getIntent().getIntExtra(Name.Index, 0);
-        presenter.setFolder(_folderIndex);
-        this.setTitle(presenter.getViewName());
+        try {
+			this.setTitle(TaskFolderHandler.getFolderByIndex(_folderIndex).getName());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         setListAdapter(new SimpleAdapter(this, getData(),
 				android.R.layout.simple_list_item_1,
 				new String[] { Name.Title }, new int[] { android.R.id.text1 }));
@@ -73,14 +80,20 @@ public class TaskActivity extends SherlockListActivity {
     
     private List<Map<String, Object>> getData(){
     	List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
-    	TaskFolder folder = presenter.getFolder();
-    	for(Task task : folder.getTasks()){
-    		Map<String, Object> item = new HashMap<String, Object>();
-    		item.put(Name.Title, task.getName());
-    		//item.put(Name.Id, Long.valueOf(task.getId()));
-    		item.put(Name.Id, presenter);
-    		myData.add(item);
-    	}
+		try {
+			_folder = TaskFolderHandler.getFolderByIndex(_folderIndex);
+			for(Task task : _folder.getTasks()){
+	    		Map<String, Object> item = new HashMap<String, Object>();
+	    		item.put(Name.Title, task.getName());
+	    		//item.put(Name.Id, Long.valueOf(task.getId()));
+	    		item.put(Name.Id, task.getId());
+	    		myData.add(item);
+	    	}
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	return myData;
     }
 
@@ -97,8 +110,8 @@ public class TaskActivity extends SherlockListActivity {
 		if(item.getTitle().toString().trim() == "New"){
 			Intent intent = new Intent(this,TaskEditActivity.class);
 			Task task = new Task();
-			task.setTaskFolderId(presenter.getFolder().getId());
-			intent.putExtra(Name.TASK_KEY, TaskViewPresenter.toJson(task));
+			task.setTaskFolderId(_folder.getId());
+			intent.putExtra(Name.TASK_KEY, ServiceHandler.toJson(task));
 			intent.putExtra(Name.Index, _folderIndex);
 	        startActivity(intent);
 		}

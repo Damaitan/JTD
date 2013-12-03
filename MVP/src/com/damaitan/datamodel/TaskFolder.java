@@ -73,6 +73,7 @@ public class TaskFolder extends Model {
 		if(task.getStatus() == Status.finished){
 			this.finishedTasks.add(task);
 		}else{
+			task.setTaskFolderId(this.getId());
 			this.tasks.add(task);
 		}
 		

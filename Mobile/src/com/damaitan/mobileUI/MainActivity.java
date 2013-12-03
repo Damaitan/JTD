@@ -59,6 +59,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+			return false;
 		}
 		return true;
 	}
@@ -68,9 +69,12 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         super.onCreate(savedInstanceState);
         
         presenter = new MainViewPresenter(this);
-        Log.i("Mobile", "MainActivity is starting....");
+        Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JTDFile);
 		try {
-			if (!isFileExist(JTDFile)) {
+			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "//" + JTDFile;
+			if (isFileExist(path)) {
+				presenter.initialization(getJsonString());
+			}else{
 				String content = presenter.initJsonString();
 				FileOutputStream fout = openFileOutput(JTDFile, MODE_PRIVATE);
 				byte[] bytes = content.getBytes();
@@ -78,8 +82,6 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 				fout.close();
 				Log.i("Mobile", "Create new file : " + JTDFile);
 				presenter.initialization(content);
-			}else{
-				presenter.initialization(getJsonString());
 			}
 			setListAdapter(new SimpleAdapter(this, presenter.getData(),
 					android.R.layout.simple_list_item_1,
@@ -117,6 +119,21 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 		stream.close();
 		json = new String(arrayOutputStream.toByteArray());
 		return json.trim();
+	}
+	
+	private boolean saveJsonStringToFile(String json) throws Exception{
+		 try{ 
+
+		        FileOutputStream fout =openFileOutput(JTDFile, MODE_PRIVATE);
+		        byte [] bytes = json.getBytes(); 
+		        fout.write(bytes); 
+		        fout.close(); 
+		        } 
+		       catch(Exception e){ 
+		        e.printStackTrace(); 
+
+		       } 
+		return true;
 	}
 
 
