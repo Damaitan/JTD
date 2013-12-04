@@ -34,6 +34,7 @@ public class Task extends Model {
 	
 
 	public Task() {
+		super(Model.invalidId,"null");
 		status = Status.ongoing;
 	}
 	
@@ -135,10 +136,9 @@ public class Task extends Model {
 		this.taskFolderId = id;
 	}
 	
-	/*public void finish(){
-		this.taskFolder.finishTask(this);
-		this.status = Status.finished;
-	}*/
+	public void setStatus(Status status){
+		this.status = status;
+	}
 	
 	/**
 	 * @return the status

@@ -81,6 +81,7 @@ public class TaskFolder extends Model {
 	
 	public void finishTask(Task task){
 		this.tasks.remove(task);
+		task.setStatus(Status.finished);
 		this.finishedTasks.add(task);
 	}
 	
