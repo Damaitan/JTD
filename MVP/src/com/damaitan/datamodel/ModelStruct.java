@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ModelStruct {
 	
 	private ArrayList<TaskFolder> folders;
-	private String maps;
+	//private String maps;
 	/**
 	 * @return the folders
 	 */

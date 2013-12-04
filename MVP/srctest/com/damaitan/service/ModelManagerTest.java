@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import com.damaitan.datamodel.ModelStruct;
 import com.damaitan.datamodel.TaskFolder;
-import com.damaitan.exception.AccessException;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.AccessMock.MockType;
 import com.google.gson.FieldNamingPolicy;
@@ -81,14 +80,7 @@ public class ModelManagerTest extends TestCase{
 				folder.setName(content[i]);
 				folders.add(folder);
 			}
-			String content1 = "[\n"
-					+ "{\"type\":0,\"name\":\"所有任务\",\"id\":0},\n"
-					+ "{\"type\":0,\"name\":\"待办事项\",\"id\":1},\n" 
-					+ "{\"type\":0,\"name\":\"项目事务\",\"id\":2},\n" 
-					+ "{\"type\":0,\"name\":\"短期目标\",\"id\":3},\n" 
-					+ "{\"type\":0,\"name\":\"长期目标\",\"id\":4},\n" 
-					+ "{\"type\":0,\"name\":\"愿景方向\",\"id\":5},\n" 
-					+ "{\"type\":0,\"name\":\"六万英尺\",\"id\":6}\n" + "]";
+			
 			
 			/*String content2;
 			try {
@@ -115,7 +107,7 @@ public class ModelManagerTest extends TestCase{
 			String content2 = gson.toJson(modelStruct);
 			System.out.print(content2);
 			
-			ModelStruct struct1 = gson.fromJson(content2, ModelStruct.class);
+			//ModelStruct struct1 = gson.fromJson(content2, ModelStruct.class);
 			//Assert.assertEquals(content2, content1);
 			//GsonBuilder builder = new GsonBuilder();
 			

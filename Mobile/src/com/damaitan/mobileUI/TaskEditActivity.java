@@ -49,24 +49,17 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Used to put dark icons on light action bar
-        boolean isLight = MainActivity.THEME == R.style.Theme_Sherlock_Light;
-        
-        if(this.task.getId() == Model.invalidId){
-        	menu.add(this.getResources().getString(R.string.create))
-            	.setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
-            	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }else{
-        	menu.add("Save")
-        	.setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
-        	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
+       
+		menu.add(this.getString(R.string.menu_taskedit_save))
+				.setShowAsAction(
+						MenuItem.SHOW_AS_ACTION_IF_ROOM
+								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        menu.add("Search")
-            .setIcon(isLight ? R.drawable.ic_search_inverse : R.drawable.ic_search)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		menu.add(this.getString(R.string.menu_taskedit_delete)).setShowAsAction(
+				MenuItem.SHOW_AS_ACTION_IF_ROOM
+						| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        menu.add("Refresh")
-            .setIcon(isLight ? R.drawable.ic_refresh_inverse : R.drawable.ic_refresh)
+        menu.add(this.getString(R.string.menu_taskedit_relation))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
         return super.onCreateOptionsMenu(menu);

@@ -43,7 +43,10 @@ import com.damaitan.presentation.IViewMain;
 import com.damaitan.presentation.MainViewPresenter;
 
 public class MainActivity extends SherlockListActivity implements IViewMain{
-    public static int THEME = R.style.Theme_Sherlock;
+    private static int MENU_ID_TAG = 0;
+    private static int MENU_ID_SETTING = 1;
+    private static int MENU_ID_SYNC = 2;
+    private static int MENU_ID_CLEAN = 3;
     private static String JTDFile = "JTD.json";
     private MainViewPresenter presenter;
     
@@ -70,6 +73,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         
         presenter = new MainViewPresenter(this);
         Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JTDFile);
+        
 		try {
 			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "//" + JTDFile;
 			if (isFileExist(path)) {
@@ -121,7 +125,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 		return json.trim();
 	}
 	
-	private boolean saveJsonStringToFile(String json) throws Exception{
+	/*private boolean saveJsonStringToFile(String json) throws Exception{
 		 try{ 
 
 		        FileOutputStream fout =openFileOutput(JTDFile, MODE_PRIVATE);
@@ -134,7 +138,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 
 		       } 
 		return true;
-	}
+	}*/
 
 
     @Override
@@ -145,19 +149,18 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         sub.add(0, R.style.Theme_Sherlock_Light_DarkActionBar, 0, "Light (Dark Action Bar)");
         sub.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         
-        boolean isLight = TaskActivity.THEME == R.style.Theme_Sherlock_Light;
 
-        menu.add(this.getString(R.string.menu_main_tag))
+        menu.add(0,MENU_ID_TAG,0,this.getString(R.string.menu_main_tag))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        menu.add(this.getString(R.string.menu_main_setting))
+        menu.add(0,MENU_ID_SETTING,0,this.getString(R.string.menu_main_setting))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        menu.add(this.getString(R.string.menu_main_sync))
+        menu.add(0,MENU_ID_SYNC,0,this.getString(R.string.menu_main_sync))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
-        menu.add(this.getString(R.string.menu_main_clean))
-        .setIcon(isLight ? R.drawable.ic_refresh_inverse : R.drawable.ic_refresh)
+        menu.add(0,MENU_ID_CLEAN,0,this.getString(R.string.menu_main_clean))
+        .setIcon(R.drawable.ic_refresh)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
         return true;

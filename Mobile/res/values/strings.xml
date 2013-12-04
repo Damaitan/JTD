@@ -16,4 +16,58 @@
     <string name="ok">确定</string>
     <string name="split_content">This activity is a demonstration of how split action items work. When you are concerned about the available room for items on small screens you should use this feature.</string>
     <string name="create">创建</string>
+    
+    <!-- Main Activity-->
+    <string name="menu_main_tag">标签</string>
+    <string name="menu_main_setting">设置</string>
+    <string name="menu_main_sync">同步</string>
+    <string name="menu_main_clean">清空完成任务</string>
+    
+    <!--  Task Activity -->
+    <string name="menu_task_tag">标签</string>
+    <string name="menu_task_new">添加</string>
+    <string name="menu_task_delete">删除</string>
+    <string name="menu_task_folder">切换清单</string>
+   
+    
+    <!--  Task Edit Activity -->
+    <string name="title_activity_task_edit">New Task</string>
+
+    <!-- Strings related to Settings -->
+ 
+	<string name="title_taskedit_name">名称</string>
+	<string name="content_taskedit_name">点击修改名称</string>
+	<string name="dialog_taskedit_name">输入名称</string>
+	
+	<string name="title_taskedit_urgent">紧急</string>
+	<string name="summary_taskedit_urgent">紧急任务</string>
+	
+	<string name="title_taskedit_tag">标签</string>
+	<string name="content_taskedit_tag">点击增加或修改标签</string>
+	<string name="dialog_taskedit_tag">输入标签</string>
+	
+	<string name="title_taskedit_priority">优先级</string>
+	<string name="summary_taskedit_priority">选择优先级</string>
+	<string name="dialog_title_taskedit_priority">优先级选择</string>
+    <string-array name="entries_taskedit_priority">
+        <item>低级</item>
+        <item>普通</item>
+        <item>较高</item>
+        <item>最高</item>
+    </string-array>
+    <string-array name="entryvalues_taskedit_priority">
+        <item>低级</item>
+        <item>普通</item>
+        <item>较高</item>
+        <item>最高</item>
+    </string-array>
+    <string name="title_taskedit_note">备注</string>
+	<string name="content_taskedit_note">点击修改备注</string>
+	<string name="dialog_taskedit_note">备注</string>
+	<string name="title_taskedit_expire">完成时间</string>
+	<string name="dialog_taskedit_expire">选择完成时间</string>
+	<string name="menu_taskedit_save">保存</string>
+	<string name="menu_taskedit_delete">删除</string>
+	<string name="menu_taskedit_relation">关联</string>
+
 </resources>
