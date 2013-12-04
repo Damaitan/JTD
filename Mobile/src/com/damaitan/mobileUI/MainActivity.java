@@ -147,17 +147,19 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         
         boolean isLight = TaskActivity.THEME == R.style.Theme_Sherlock_Light;
 
-        menu.add("New")
-            .setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
+        menu.add(this.getString(R.string.menu_main_tag))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        menu.add("Delete")
+        menu.add(this.getString(R.string.menu_main_setting))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        menu.add("Refresh")
-            .setIcon(isLight ? R.drawable.ic_refresh_inverse : R.drawable.ic_refresh)
+        menu.add(this.getString(R.string.menu_main_sync))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
+        
+        menu.add(this.getString(R.string.menu_main_clean))
+        .setIcon(isLight ? R.drawable.ic_refresh_inverse : R.drawable.ic_refresh)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        
         return true;
         
     }

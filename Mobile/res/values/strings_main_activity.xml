@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_main_tag">标签</string>
+    <string name="menu_main_setting">设置</string>
+    <string name="menu_main_sync">同步</string>
+    <string name="menu_main_clean">清空</string>
+</resources>
