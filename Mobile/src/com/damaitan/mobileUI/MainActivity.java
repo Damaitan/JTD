@@ -150,6 +150,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         sub.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         
 
+
         menu.add(0,MENU_ID_TAG,0,this.getString(R.string.menu_main_tag))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
