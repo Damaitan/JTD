@@ -75,7 +75,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
         Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JTDFile);
         
 		try {
-			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "//" + JTDFile;
+			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JTDFile;
 			if (isFileExist(path)) {
 				presenter.initialization(getJsonString());
 			}else{

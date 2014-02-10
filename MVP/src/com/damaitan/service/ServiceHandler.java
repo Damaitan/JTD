@@ -15,12 +15,11 @@ public class ServiceHandler {
 	static boolean isInitialized = false;
 
 	public static void initialization(String json) throws ServiceException{
+		ModelManager dm = ModelManager.getInstance();
 		if(!isInitialized){
-			ModelManager dm = ModelManager.getInstance();
 			dm.construct(json);
 			isInitialized = true;
 		}
-	
 	}
 	
 	//	It's used when this software is installed at the first time

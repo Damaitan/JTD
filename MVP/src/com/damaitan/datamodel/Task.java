@@ -27,7 +27,7 @@ public class Task extends Model {
 	private int calendarType;
 	private String note;
 	private int priority;
-	private String[] tags;
+	private String tags;
 	private long taskFolderId;
 	private Status status;
 	
@@ -114,13 +114,13 @@ public class Task extends Model {
 	/**
 	 * @return the tags
 	 */
-	public String[] getTags() {
+	public String getTags() {
 		return tags;
 	}
 	/**
 	 * @param tags the tags to set
 	 */
-	public void setTags(String[] tags) {
+	public void setTags(String tags) {
 		this.tags = tags;
 	}
 	/**
@@ -159,7 +159,7 @@ public class Task extends Model {
 		task.setName(this.getName());
 		task.setNote(this.getNote());
 		task.setPriority(this.getPriority());
-		task.setTags(this.getTags().clone());
+		task.setTags(this.getTags());
 		task.setTaskFolderId(this.getTaskFolderId());
 		task.setUrgent(this.isUrgent());
 		return task;

@@ -27,7 +27,6 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.damaitan.datamodel.Model;
 import com.damaitan.datamodel.Task;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.ServiceHandler;
@@ -100,7 +99,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		 }else if(preference.getKey().equals("taskedit_tag"))
 		 {
 			 preference.setSummary((String)objValue);
-			 this.task.setTags(value.split(","));
+			 this.task.setTags(value);
 		 }else if(preference.getKey().equals("taskedit_priority"))
 		 {
 			 preference.setTitle(this.getString(R.string.title_taskedit_priority) + ":" + (String)objValue);

@@ -80,11 +80,11 @@ final class ModelManager{
 	private void tag(Task task){
 		if(task.getTags() == null)
 			return;
-		for(String item : task.getTags()){
+		/*for(String item : task.getTags()){
 			if(!tags.contains(item)){
 				tags.add(item);
 			}
-		}
+		}*/
 	}
 
 	
