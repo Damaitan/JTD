@@ -41,9 +41,9 @@ public class TaskActivity extends SherlockListActivity {
 	 private int _folderIndex;
 	 private TaskFolder _folder;
 	 private static int MENU_ID_NEW = 0;
-	 private static int MENU_ID_DELETE = 1;
-	 private static int MENU_ID_TAG = 2;
-	 private static int MENU_ID_FOLDER = 3;
+	 private static int MENU_ID_DELETE = MENU_ID_NEW + 1;
+	 private static int MENU_ID_TAG = MENU_ID_NEW + 2;
+	 private static int MENU_ID_FOLDER = MENU_ID_NEW + 3;
 	 
 	 
 	 

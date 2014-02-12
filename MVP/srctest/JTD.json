@@ -1,0 +1,52 @@
+{
+  "Folders": [
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "所有任务",
+      "Id": 0
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "待办事项",
+      "Id": 1
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "项目事务",
+      "Id": 2
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "短期目标",
+      "Id": 3
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "长期目标",
+      "Id": 4
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "愿景方向",
+      "Id": 5
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "六万英尺",
+      "Id": 6
+    },
+    {
+      "FinishedTasks": [],
+      "Tasks": [],
+      "Name": "未来清单",
+      "Id": 7
+    }
+  ]
+}

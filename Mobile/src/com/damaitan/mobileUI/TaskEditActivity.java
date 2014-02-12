@@ -42,24 +42,26 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private Task task = null;
 	private int folderindex = -1;
 	
+	private static int MENU_ID_SAVE = 4;
+	private static int MENU_ID_DELETE = MENU_ID_SAVE + 1;
+	private static int MENU_ID_RELATION = MENU_ID_SAVE + 2;
+	 
+	
 	public TaskEditActivity(){
 	}
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Used to put dark icons on light action bar
-       
-		menu.add(this.getString(R.string.menu_taskedit_save))
-				.setShowAsAction(
-						MenuItem.SHOW_AS_ACTION_IF_ROOM
-								| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    	
+		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-		menu.add(this.getString(R.string.menu_taskedit_delete)).setShowAsAction(
-				MenuItem.SHOW_AS_ACTION_IF_ROOM
-						| MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		menu.add(0,MENU_ID_DELETE,0,this.getString(R.string.menu_taskedit_delete))
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        menu.add(this.getString(R.string.menu_taskedit_relation))
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        menu.add(0,MENU_ID_RELATION,0,this.getString(R.string.menu_taskedit_relation))
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -118,9 +120,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		//Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
-		if(item.getTitle().toString().trim().equals(this.getResources().getString(R.string.create))){
-			Toast.makeText(this, ServiceHandler.toJson(this.task), Toast.LENGTH_SHORT).show();
+		if(item.getItemId() == MENU_ID_SAVE){
 			try {
 				TaskFolderHandler.saveTask(folderindex, task, true);
 				saveJsonStringToFile(ServiceHandler.modelString());
