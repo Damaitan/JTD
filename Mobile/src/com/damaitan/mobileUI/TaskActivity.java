@@ -16,17 +16,14 @@
 package com.damaitan.mobileUI;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.SimpleAdapter;
+import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
-
-import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.datamodel.Task;
 import com.damaitan.exception.ServiceException;
@@ -36,7 +33,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-public class TaskActivity extends SherlockListActivity {
+public class TaskActivity extends SherlockActivity {
 
 	 private int _folderIndex;
 	 private TaskFolder _folder;
@@ -45,7 +42,24 @@ public class TaskActivity extends SherlockListActivity {
 	 private static int MENU_ID_TAG = MENU_ID_NEW + 2;
 	 private static int MENU_ID_FOLDER = MENU_ID_NEW + 3;
 	 
-	 
+	 private TaskFolderFragmentItemAdapter expiredTaskAdapter; 
+	 private TaskFolderFragmentItemAdapter dayTaskAdapter;
+	 private TaskFolderFragmentItemAdapter weekTaskAdapter;
+	 private TaskFolderFragmentItemAdapter monthTaskAdapter;
+	 private TaskFolderFragmentItemAdapter otherTaskAdapter;
+	 private TaskFolderFragmentItemAdapter finishTaskAdapter;
+	 private ListView expiredTaskView; 
+	 private ListView dayTaskView;
+	 private ListView weekTaskView;
+	 private ListView monthTaskView;
+	 private ListView otherTaskView;
+	 private ListView finishTaskView;
+	 private List<Task> listExpiredTask;
+	 private List<Task> listDayTask;
+	 private List<Task> listWeekTask;
+	 private List<Task> listMonthTask;
+	 private List<Task> listOtherTask;
+	 private List<Task> listFinishTask;
 	 
 	 
 	@Override
@@ -72,10 +86,10 @@ public class TaskActivity extends SherlockListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
         MenuItem subMenuItem = subMenu.getItem();
-        //subMenuItem.setIcon(R.drawable.ic_title_share_default);
         subMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        
+	    
 
         return true;
     }
@@ -83,37 +97,58 @@ public class TaskActivity extends SherlockListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        setContentView(R.layout.task_folder); 
         _folderIndex = this.getIntent().getIntExtra(Name.Index, 0);
         try {
 			this.setTitle(TaskFolderHandler.getFolderByIndex(_folderIndex).getName());
+			classifyData();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("Error", "TaskActivity onCreate", e);
 		}
-        setListAdapter(new SimpleAdapter(this, getData(),
-				android.R.layout.simple_list_item_1,
-				new String[] { Name.Title }, new int[] { android.R.id.text1 }));
+        
+        expiredTaskView = (ListView)findViewById(R.id.lst_task_folder_expired); 
+	   	dayTaskView = (ListView)findViewById(R.id.lst_task_folder_day);
+	   	weekTaskView = (ListView)findViewById(R.id.lst_task_folder_week);
+	   	monthTaskView = (ListView)findViewById(R.id.lst_task_folder_month);
+	   	otherTaskView = (ListView)findViewById(R.id.lst_task_folder_other);
+	   	finishTaskView = (ListView)findViewById(R.id.lst_task_folder_finish);
+	   	
+	   	expiredTaskAdapter = new TaskFolderFragmentItemAdapter(this, listExpiredTask);
+	   	expiredTaskView.setAdapter(expiredTaskAdapter);
+	   	dayTaskAdapter = new TaskFolderFragmentItemAdapter(this, listDayTask);
+	   	dayTaskView.setAdapter(dayTaskAdapter);
+	   	weekTaskAdapter = new TaskFolderFragmentItemAdapter(this, listWeekTask);
+	   	weekTaskView.setAdapter(weekTaskAdapter);
+	   	monthTaskAdapter = new TaskFolderFragmentItemAdapter(this, listMonthTask);
+	   	monthTaskView.setAdapter(monthTaskAdapter);
+	   	otherTaskAdapter = new TaskFolderFragmentItemAdapter(this, listOtherTask);
+	   	otherTaskView.setAdapter(otherTaskAdapter);
+	   	finishTaskAdapter = new TaskFolderFragmentItemAdapter(this, listFinishTask,true);
+	   	finishTaskView.setAdapter(finishTaskAdapter);
  
     }
     
-    private List<Map<String, Object>> getData(){
-    	List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
+    private void classifyData(){
+    	listExpiredTask = new ArrayList<Task>();
+    	listDayTask = new ArrayList<Task>();
+    	listWeekTask = new ArrayList<Task>();
+    	listMonthTask = new ArrayList<Task>();
+    	listOtherTask = new ArrayList<Task>();
+    	listFinishTask = new ArrayList<Task>();
+    	
 		try {
 			_folder = TaskFolderHandler.getFolderByIndex(_folderIndex);
 			for(Task task : _folder.getTasks()){
-	    		Map<String, Object> item = new HashMap<String, Object>();
-	    		item.put(Name.Title, task.getName());
-	    		//item.put(Name.Id, Long.valueOf(task.getId()));
-	    		item.put(Name.Id, task.getId());
-	    		myData.add(item);
+	    		listExpiredTask.add(task);
+	    		listDayTask.add(task);
+	    		listWeekTask.add(task);
+	    		listMonthTask.add(task);
+	    		listOtherTask.add(task);
+	    		listFinishTask.add(task);
 	    	}
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("Error", "TaskActivity getData()", e);
 		}
-    	
-    	return myData;
     }
 
 	/* (non-Javadoc)
@@ -121,10 +156,6 @@ public class TaskActivity extends SherlockListActivity {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		/*if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
-            return false;
-        }*/
-        //THEME = item.getItemId();
 		
         Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
 		if(item.getItemId() == MENU_ID_NEW){
@@ -139,5 +170,6 @@ public class TaskActivity extends SherlockListActivity {
         return true;
         
 	}
+
    
 }
