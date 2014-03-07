@@ -3,9 +3,6 @@
  */
 package com.damaitan.service;
 
-
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -14,7 +11,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.damaitan.exception.ServiceException;
 
 /**
  * @author admin
