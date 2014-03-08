@@ -140,18 +140,16 @@ public class TaskFolderActivity extends SherlockActivity {
 
 		@Override
 		public int getItemViewType(int position) {
-			// TODO Auto-generated method stub
 			return getItemType(position);
 		}
 
 		@Override
 		public int getViewTypeCount() {
-			// TODO Auto-generated method stub
 			return 2;
 		}
 
 		@Override
-		public Object getItem(int arg0) {
+		public Object getItem(int position) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -239,7 +237,6 @@ public class TaskFolderActivity extends SherlockActivity {
 		}
 		
 		private String getClassName(int position){
-			
 			if(position == position_expired)
 				return this.context.getString(R.string.txt_task_folder_expired);
 			if(position == position_day)
