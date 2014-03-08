@@ -135,8 +135,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 		        } 
 		       catch(Exception e){ 
 		        e.printStackTrace(); 
-Android五种数据传递方法汇总
-		       } 
+Android五种数据传递方法汇总		       } 
 		return true;
 	}*/
 

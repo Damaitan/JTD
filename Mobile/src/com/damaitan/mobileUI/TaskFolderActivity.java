@@ -52,12 +52,12 @@ public class TaskFolderActivity extends SherlockActivity {
 		_folderIndex = this.getIntent().getIntExtra(Name.Index, 0);
         try {
         	_folder = TaskFolderHandler.getFolderByIndex(_folderIndex);
-        	Task task1 = new Task();
+        	/*Task task1 = new Task();
         	task1.setName("Task1");
         	Task task2 = new Task();
         	task2.setName("Task2");
         	_folder.addTask(task1);
-        	_folder.addTask(task2);
+        	_folder.addTask(task2);*/
 			this.setTitle(TaskFolderHandler.getFolderByIndex(_folderIndex).getName());
 		} catch (Exception e) {
 			Log.e("Error", "TaskActivity onCreate", e);
