@@ -8,13 +8,15 @@ package com.damaitan.datamodel;
  *
  */
 public class Model {
-	public final static long invalidId = 0xFFFF; // 
+	public final static long invalidId = 0xFFFF; 
+	public final static String invalidStr = "EMPTY";
 	
 	private String name;
 	private long id;  
 	
 	public Model(){
 		id = invalidId;
+		name = invalidStr;
 	}
 	
 	public Model(long id, String name){

@@ -22,7 +22,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.Menu;
@@ -46,6 +45,12 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private static int MENU_ID_DELETE = MENU_ID_SAVE + 1;
 	private static int MENU_ID_RELATION = MENU_ID_SAVE + 2;
 	private static int MENU_ID_NEW = MENU_ID_SAVE + 3;
+	
+	private static String NAME_KEY = "taskedit_name";
+	private static String URGENT_KEY = "taskedit_urgent";
+	private static String TAG_KEY = "taskedit_tag";
+	private static String PRIORITY_KEY = "taskedit_priority";
+	private static String NOTE_KEY = "taskedit_note";
 	 
 	
 	public TaskEditActivity(){
@@ -80,12 +85,20 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         this.task = ServiceHandler.fromJson(json, Task.class);
         
         addPreferencesFromResource(R.xml.taskedit);
-        namePreference = (EditTextPreference)findPreference("taskedit_name");
-        urgentPreference = (CheckBoxPreference)findPreference("taskedit_urgent");
-        tagPreference = (EditTextPreference)findPreference("taskedit_tag");
-        priorityPreference = (ListPreference)findPreference("taskedit_priority");
-        notePreference = (EditTextPreference)findPreference("taskedit_note");
+        namePreference = (EditTextPreference)findPreference(NAME_KEY);
+        urgentPreference = (CheckBoxPreference)findPreference(URGENT_KEY);
+        tagPreference = (EditTextPreference)findPreference(TAG_KEY);
+        priorityPreference = (ListPreference)findPreference(PRIORITY_KEY);
+        notePreference = (EditTextPreference)findPreference(NOTE_KEY);
+        if(this.task.getId() != Task.invalidId){
+        	namePreference.setDefaultValue(this.task.getName());
+        	urgentPreference.setChecked(this.task.isUrgent());
+        	tagPreference.setDefaultValue(this.task.getTags());
+        	priorityPreference.setDefaultValue(this.task.getPriority());
+        	notePreference.setDefaultValue(this.task.getNote());
+        }
         
+        //Ìí¼ÓÕìÌýÊÂ¼þ
         namePreference.setOnPreferenceChangeListener(this);
         urgentPreference.setOnPreferenceChangeListener(this);
         tagPreference.setOnPreferenceChangeListener(this);
@@ -94,27 +107,27 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     }
 
 	 public boolean onPreferenceChange(Preference preference, Object objValue) {
-		 Toast.makeText(this, "Preference Key:" + preference.getKey() + " value:" + (String)objValue, Toast.LENGTH_SHORT).show();
-		 String value = (String)objValue;
-		 if(preference.getKey().equals("taskedit_name")){
+		 if(preference.getKey().equals(NAME_KEY)){
 			 preference.setTitle(this.getString(R.string.title_taskedit_name) + ":" + (String)objValue);
 			 this.task.setName((String)objValue);
-		 }else if(preference.getKey().equals("taskedit_urgent"))
+		 }else if(preference.getKey().equals(URGENT_KEY))
 		 {
-			 this.task.setUrgent(Boolean.getBoolean(value));
-		 }else if(preference.getKey().equals("taskedit_tag"))
+			 this.task.setUrgent(((Boolean)objValue).booleanValue());
+		 }else if(preference.getKey().equals(TAG_KEY))
 		 {
 			 preference.setSummary((String)objValue);
-			 this.task.setTags(value);
-		 }else if(preference.getKey().equals("taskedit_priority"))
+			 this.task.setTags((String)objValue);
+		 }else if(preference.getKey().equals(PRIORITY_KEY))
 		 {
-			 preference.setTitle(this.getString(R.string.title_taskedit_priority) + ":" + (String)objValue);
-			 this.task.setPriority(1);//this code must be changed
+			 ListPreference lp = (ListPreference)preference;
+			 int index = lp.findIndexOfValue((String)objValue);
+			 lp.setTitle(this.getString(R.string.title_taskedit_priority) + ":" + lp.getEntries()[index]);
+			 this.task.setPriority(Integer.parseInt((String)objValue));//this code must be changed
 		 }
-		 else if(preference.getKey().equals("taskedit_note"))
+		 else if(preference.getKey().equals(NOTE_KEY))
 		 {
 			 preference.setSummary((String)objValue);
-			 this.task.setNote(value);
+			 this.task.setNote((String)objValue);
 		 }
 		 return true;
 	 }

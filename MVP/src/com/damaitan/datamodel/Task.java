@@ -34,7 +34,7 @@ public class Task extends Model {
 	
 
 	public Task() {
-		super(Model.invalidId,"null");
+		super(Model.invalidId,Model.invalidStr);
 		status = Status.ongoing;
 	}
 	

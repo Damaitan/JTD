@@ -116,7 +116,6 @@ public class TaskFolderActivity extends SherlockActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-        //Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
 		if(item.getItemId() == MENU_ID_NEW){
 			Intent intent = new Intent(this,TaskEditActivity.class);
 			Task task = new Task();
@@ -176,7 +175,7 @@ public class TaskFolderActivity extends SherlockActivity {
 		}
 
 		@Override
-		public long getItemId(int arg0) {
+		public long getItemId(int position) {
 			// TODO Auto-generated method stub
 			return 0;
 		}
