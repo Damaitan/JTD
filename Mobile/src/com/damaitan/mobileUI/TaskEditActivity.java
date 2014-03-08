@@ -22,6 +22,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.Menu;
@@ -142,11 +143,9 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 				TaskFolderHandler.saveTask(folderindex, task, true);
 				saveJsonStringToFile(ServiceHandler.modelString());
 			} catch (ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e("Error","TaskEditActivity onOptionsItemSelected ServiceException", e);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e("Error","TaskEditActivity onOptionsItemSelected", e);
 			}
 			
 		}
