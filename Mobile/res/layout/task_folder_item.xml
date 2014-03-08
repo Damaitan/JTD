@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <EditText
+    <TextView android:text="TextView"
         android:id="@+id/task_folder_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +17,6 @@
         android:inputType="text" >
 
         <requestFocus />
-    </EditText>
+    </TextView>
 
 </LinearLayout>

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +20,6 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -27,6 +27,7 @@ import com.actionbarsherlock.view.SubMenu;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
+import com.damaitan.service.ServiceHandler;
 import com.damaitan.service.TaskFolderHandler;
 
 /**
@@ -51,6 +52,12 @@ public class TaskFolderActivity extends SherlockActivity {
 		_folderIndex = this.getIntent().getIntExtra(Name.Index, 0);
         try {
         	_folder = TaskFolderHandler.getFolderByIndex(_folderIndex);
+        	Task task1 = new Task();
+        	task1.setName("Task1");
+        	Task task2 = new Task();
+        	task2.setName("Task2");
+        	_folder.addTask(task1);
+        	_folder.addTask(task2);
 			this.setTitle(TaskFolderHandler.getFolderByIndex(_folderIndex).getName());
 		} catch (Exception e) {
 			Log.e("Error", "TaskActivity onCreate", e);
@@ -105,6 +112,20 @@ public class TaskFolderActivity extends SherlockActivity {
 			data.get(TaskFolderAdapter.FINISH).add(task);
 		}
 		return data;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+        //Toast.makeText(this, "Menu changed to \"" + item.getTitle() + "\"" + " ID:" + item.getItemId(), Toast.LENGTH_SHORT).show();
+		if(item.getItemId() == MENU_ID_NEW){
+			Intent intent = new Intent(this,TaskEditActivity.class);
+			Task task = new Task();
+			task.setTaskFolderId(_folder.getId());
+			intent.putExtra(Name.TASK_KEY, ServiceHandler.toJson(task));
+			intent.putExtra(Name.Index, _folderIndex);
+	        startActivity(intent);
+		}
+        return true;
 	}
 	
 	static public class TaskFolderAdapter extends BaseAdapter{
@@ -163,12 +184,12 @@ public class TaskFolderActivity extends SherlockActivity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			int itemType = getItemType(position);
-			if(itemType == this.ITEM_TYPE_CLASS){
+			if(itemType == ITEM_TYPE_CLASS){
 				convertView = mLayoutInflater.inflate(R.layout.task_folder_text, null);
 				TextView textView = (TextView)convertView.findViewById(R.id.task_folder_listitem_text);
 				textView.setText(getClassName(position));
 				
-			}else if(itemType == this.ITEM_TYPE_TASK){
+			}else if(itemType == ITEM_TYPE_TASK){
 				convertView = mLayoutInflater.inflate(R.layout.task_folder_item, null);
 				Task task = getTask(position);
 				if(task.getStatus() == Task.Status.finished){
@@ -178,7 +199,7 @@ public class TaskFolderActivity extends SherlockActivity {
 				TextView txt = (TextView)convertView.findViewById(R.id.task_folder_item_name);
 				txt.setText(task.getName());
 			}
-			return null;
+			return convertView;
 		}
 		
 		public int getItemType(int position){
@@ -254,17 +275,17 @@ public class TaskFolderActivity extends SherlockActivity {
 		
 		private Task getTask(int position){
 			if(position_finish != -1 && position > position_finish)
-				return this.tasks.get(FINISH).get(position - position_finish);
+				return this.tasks.get(FINISH).get(position - position_finish - 1);
 			if(position_other != -1 && position > position_other)
-				return this.tasks.get(OTHER).get(position - position_other);
+				return this.tasks.get(OTHER).get(position - position_other - 1);
 			if(position_month != -1 && position > position_month)
-				return this.tasks.get(MONTH).get(position - position_month);
+				return this.tasks.get(MONTH).get(position - position_month - 1);
 			if(position_week != -1 && position > position_week)
-				return this.tasks.get(WEEK).get(position - position_week);
+				return this.tasks.get(WEEK).get(position - position_week - 1);
 			if(position_day != -1 && position > position_day)
-				return this.tasks.get(DAY).get(position - position_day);
+				return this.tasks.get(DAY).get(position - position_day - 1);
 			if(position_expired != -1 && position > position_expired)
-				return this.tasks.get(EXPIRED).get(position - position_expired);
+				return this.tasks.get(EXPIRED).get(position - position_expired - 1);
 			return null;
 		}
 	
