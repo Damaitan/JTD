@@ -194,7 +194,8 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Map<String, Object> map = (Map<String, Object>)l.getItemAtPosition(position);
 
-        Intent intent = new Intent(this,TaskActivity.class);
+        //Intent intent = new Intent(this,TaskActivity.class);
+        Intent intent = new Intent(this,TaskFolderActivity.class);
         Integer index = (Integer)map.get(Name.Index);
         intent.putExtra(Name.Index, index.intValue());
         startActivity(intent);

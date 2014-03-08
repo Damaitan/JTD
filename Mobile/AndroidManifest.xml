@@ -38,7 +38,16 @@
             </intent-filter>
         </activity>
         
-        
+        <activity
+            android:name="com.damaitan.mobileUI.TaskFolderActivity"
+            android:label="@string/activity_name" 
+            android:theme="@style/Theme.Sherlock"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.damaitan.mobileUI" />
+            </intent-filter>
+        </activity>
         
         <activity
             android:name="com.damaitan.mobileUI.TaskEditActivity"

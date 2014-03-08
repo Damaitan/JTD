@@ -20,7 +20,7 @@ import android.widget.TextView;
  * @author admin
  *
  */
-public class TaskFolderFragmentItemAdapter extends BaseAdapter {
+public class TaskFolderItemAdapter extends BaseAdapter {
 	private Context context;                        //运行上下文   
     private List<Task> tasks;    //信息集合   
     private boolean finished;
@@ -30,14 +30,14 @@ public class TaskFolderFragmentItemAdapter extends BaseAdapter {
     	public TextView task;
      }  
     
-    public TaskFolderFragmentItemAdapter(Context context, List<Task> tasks) {   
+    public TaskFolderItemAdapter(Context context, List<Task> tasks) {   
         this.context = context;            
         listContainer = LayoutInflater.from(context);   //创建视图容器并设置上下文   
         this.tasks = tasks; 
         this.finished = false;
     }
     
-    public TaskFolderFragmentItemAdapter(Context context, List<Task> tasks, boolean finished) {   
+    public TaskFolderItemAdapter(Context context, List<Task> tasks, boolean finished) {   
         this.context = context;            
         listContainer = LayoutInflater.from(context);   //创建视图容器并设置上下文   
         this.tasks = tasks; 

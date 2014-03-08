@@ -42,12 +42,12 @@ public class TaskActivity extends SherlockActivity {
 	 private static int MENU_ID_TAG = MENU_ID_NEW + 2;
 	 private static int MENU_ID_FOLDER = MENU_ID_NEW + 3;
 	 
-	 private TaskFolderFragmentItemAdapter expiredTaskAdapter; 
-	 private TaskFolderFragmentItemAdapter dayTaskAdapter;
-	 private TaskFolderFragmentItemAdapter weekTaskAdapter;
-	 private TaskFolderFragmentItemAdapter monthTaskAdapter;
-	 private TaskFolderFragmentItemAdapter otherTaskAdapter;
-	 private TaskFolderFragmentItemAdapter finishTaskAdapter;
+	 private TaskFolderItemAdapter expiredTaskAdapter; 
+	 private TaskFolderItemAdapter dayTaskAdapter;
+	 private TaskFolderItemAdapter weekTaskAdapter;
+	 private TaskFolderItemAdapter monthTaskAdapter;
+	 private TaskFolderItemAdapter otherTaskAdapter;
+	 private TaskFolderItemAdapter finishTaskAdapter;
 	 private ListView expiredTaskView; 
 	 private ListView dayTaskView;
 	 private ListView weekTaskView;
@@ -113,17 +113,17 @@ public class TaskActivity extends SherlockActivity {
 	   	otherTaskView = (ListView)findViewById(R.id.lst_task_folder_other);
 	   	finishTaskView = (ListView)findViewById(R.id.lst_task_folder_finish);
 	   	
-	   	expiredTaskAdapter = new TaskFolderFragmentItemAdapter(this, listExpiredTask);
+	   	expiredTaskAdapter = new TaskFolderItemAdapter(this, listExpiredTask);
 	   	expiredTaskView.setAdapter(expiredTaskAdapter);
-	   	dayTaskAdapter = new TaskFolderFragmentItemAdapter(this, listDayTask);
+	   	dayTaskAdapter = new TaskFolderItemAdapter(this, listDayTask);
 	   	dayTaskView.setAdapter(dayTaskAdapter);
-	   	weekTaskAdapter = new TaskFolderFragmentItemAdapter(this, listWeekTask);
+	   	weekTaskAdapter = new TaskFolderItemAdapter(this, listWeekTask);
 	   	weekTaskView.setAdapter(weekTaskAdapter);
-	   	monthTaskAdapter = new TaskFolderFragmentItemAdapter(this, listMonthTask);
+	   	monthTaskAdapter = new TaskFolderItemAdapter(this, listMonthTask);
 	   	monthTaskView.setAdapter(monthTaskAdapter);
-	   	otherTaskAdapter = new TaskFolderFragmentItemAdapter(this, listOtherTask);
+	   	otherTaskAdapter = new TaskFolderItemAdapter(this, listOtherTask);
 	   	otherTaskView.setAdapter(otherTaskAdapter);
-	   	finishTaskAdapter = new TaskFolderFragmentItemAdapter(this, listFinishTask,true);
+	   	finishTaskAdapter = new TaskFolderItemAdapter(this, listFinishTask,true);
 	   	finishTaskView.setAdapter(finishTaskAdapter);
  
     }

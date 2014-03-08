@@ -4,6 +4,7 @@
 package com.damaitan.datamodel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.damaitan.datamodel.Task.Status;
 
@@ -93,8 +94,12 @@ public class TaskFolder extends Model {
 		}
 	}
 	
-	public ArrayList<Task> getTasks(){
+	public List<Task> getTasks(){
 		return this.tasks;
+	}
+	
+	public List<Task> getFinishedTasks(){
+		return this.finishedTasks;
 	}
 
 	public String getSimpleInfo(){

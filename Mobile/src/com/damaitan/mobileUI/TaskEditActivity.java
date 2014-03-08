@@ -45,6 +45,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private static int MENU_ID_SAVE = 4;
 	private static int MENU_ID_DELETE = MENU_ID_SAVE + 1;
 	private static int MENU_ID_RELATION = MENU_ID_SAVE + 2;
+	private static int MENU_ID_NEW = MENU_ID_SAVE + 3;
 	 
 	
 	public TaskEditActivity(){
@@ -56,6 +57,9 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     	
 		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		
+		menu.add(0,MENU_ID_NEW,0,this.getString(R.string.menu_taskedit_new))
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
 		menu.add(0,MENU_ID_DELETE,0,this.getString(R.string.menu_taskedit_delete))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
