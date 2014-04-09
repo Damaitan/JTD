@@ -22,25 +22,58 @@ public class Task extends Model {
 		ongoing,finished
 	}
 	
+	/*public enum Priority{
+		low,normal,high,highest
+	}*/
+	
 	private boolean urgent;
 	private String expired;
-	private int calendarType;
+	//private int calendarType;
 	private String note;
 	private int priority;
 	private String tags;
 	private long taskFolderId;
 	private Status status;
+	private boolean repeat;
+	private int repeat_proid;
+	private long parentTaskId;
 	
-	
+	public int getRepeat_proid() {
+		return repeat_proid;
+	}
+
+	public void setRepeat_proid(int repeat_proid) {
+		this.repeat_proid = repeat_proid;
+	}
+
+	public long getParentTaskId() {
+		return parentTaskId;
+	}
+
+	public void setParentTaskId(long parentTaskId) {
+		this.parentTaskId = parentTaskId;
+	}
+
+	public boolean isRepeat() {
+		return repeat;
+	}
+
+	public void setRepeat(boolean repeat) {
+		this.repeat = repeat;
+	}	
 
 	public Task() {
 		super(Model.invalidId,Model.invalidStr);
 		status = Status.ongoing;
+		priority = 0;
+		parentTaskId = Model.invalidId;
 	}
 	
 	public Task(long id,String name) {
 		super(id,name);
 		status = Status.ongoing;
+		priority = 0;
+		parentTaskId = Model.invalidId;
 	}
 	
 	/**
@@ -74,15 +107,15 @@ public class Task extends Model {
 	/**
 	 * @return the calendarType
 	 */
-	public int getCalendarType() {
+	/*public int getCalendarType() {
 		return calendarType;
-	}
+	}*/
 	/**
 	 * @param calendarType the calendarType to set
 	 */
-	public void setCalendarType(int calendarType) {
+	/*public void setCalendarType(int calendarType) {
 		this.calendarType = calendarType;
-	}
+	}*/
 
 
 	/**
@@ -146,6 +179,7 @@ public class Task extends Model {
 	public Status getStatus() {
 		return status;
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone(),×¢ÒâcloneµÄÏÝÚå
@@ -153,7 +187,7 @@ public class Task extends Model {
 	@Override
 	public Task clone(){
 		Task task = new Task();
-		task.setCalendarType(this.getCalendarType());
+		//task.setCalendarType(this.getCalendarType());
 		task.setExpired(this.getExpired());
 		task.setId(this.getId());
 		task.setName(this.getName());
@@ -162,6 +196,9 @@ public class Task extends Model {
 		task.setTags(this.getTags());
 		task.setTaskFolderId(this.getTaskFolderId());
 		task.setUrgent(this.isUrgent());
+		task.setParentTaskId(this.getParentTaskId());
+		task.setRepeat(this.isRepeat());
+		task.setRepeat_proid(this.getRepeat_proid());
 		return task;
 	}
 	

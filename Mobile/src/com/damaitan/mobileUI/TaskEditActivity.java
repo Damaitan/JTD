@@ -27,7 +27,9 @@ import android.util.Log;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.damaitan.datamodel.Model;
 import com.damaitan.datamodel.Task;
+import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.ServiceHandler;
 import com.damaitan.service.TaskFolderHandler;
@@ -38,7 +40,10 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private EditTextPreference tagPreference;
 	private ListPreference priorityPreference;
 	private EditTextPreference notePreference;
-	
+	private ListPreference parentPreference;
+	private CheckBoxPreference repeatPreference;
+	private DatePreference expiredPreference;
+	private EditTextPreference repeatPeroidPreference;
 	private Task task = null;
 	private int folderindex = -1;
 	
@@ -52,6 +57,10 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private static String TAG_KEY = "taskedit_tag";
 	private static String PRIORITY_KEY = "taskedit_priority";
 	private static String NOTE_KEY = "taskedit_note";
+	private static String PARENET_KEY = "taskedit_parent";
+	private static String REPEAT_KEY = "taskedit_repeat";
+	private static String EXPIRE_KEY = "taskedit_expire";
+	private static String REPEAT_PEROID_KEY = "taskedit_repeat_peroid";
 	 
 	
 	public TaskEditActivity(){
@@ -84,19 +93,47 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         String json = this.getIntent().getStringExtra(Name.TASK_KEY);
         this.folderindex = this.getIntent().getIntExtra(Name.Index, -1);
         this.task = ServiceHandler.fromJson(json, Task.class);
-        
         addPreferencesFromResource(R.xml.taskedit);
         namePreference = (EditTextPreference)findPreference(NAME_KEY);
         urgentPreference = (CheckBoxPreference)findPreference(URGENT_KEY);
         tagPreference = (EditTextPreference)findPreference(TAG_KEY);
         priorityPreference = (ListPreference)findPreference(PRIORITY_KEY);
         notePreference = (EditTextPreference)findPreference(NOTE_KEY);
+        parentPreference = (ListPreference)findPreference(PARENET_KEY);
+    	repeatPreference = (CheckBoxPreference)findPreference(REPEAT_KEY);
+    	expiredPreference = (DatePreference)findPreference(EXPIRE_KEY);
+    	repeatPeroidPreference = (EditTextPreference)findPreference(REPEAT_PEROID_KEY);
+    	TaskFolder parentFolder = null;
+		try {
+			parentFolder = TaskFolderHandler.getFolderByIndex(this.folderindex + 1);
+		} catch (ServiceException e) {
+			this.parentPreference.setEnabled(false);
+		}
+		int size = parentFolder.getTasks().size();
+		if(parentFolder != null && size > 0){
+			String entries[] = new String[size];
+			String values[] = new String[size];
+			for(int i = 0; i < size; i++){
+				Task task = parentFolder.getTasks().get(i);
+				entries[i] = task.getName();
+				values[i] = Long.toString(task.getId());
+			}
+			this.parentPreference.setEntries(entries);
+			this.parentPreference.setEntryValues(values);
+		}else{
+			this.parentPreference.setEnabled(false);
+		}
+		
         if(this.task.getId() != Task.invalidId){
         	namePreference.setDefaultValue(this.task.getName());
         	urgentPreference.setChecked(this.task.isUrgent());
         	tagPreference.setDefaultValue(this.task.getTags());
         	priorityPreference.setDefaultValue(this.task.getPriority());
         	notePreference.setDefaultValue(this.task.getNote());
+        	parentPreference.setDefaultValue(Model.invalidId);
+        	repeatPreference.setChecked(this.task.isRepeat());
+        	expiredPreference.setDefaultValue(this.task.getExpired());
+        	repeatPeroidPreference.setDefaultValue(this.task.getRepeat_proid());
         }
         
         //Ìí¼ÓÕìÌýÊÂ¼þ
@@ -105,6 +142,10 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         tagPreference.setOnPreferenceChangeListener(this);
         priorityPreference.setOnPreferenceChangeListener(this);
         notePreference.setOnPreferenceChangeListener(this);
+        parentPreference.setOnPreferenceChangeListener(this);
+        repeatPreference.setOnPreferenceChangeListener(this);
+        expiredPreference.setOnPreferenceChangeListener(this);
+        repeatPeroidPreference.setOnPreferenceChangeListener(this);
     }
 
 	 public boolean onPreferenceChange(Preference preference, Object objValue) {
