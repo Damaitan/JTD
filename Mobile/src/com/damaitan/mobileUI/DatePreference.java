@@ -3,6 +3,9 @@
  */
 package com.damaitan.mobileUI;
 
+import java.util.Calendar;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -14,7 +17,8 @@ import android.widget.DatePicker;
  * @author admin
  *
  */
-public class TimePreference extends DialogPreference {
+@SuppressLint("NewApi")
+public class DatePreference extends DialogPreference {
 	
 	//private int lastHour=0;
 	//private int lastMinute=0;
@@ -30,7 +34,7 @@ public class TimePreference extends DialogPreference {
 	    return(Integer.parseInt(pieces[1]));
 	}
 
-	public TimePreference(Context ctxt, AttributeSet attrs) {
+	public DatePreference(Context ctxt, AttributeSet attrs) {
 		super(ctxt, attrs);
 		setPositiveButtonText(ctxt.getResources().getString(R.string.ok));
 		setNegativeButtonText(ctxt.getResources().getString(R.string.cancel));
@@ -39,6 +43,12 @@ public class TimePreference extends DialogPreference {
 	@Override
 	protected View onCreateDialogView() {
 		picker=new DatePicker(getContext());
+		Calendar calendar=Calendar.getInstance();
+        int year=calendar.get(Calendar.YEAR);
+        int monthOfYear=calendar.get(Calendar.MONTH);
+        int dayOfMonth=calendar.get(Calendar.DAY_OF_MONTH);
+        picker.init(year, monthOfYear, dayOfMonth,null);
+        picker.setCalendarViewShown(false);
 		return(picker);
 	}
 

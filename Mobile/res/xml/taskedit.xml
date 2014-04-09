@@ -13,11 +13,23 @@
                 android:title="@string/title_taskedit_urgent"
                 android:summary="@string/summary_taskedit_urgent" />
         
+        <ListPreference
+                android:key="taskedit_parent"
+                android:title="@string/title_taskedit_parent"
+                android:summary="@string/summary_taskedit_parent"
+                android:dialogTitle="@string/dialog_title_taskedit_parent" />
+        
+        
         <EditTextPreference
                 android:key="taskedit_tag"
                 android:title="@string/title_taskedit_tag"
                 android:summary="@string/content_taskedit_tag"
                 android:dialogTitle="@string/dialog_taskedit_tag" />
+        
+        <CheckBoxPreference
+                android:key="taskedit_repeat"
+                android:title="@string/title_taskedit_repeat"
+                android:summary="@string/summary_taskedit_repeat" />
         
         <ListPreference
                 android:key="taskedit_priority"
@@ -33,10 +45,16 @@
                 android:summary="@string/content_taskedit_note"
                 android:dialogTitle="@string/dialog_taskedit_note" />
         
-        <com.damaitan.mobileUI.TimePreference 
+        <com.damaitan.mobileUI.DatePreference 
             	android:key="taskedit_expire" 
             	android:title="@string/title_taskedit_expire"
             	android:dialogTitle="@string/dialog_taskedit_expire" /> 
+            	
+        <EditTextPreference
+                android:key="taskedit_repeat_peroid"
+                android:title="@string/title_taskedit_repeat_peroid"
+                android:summary="@string/content_taskedit_repeat_peroid"
+                android:dialogTitle="@string/dialog_taskedit_repeat_peroid" />
         
        
 </PreferenceScreen>

@@ -46,6 +46,9 @@
 	<string name="content_taskedit_tag">点击增加或修改标签</string>
 	<string name="dialog_taskedit_tag">输入标签</string>
 	
+	<string name="title_taskedit_repeat">重复</string>
+	<string name="summary_taskedit_repeat">任务在完成后重新进入列表</string>
+	
 	<string name="title_taskedit_priority">优先级</string>
 	<string name="summary_taskedit_priority">选择优先级</string>
 	<string name="dialog_title_taskedit_priority">优先级选择</string>
@@ -61,11 +64,19 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <string name="title_taskedit_parent">上级任务</string>
+	<string name="summary_taskedit_parent">选择上级任务</string>
+	<string name="dialog_title_taskedit_parent">上级任务选择</string>
+    
     <string name="title_taskedit_note">备注</string>
 	<string name="content_taskedit_note">点击修改备注</string>
 	<string name="dialog_taskedit_note">备注</string>
-	<string name="title_taskedit_expire">完成时间</string>
-	<string name="dialog_taskedit_expire">选择完成时间</string>
+	<string name="title_taskedit_expire">到期时间</string>
+	<string name="dialog_taskedit_expire">选择到期时间</string>
+	<string name="title_taskedit_repeat_peroid">重复周期</string>
+	<string name="content_taskedit_repeat_peroid">点击修改重复周期</string>
+	<string name="dialog_taskedit_repeat_peroid">重复周期</string>
+	
 	<string name="menu_taskedit_save">保存</string>
 	<string name="menu_taskedit_delete">删除</string>
 	<string name="menu_taskedit_relation">关联</string>
@@ -78,5 +89,7 @@
 	<string name="txt_task_folder_other">其他</string>
 	<string name="txt_task_folder_finish">已完成</string>
 	<string name="txt_task_folder_info">信息</string>
+	<string name="task_edit_choose_day">选择到期日：</string>
+	<string name="task_edit_txt_repeat">重复</string>
 
 </resources>
