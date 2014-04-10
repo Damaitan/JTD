@@ -43,7 +43,7 @@
 	<string name="summary_taskedit_urgent">紧急任务</string>
 	
 	<string name="title_taskedit_tag">标签</string>
-	<string name="content_taskedit_tag">点击增加或修改标签</string>
+	<string name="content_taskedit_tag">点击选择标签</string>
 	<string name="dialog_taskedit_tag">输入标签</string>
 	
 	<string name="title_taskedit_repeat">重复</string>
@@ -65,7 +65,7 @@
         <item>3</item>
     </string-array>
     <string name="title_taskedit_parent">上级任务</string>
-	<string name="summary_taskedit_parent">选择上级任务</string>
+	<string name="summary_taskedit_parent">只有上级清单有任务时才可以配置</string>
 	<string name="dialog_title_taskedit_parent">上级任务选择</string>
     
     <string name="title_taskedit_note">备注</string>
