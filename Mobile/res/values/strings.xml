@@ -74,7 +74,7 @@
 	<string name="title_taskedit_expire">到期时间</string>
 	<string name="dialog_taskedit_expire">选择到期时间</string>
 	<string name="title_taskedit_repeat_peroid">重复周期</string>
-	<string name="content_taskedit_repeat_peroid">用于修改重复任务的下一个到期日</string>
+	<string name="content_taskedit_repeat_peroid">用于计算重复任务的下一个到期日</string>
 	<string name="dialog_taskedit_repeat_peroid">重复周期设定</string>
 	<string name="menu_taskedit_save">保存</string>
 	<string name="menu_taskedit_delete">删除</string>
