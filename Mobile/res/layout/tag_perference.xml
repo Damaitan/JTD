@@ -30,7 +30,7 @@
             android:id="@+id/task_tag_btn_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="@string/task_tag_new" />
 
     </LinearLayout>
 

@@ -90,5 +90,6 @@
 	<string name="txt_task_folder_info">信息</string>
 	<string name="task_edit_choose_day">选择到期日：</string>
 	<string name="task_edit_txt_repeat">重复</string>
+	<string name="task_tag_new">添加</string>
 
 </resources>
