@@ -20,7 +20,7 @@
                 android:dialogTitle="@string/dialog_title_taskedit_parent" />
         
         
-        <EditTextPreference
+        <com.damaitan.mobileUI.TagPreference
                 android:key="taskedit_tag"
                 android:title="@string/title_taskedit_tag"
                 android:summary="@string/content_taskedit_tag"

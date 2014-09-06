@@ -37,7 +37,7 @@ import com.damaitan.service.TaskFolderHandler;
 public class TaskEditActivity extends SherlockPreferenceActivity  implements Preference.OnPreferenceChangeListener{
 	private EditTextPreference namePreference;
 	private CheckBoxPreference urgentPreference;
-	private EditTextPreference tagPreference;
+	private TagPreference tagPreference;
 	private ListPreference priorityPreference;
 	private EditTextPreference notePreference;
 	private ListPreference parentPreference;
@@ -96,7 +96,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         addPreferencesFromResource(R.xml.taskedit);
         namePreference = (EditTextPreference)findPreference(NAME_KEY);
         urgentPreference = (CheckBoxPreference)findPreference(URGENT_KEY);
-        tagPreference = (EditTextPreference)findPreference(TAG_KEY);
+        tagPreference = (TagPreference)findPreference(TAG_KEY);
         priorityPreference = (ListPreference)findPreference(PRIORITY_KEY);
         notePreference = (EditTextPreference)findPreference(NOTE_KEY);
         parentPreference = (ListPreference)findPreference(PARENET_KEY);
