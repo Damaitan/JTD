@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.damaitan.service.TaskFolderHandler;
+
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,7 +34,8 @@ public class TagPreference extends DialogPreference {
 	private ListView lst = null;
 	private EditText edt = null;
 	private Button btn = null;
-	ArrayList<Map<String,Object>> items = null;
+	private ArrayList<Map<String,Object>> items = null;
+	private String tag;
 	public TagPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setPositiveButtonText(context.getResources().getString(R.string.ok));
@@ -72,7 +76,7 @@ public class TagPreference extends DialogPreference {
 			@Override
 			public void onClick(View arg0) {		
 				Map<String,Object> lstitem = new HashMap<String,Object>();
-				String name = edt.getText().toString();
+				String name = edt.getText().toString().trim();
 				lstitem.put(checkKey, true);
 				lstitem.put(nameKey, name);
 				items.add(lstitem);
@@ -87,12 +91,43 @@ public class TagPreference extends DialogPreference {
 	
 	List<? extends Map<String, ?>> getData(){
 		ArrayList<Map<String,Object>> items = new ArrayList<Map<String,Object>>(); 
-		Map<String,Object> lstitem = new HashMap<String,Object>();
-		lstitem.put(checkKey, true);
-		lstitem.put(nameKey, "tag");
-		items.add(lstitem); 
+		for(String item : TaskFolderHandler.getTags()){
+			Map<String,Object> lstitem = new HashMap<String,Object>();
+			lstitem.put(checkKey, tag.contains(item));
+			lstitem.put(nameKey, item);
+			items.add(lstitem); 
+		}
 		return items;
 	}
+
+	/* (non-Javadoc)
+	 * @see android.preference.DialogPreference#onDialogClosed(boolean)
+	 */
+	@Override
+	protected void onDialogClosed(boolean positiveResult) {
+		// TODO Auto-generated method stub
+		Log.d("TagPreference onDialogClosed", Boolean.toString(positiveResult));
+		super.onDialogClosed(positiveResult);
+	}
+
+	/* (non-Javadoc)
+	 * @see android.preference.Preference#onGetDefaultValue(android.content.res.TypedArray, int)
+	 */
+	@Override
+	protected Object onGetDefaultValue(TypedArray a, int index) {
+		// TODO Auto-generated method stub
+		tag = a.getString(index);
+		Log.d("TagPreference onGetDefaultValue", tag);
+		return super.onGetDefaultValue(a, index);
+	}
+	
+	
+
+
+	
+	
+
+	
 	
 	
 	

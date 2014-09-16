@@ -55,9 +55,14 @@ public class TaskFolderHandler {
 			//Cross Validation first
 			task.setId(ModelManager.getInstance().getNewTaskId(true));
 			folder.addTask(task);
+			ModelManager.getInstance().tag(task);
 		}
 		
 		return resultCode;
+	}
+	
+	public static ArrayList<String> getTags(){
+		return ModelManager.getInstance().getTags();
 	}
 	
 	

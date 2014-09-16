@@ -76,6 +76,7 @@ public class TaskFolder extends Model {
 		}else{
 			task.setTaskFolderId(this.getId());
 			this.tasks.add(task);
+			
 		}
 		
 	}

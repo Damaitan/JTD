@@ -27,6 +27,8 @@ final class ModelManager{
 	
 	private static ModelManager uniqueInstance = null;
 	
+	private final String TAGSPLITTER = " ";
+	
 	private ModelManager(){
 		gson = new GsonBuilder()
 		// .excludeFieldsWithoutExposeAnnotation() //不导出实体中没有用@Expose注解的属性
@@ -75,18 +77,20 @@ final class ModelManager{
 
 	}
 	 
-	
-	
-	private void tag(Task task){
+	public void tag(Task task){
 		if(task.getTags() == null)
 			return;
-		/*for(String item : task.getTags()){
+		task.getTags().split(" ");
+		for(String item : task.getTags().split(TAGSPLITTER)){
 			if(!tags.contains(item)){
 				tags.add(item);
 			}
-		}*/
+		}
 	}
-
+	
+	public ArrayList<String> getTags(){
+		return this.tags;
+	}
 	
 	public void construct(String json) throws ServiceException {
 		Gson gson = getGson();
