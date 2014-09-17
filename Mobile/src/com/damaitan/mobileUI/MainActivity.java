@@ -77,7 +77,9 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 		try {
 			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JTDFile;
 			if (isFileExist(path)) {
-				presenter.initialization(getJsonString());
+				String content = getJsonString();
+				Log.d("MainActivity FileExist", content);
+				presenter.initialization(content);
 			}else{
 				String content = presenter.initJsonString();
 				FileOutputStream fout = openFileOutput(JTDFile, MODE_PRIVATE);
@@ -85,6 +87,7 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 				fout.write(bytes);
 				fout.close();
 				Log.i("Mobile", "Create new file : " + JTDFile);
+				Log.d("MainActivity No File", content);
 				presenter.initialization(content);
 			}
 			setListAdapter(new SimpleAdapter(this, presenter.getData(),
@@ -109,20 +112,14 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 	
 
 	private String getJsonString() throws Exception{
-		FileInputStream stream;
-
-		stream = openFileInput(JTDFile);
-		String json;
-
-		byte[] bytes = new byte[1024];
+		FileInputStream stream  = openFileInput(JTDFile);
+		int length = stream.available();
+		byte[] buffer = new byte[length];
+		stream.read(buffer);
 		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-		while (stream.read(bytes) != -1) {
-			arrayOutputStream.write(bytes, 0, bytes.length);
-		}
-		arrayOutputStream.close();
-		stream.close();
-		json = new String(arrayOutputStream.toByteArray());
-		return json.trim();
+		arrayOutputStream.write(buffer, 0,length);
+		String json = new String(arrayOutputStream.toByteArray());
+		return json;
 	}
 	
 	/*private boolean saveJsonStringToFile(String json) throws Exception{

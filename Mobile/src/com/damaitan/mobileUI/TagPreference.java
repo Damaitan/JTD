@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.damaitan.datamodel.Task;
 import com.damaitan.service.TaskFolderHandler;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -61,7 +61,6 @@ public class TagPreference extends DialogPreference {
 			 */
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				// TODO Auto-generated method stub
 				View view = super.getView(position, convertView, parent);
 				Map<String,Object> lstitem = items.get(position);
 				CheckBox chbox = (CheckBox)view.findViewById(R.id.tag_check_listitem);
@@ -75,11 +74,28 @@ public class TagPreference extends DialogPreference {
 		btn.setOnClickListener(new Button.OnClickListener(){
 			@Override
 			public void onClick(View arg0) {		
-				Map<String,Object> lstitem = new HashMap<String,Object>();
 				String name = edt.getText().toString().trim();
-				lstitem.put(checkKey, true);
-				lstitem.put(nameKey, name);
-				items.add(lstitem);
+				name = name.replace("\n", Task.TAGSPLITTER);
+				for(String str : name.split(Task.TAGSPLITTER)){
+					if(!str.trim().equalsIgnoreCase("")){
+						boolean goNext = true;
+						for(Map<String,Object> item : items){
+							
+							if(str.trim().equalsIgnoreCase((String)item.get(nameKey))){
+								item.put(checkKey, true);
+								goNext = false;
+								break;
+							}
+						}
+						if(!goNext){
+							continue;
+						}
+						Map<String,Object> lstitem = new HashMap<String,Object>();
+						lstitem.put(checkKey, true);
+						lstitem.put(nameKey, str);
+						items.add(lstitem);
+					}
+				}
 				Log.d("TagPreference", "Button is clicked :" + name);
 				adapter.notifyDataSetChanged();
 			}
@@ -97,6 +113,17 @@ public class TagPreference extends DialogPreference {
 			lstitem.put(nameKey, item);
 			items.add(lstitem); 
 		}
+		if(tag == null){
+			return items;
+		}
+		for(String item : tag.split(Task.TAGSPLITTER)){
+			if(TaskFolderHandler.getTags() == null || !TaskFolderHandler.getTags().contains(item)){
+				Map<String,Object> lstitem = new HashMap<String,Object>();
+				lstitem.put(checkKey, true);
+				lstitem.put(nameKey, item.trim());
+				items.add(lstitem); 
+			}
+		}
 		return items;
 	}
 
@@ -105,21 +132,29 @@ public class TagPreference extends DialogPreference {
 	 */
 	@Override
 	protected void onDialogClosed(boolean positiveResult) {
-		// TODO Auto-generated method stub
 		Log.d("TagPreference onDialogClosed", Boolean.toString(positiveResult));
+		if(positiveResult){
+			StringBuffer value = new StringBuffer();
+			for(Map<String,Object> item : items){
+				value.append((((String)item.get(nameKey)).trim()) + Task.TAGSPLITTER);
+			}
+			if(!value.toString().trim().equalsIgnoreCase(tag)){
+				callChangeListener(value.toString().trim());
+			}
+		}
 		super.onDialogClosed(positiveResult);
 	}
 
 	/* (non-Javadoc)
-	 * @see android.preference.Preference#onGetDefaultValue(android.content.res.TypedArray, int)
+	 * @see android.preference.Preference#setDefaultValue(java.lang.Object)
 	 */
 	@Override
-	protected Object onGetDefaultValue(TypedArray a, int index) {
-		// TODO Auto-generated method stub
-		tag = a.getString(index);
-		Log.d("TagPreference onGetDefaultValue", tag);
-		return super.onGetDefaultValue(a, index);
+	public void setDefaultValue(Object defaultValue) {
+		tag = (String)defaultValue;
+		super.setDefaultValue(defaultValue);
 	}
+
+	
 	
 	
 

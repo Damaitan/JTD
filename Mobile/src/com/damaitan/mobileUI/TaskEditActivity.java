@@ -68,14 +68,15 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //Used to put dark icons on light action bar
     	
-		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
+    	if(this.task.getId() == Task.invalidId){
+    		menu.add(0,MENU_ID_NEW,0,this.getString(R.string.menu_taskedit_new))
+    		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    	}else{
+    		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    	}
 		
-		menu.add(0,MENU_ID_NEW,0,this.getString(R.string.menu_taskedit_new))
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
 		menu.add(0,MENU_ID_DELETE,0,this.getString(R.string.menu_taskedit_delete))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -128,6 +129,9 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         	namePreference.setDefaultValue(this.task.getName());
         	urgentPreference.setChecked(this.task.isUrgent());
         	tagPreference.setDefaultValue(this.task.getTags());
+        	if(!this.task.getTags().equalsIgnoreCase("")){
+        		tagPreference.setSummary(task.getTags());
+        	}
         	priorityPreference.setDefaultValue(this.task.getPriority());
         	notePreference.setDefaultValue(this.task.getNote());
         	parentPreference.setDefaultValue(Model.invalidId);
