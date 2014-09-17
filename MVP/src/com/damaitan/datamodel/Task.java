@@ -21,6 +21,7 @@ public class Task extends Model {
 	public enum Status{
 		ongoing,finished
 	}
+	public final static String TAGSPLITTER = " ";
 	
 	/*public enum Priority{
 		low,normal,high,highest

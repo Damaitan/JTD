@@ -27,7 +27,7 @@ final class ModelManager{
 	
 	private static ModelManager uniqueInstance = null;
 	
-	private final String TAGSPLITTER = " ";
+	
 	
 	private ModelManager(){
 		gson = new GsonBuilder()
@@ -81,7 +81,7 @@ final class ModelManager{
 		if(task.getTags() == null)
 			return;
 		task.getTags().split(" ");
-		for(String item : task.getTags().split(TAGSPLITTER)){
+		for(String item : task.getTags().split(Task.TAGSPLITTER)){
 			if(!tags.contains(item)){
 				tags.add(item);
 			}
