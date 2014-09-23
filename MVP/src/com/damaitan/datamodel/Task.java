@@ -22,6 +22,7 @@ public class Task extends Model {
 		ongoing,finished
 	}
 	public final static String TAGSPLITTER = " ";
+	public final static String DATESPLITTER = "/";
 	
 	/*public enum Priority{
 		low,normal,high,highest

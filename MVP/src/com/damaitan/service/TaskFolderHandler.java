@@ -63,10 +63,6 @@ public class TaskFolderHandler {
 	
 	public static ArrayList<String> getTags(){
 		return ModelManager.getInstance().getTags();
-	}
-	
-	
-	
-	
+	}	
 	
 }

@@ -23,6 +23,7 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.Menu;
@@ -50,7 +51,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private static int MENU_ID_SAVE = 4;
 	private static int MENU_ID_DELETE = MENU_ID_SAVE + 1;
 	private static int MENU_ID_RELATION = MENU_ID_SAVE + 2;
-	private static int MENU_ID_NEW = MENU_ID_SAVE + 3;
+	//private static int MENU_ID_NEW = MENU_ID_SAVE + 3;
 	
 	private static String NAME_KEY = "taskedit_name";
 	private static String URGENT_KEY = "taskedit_urgent";
@@ -69,13 +70,18 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	
-    	if(this.task.getId() == Task.invalidId){
-    		menu.add(0,MENU_ID_NEW,0,this.getString(R.string.menu_taskedit_new))
+    	/*if(this.task.getId() == Task.invalidId){
+    		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_new))
     		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     	}else{
     		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    	}*/
+    	if(this.task.getId() != Task.invalidId){
+    		this.setTitle(this.task.getName());
     	}
+    	menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		
 		menu.add(0,MENU_ID_DELETE,0,this.getString(R.string.menu_taskedit_delete))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -154,27 +160,34 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 
 	 public boolean onPreferenceChange(Preference preference, Object objValue) {
 		 if(preference.getKey().equals(NAME_KEY)){
-			 preference.setTitle(this.getString(R.string.title_taskedit_name) + ":" + (String)objValue);
+			 preference.setSummary((String)objValue);
 			 this.task.setName((String)objValue);
-		 }else if(preference.getKey().equals(URGENT_KEY))
-		 {
+		 }else if(preference.getKey().equals(URGENT_KEY)){
 			 this.task.setUrgent(((Boolean)objValue).booleanValue());
-		 }else if(preference.getKey().equals(TAG_KEY))
-		 {
+		 }else if(preference.getKey().equals(TAG_KEY)){
 			 preference.setSummary((String)objValue);
 			 this.task.setTags((String)objValue);
-		 }else if(preference.getKey().equals(PRIORITY_KEY))
-		 {
+		 }else if(preference.getKey().equals(PRIORITY_KEY)){
 			 ListPreference lp = (ListPreference)preference;
 			 int index = lp.findIndexOfValue((String)objValue);
-			 lp.setTitle(this.getString(R.string.title_taskedit_priority) + ":" + lp.getEntries()[index]);
+			 lp.setSummary(lp.getEntries()[index]);
 			 this.task.setPriority(Integer.parseInt((String)objValue));//this code must be changed
-		 }
-		 else if(preference.getKey().equals(NOTE_KEY))
-		 {
+		 }else if(preference.getKey().equals(NOTE_KEY)){
 			 preference.setSummary((String)objValue);
 			 this.task.setNote((String)objValue);
+		 }else if(preference.getKey().equals(PARENET_KEY)){
+			 ListPreference lp = (ListPreference)preference;
+			 int index = lp.findIndexOfValue((String)objValue);
+			 preference.setSummary(lp.getEntries()[index]);
+			 this.task.setParentTaskId(Long.parseLong((String)objValue));
+		 }else if(preference.getKey().equals(REPEAT_PEROID_KEY)){
+			 preference.setSummary((String)objValue);
+			 this.task.setRepeat_proid(Integer.parseInt((String)objValue));
+		 }else if(preference.getKey().equals(EXPIRE_KEY)){
+			 preference.setSummary((String)objValue);
+			 this.task.setExpired((String)objValue);
 		 }
+		 
 		 return true;
 	 }
 
@@ -185,8 +198,13 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == MENU_ID_SAVE){
 			try {
-				TaskFolderHandler.saveTask(folderindex, task, true);
-				saveJsonStringToFile(ServiceHandler.modelString());
+				if(this.task.getName().trim().equalsIgnoreCase("") || this.task.getName().trim().equalsIgnoreCase(Model.invalidStr)){
+					Toast.makeText(this,  "Please input task name", Toast.LENGTH_SHORT).show();
+				}else{
+					TaskFolderHandler.saveTask(folderindex, task, true);
+					this.setTitle(this.task.getName());
+					saveJsonStringToFile(ServiceHandler.modelString());
+				}
 			} catch (ServiceException e) {
 				Log.e("Error","TaskEditActivity onOptionsItemSelected ServiceException", e);
 			} catch (Exception e) {

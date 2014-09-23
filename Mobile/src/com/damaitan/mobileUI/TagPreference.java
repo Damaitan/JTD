@@ -98,6 +98,7 @@ public class TagPreference extends DialogPreference {
 				}
 				Log.d("TagPreference", "Button is clicked :" + name);
 				adapter.notifyDataSetChanged();
+				edt.setText("");
 			}
 			
 		});
@@ -109,7 +110,7 @@ public class TagPreference extends DialogPreference {
 		ArrayList<Map<String,Object>> items = new ArrayList<Map<String,Object>>(); 
 		for(String item : TaskFolderHandler.getTags()){
 			Map<String,Object> lstitem = new HashMap<String,Object>();
-			lstitem.put(checkKey, tag.contains(item));
+			lstitem.put(checkKey, tag != null ? tag.contains(item) : false);
 			lstitem.put(nameKey, item);
 			items.add(lstitem); 
 		}
