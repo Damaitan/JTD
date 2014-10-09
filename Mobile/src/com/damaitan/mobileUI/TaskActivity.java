@@ -39,7 +39,8 @@ public class TaskActivity extends SherlockActivity {
 	 private TaskFolder _folder;
 	 private static int MENU_ID_NEW = 0;
 	 private static int MENU_ID_DELETE = MENU_ID_NEW + 1;
-	 private static int MENU_ID_TAG = MENU_ID_NEW + 2;
+	 //private static int MENU_ID_TAG = MENU_ID_NEW + 2;
+	 private static int MENU_ID_FINISH = MENU_ID_NEW + 2;
 	 private static int MENU_ID_FOLDER = MENU_ID_NEW + 3;
 	 
 	 private TaskFolderItemAdapter expiredTaskAdapter; 
@@ -72,7 +73,8 @@ public class TaskActivity extends SherlockActivity {
         menu.add(0,MENU_ID_DELETE,1,this.getString(R.string.menu_task_delete))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        menu.add(0,MENU_ID_TAG,2,this.getString(R.string.menu_task_tag))
+        //menu.add(0,MENU_ID_TAG,2,this.getString(R.string.menu_task_tag))
+        menu.add(0,MENU_ID_FINISH,2,this.getString(R.string.menu_task_finish))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
         SubMenu subMenu = menu.addSubMenu(0,MENU_ID_FOLDER,2,this.getString(R.string.menu_task_folder));

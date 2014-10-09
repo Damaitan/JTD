@@ -5,6 +5,7 @@ package com.damaitan.service;
 
 import java.util.ArrayList;
 
+import com.damaitan.datamodel.CommonString;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
@@ -55,7 +56,7 @@ final class ModelManager{
 	}
 	
 	public String initJsonString(){
-		String content[] = new String[]{"所有任务","待办事项","项目事务","短期目标","长期目标","愿景方向","六万英尺","未来清单"};
+		String content[] = CommonString.InitJsonString;
 		ArrayList<TaskFolder> folders = new ArrayList<TaskFolder>();
 		for(int i = 0; i< content.length; i++){
 			TaskFolder folder = new TaskFolder();
@@ -95,6 +96,9 @@ final class ModelManager{
 	public void construct(String json) throws ServiceException {
 		Gson gson = getGson();
 		this.modelStruct = gson.fromJson(json, ModelStruct.class);
+		for(String str : CommonString.InitTag){
+			tags.add(str);
+		}
 		for(TaskFolder item : modelStruct.getFolders()){
 			if(item.getTasks() != null){
 				allTasks.addAll(item.getTasks());

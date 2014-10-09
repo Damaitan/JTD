@@ -29,6 +29,7 @@ import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.ServiceHandler;
 import com.damaitan.service.TaskFolderHandler;
+import com.damaitan.datamodel.CommonString;
 
 /**
  * @author admin
@@ -105,13 +106,28 @@ public class TaskFolderActivity extends SherlockActivity {
 		data.put(TaskFolderAdapter.FINISH, new ArrayList<Task>());
 		
 		for(Task task : _folder.getTasks()){
-			data.get(TaskFolderAdapter.DAY).add(task);
-			data.get(TaskFolderAdapter.MONTH).add(task);
+			data.get(judge(task)).add(task);
     	}
 		for(Task task : _folder.getFinishedTasks()){
 			data.get(TaskFolderAdapter.FINISH).add(task);
 		}
 		return data;
+	}
+	
+	private String judge(Task task){
+		if(task.getTags() == null){
+			return TaskFolderAdapter.OTHER;
+		}
+		if(task.getTags().contains(CommonString.InitTag[0])){
+			return TaskFolderAdapter.DAY;
+		}
+		if(task.getTags().contains(CommonString.InitTag[1])){
+			return TaskFolderAdapter.WEEK;
+		}
+		if(task.getTags().contains(CommonString.InitTag[2])){
+			return TaskFolderAdapter.MONTH;
+		}		
+		return TaskFolderAdapter.OTHER;
 	}
 	
 	@Override
