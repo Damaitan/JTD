@@ -22,13 +22,16 @@
     <string name="menu_main_setting">设置</string>
     <string name="menu_main_sync">同步</string>
     <string name="menu_main_clean">清空完成任务</string>
+    <string name="menu_main_statistics">统计</string>
     
     <!--  Task Activity -->
-    <string name="menu_task_tag">标签</string>
+
     <string name="menu_task_new">添加</string>
-    <string name="menu_task_delete">删除</string>
     <string name="menu_task_folder">切换清单</string>
-    <string name="menu_task_finish">完成</string>
+    <string name="contextmenu_task_edit">编辑</string>
+    <string name="contextmenu_task_delete">删除</string>
+    <string name="contextmenu_task_tag">标签</string>
+    <string name="contextmenu_task_title">操作</string>
    
     
     <!--  Task Edit Activity -->

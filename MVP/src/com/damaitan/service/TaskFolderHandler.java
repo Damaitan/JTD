@@ -16,19 +16,8 @@ import com.damaitan.exception.ServiceException;
  */
 public class TaskFolderHandler {
 	
-	//@SuppressWarnings("unchecked")
-	/*public static ArrayList<TaskFolder> getCopied() throws ServiceException{ // it's just copy from service
-		ModelManager dm = ModelManager.getInstance();
-		
-		ArrayList<TaskFolder> folders = dm.getFolders();
-		if(folders == null)
-			throw new ServiceException("TaskFolderHandler:getCopied - Get NULL of Folders",new NullPointerException());
-		return (ArrayList<TaskFolder>)(folders.clone());
-	}*/
-	
 	public static ArrayList<TaskFolder> getFolders() throws ServiceException{ // it's just copy from service
 		ModelManager dm = ModelManager.getInstance();
-		
 		ArrayList<TaskFolder> folders = dm.getFolders();
 		if(folders == null)
 			throw new ServiceException("TaskFolderHandler:getFolders - Get NULL of Folders",new NullPointerException());

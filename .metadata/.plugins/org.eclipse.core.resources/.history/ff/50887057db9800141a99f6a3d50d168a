@@ -1,0 +1,29 @@
+package com.damaitan.mobileUI;
+
+import java.io.FileOutputStream;
+
+import android.content.Context;
+
+public class JsonHelper{
+
+	public static String JTDFile = "JTD.json";
+	
+	public JsonHelper() {
+	}
+
+	public static boolean saveJsonStringToFile(String filename = JTDFile, Context handler,  String json ) throws Exception {
+		try {
+			FileOutputStream fout = handler.openFileOutput(filename, Context.MODE_PRIVATE);
+			byte[] bytes = json.getBytes();
+			fout.write(bytes);
+			fout.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+	
+		}
+		return true;
+	}
+	
+	
+
+}

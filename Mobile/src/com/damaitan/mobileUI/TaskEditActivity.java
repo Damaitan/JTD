@@ -15,8 +15,7 @@
  */
 package com.damaitan.mobileUI;
 
-import java.io.FileOutputStream;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -91,8 +90,8 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 
         return super.onCreateOptionsMenu(menu);
     }
-
-    @SuppressWarnings("deprecation")
+    
+	@SuppressWarnings("deprecation")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,37 +195,47 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getItemId() == MENU_ID_SAVE){
+		if (item.getItemId() == MENU_ID_SAVE) {
+			Log.e("TaskEditActivity", "onOptionsItemSelected " + MENU_ID_SAVE);
 			try {
-				if(this.task.getName().trim().equalsIgnoreCase("") || this.task.getName().trim().equalsIgnoreCase(Model.invalidStr)){
-					Toast.makeText(this,  "Please input task name", Toast.LENGTH_SHORT).show();
-				}else{
+				if (this.task.getName().trim().equalsIgnoreCase("")
+						|| this.task.getName().trim()
+								.equalsIgnoreCase(Model.invalidStr)) {
+					Toast.makeText(this, "Please input task name",
+							Toast.LENGTH_SHORT).show();
+				} else {
 					TaskFolderHandler.saveTask(folderindex, task, true);
 					this.setTitle(this.task.getName());
-					saveJsonStringToFile(ServiceHandler.modelString());
+					JsonHelper.saveJsonStringToFile(this, JsonHelper.JTDFile,
+							ServiceHandler.modelString());
+					Intent intent = new Intent();
+					intent.putExtra("STATE", true);
+					intent.putExtra("TASKID", task.getId());
+					setResult(RESULT_OK, new Intent());
+					finish();
 				}
 			} catch (ServiceException e) {
-				Log.e("Error","TaskEditActivity onOptionsItemSelected ServiceException", e);
+				Log.e("Error",
+						"TaskEditActivity onOptionsItemSelected ServiceException",
+						e);
 			} catch (Exception e) {
-				Log.e("Error","TaskEditActivity onOptionsItemSelected", e);
+				Log.e("Error", "TaskEditActivity onOptionsItemSelected", e);
 			}
-			
+
+		}
+		if (item.getItemId() == MENU_ID_DELETE) {
+			Log.e("TaskEditActivity", "onOptionsItemSelected" + MENU_ID_DELETE);
+			if (this.task.getId() != Task.invalidId) {
+				Intent intent = new Intent();
+				intent.putExtra("STATE", true);
+				intent.putExtra("TASKID", task.getId());
+				setResult(RESULT_OK, new Intent());
+			}
+			finish();
 		}
 		return true;
 	}
 	
-	private boolean saveJsonStringToFile(String json) throws Exception{
-		try {
-			FileOutputStream fout = openFileOutput("JTD.json", MODE_PRIVATE);
-			byte[] bytes = json.getBytes();
-			fout.write(bytes);
-			fout.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		return true;
-	}
 	
 	 
 	 

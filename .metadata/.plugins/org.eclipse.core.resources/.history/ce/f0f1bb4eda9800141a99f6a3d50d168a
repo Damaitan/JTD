@@ -1,0 +1,27 @@
+package com.damaitan.mobileUI;
+
+import java.io.FileOutputStream;
+
+import android.preference.Preference.OnPreferenceChangeListener;
+
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+
+public class JsonHelper{
+
+	public JsonHelper() {
+	}
+
+	public static boolean saveJsonStringToFile(String json) throws Exception {
+		try {
+			FileOutputStream fout = openFileOutput("JTD.json", Context.MODE_PRIVATE);
+			byte[] bytes = json.getBytes();
+			fout.write(bytes);
+			fout.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+	
+		}
+		return true;
+	}
+
+}

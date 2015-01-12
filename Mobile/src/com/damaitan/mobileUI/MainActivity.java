@@ -16,11 +16,7 @@
 
 package com.damaitan.mobileUI;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -39,58 +36,43 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.PresentationException;
-import com.damaitan.presentation.IViewMain;
-import com.damaitan.presentation.MainViewPresenter;
+import com.damaitan.exception.ServiceException;
+import com.damaitan.service.ServiceHandler;
+import com.damaitan.service.TaskFolderHandler;
 
-public class MainActivity extends SherlockListActivity implements IViewMain{
-    private static int MENU_ID_TAG = 0;
-    private static int MENU_ID_SETTING = 1;
-    private static int MENU_ID_SYNC = 2;
-    private static int MENU_ID_CLEAN = 3;
-    private static String JTDFile = "JTD.json";
-    private MainViewPresenter presenter;
+public class MainActivity extends SherlockListActivity{
+    //private static int MENU_ID_TAG = 0;
+    private static int MENU_ID_SETTING = 0;
+    private static int MENU_ID_STATISTICS = 2;
+    //private static int MENU_ID_CLEAN = 3;
+    //private MainViewPresenter presenter;
+    private List<Map<String, Object>> m_listData;
     
     
-    public static boolean isFileExist(String path) {
-		if (path == null) {
-			return false;
-		}
-		try {
-			File f = new File(path);
-			if (!f.exists()) {
-				return false;
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			return false;
-		}
-		return true;
-	}
+    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        presenter = new MainViewPresenter(this);
-        Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JTDFile);
+        //presenter = new MainViewPresenter(this);
+        Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JsonHelper.JTDFile);
         
 		try {
-			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JTDFile;
-			if (isFileExist(path)) {
-				String content = getJsonString();
+			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JsonHelper.JTDFile;
+			if (JsonHelper.isFileExist(path)) {
+				String content = JsonHelper.getJsonString(this);
 				Log.d("MainActivity FileExist", content);
-				presenter.initialization(content);
+				ServiceHandler.initialization(content);
 			}else{
-				String content = presenter.initJsonString();
-				FileOutputStream fout = openFileOutput(JTDFile, MODE_PRIVATE);
-				byte[] bytes = content.getBytes();
-				fout.write(bytes);
-				fout.close();
-				Log.i("Mobile", "Create new file : " + JTDFile);
+				String content = ServiceHandler.initJsonString();
+				JsonHelper.saveJsonStringToFile(this, content);
+				Log.i("Mobile", "Create new file : " + JsonHelper.JTDFile);
 				Log.d("MainActivity No File", content);
-				presenter.initialization(content);
+				ServiceHandler.initialization(content);
 			}
-			setListAdapter(new SimpleAdapter(this, presenter.getData(),
+			m_listData = listItems(null);
+			setListAdapter(new SimpleAdapter(this, m_listData,
 					android.R.layout.simple_list_item_1,
 					new String[] { Name.Title }, new int[] { android.R.id.text1 }));
 		} catch (PresentationException e) {
@@ -108,57 +90,22 @@ public class MainActivity extends SherlockListActivity implements IViewMain{
 		}
 		getListView().setTextFilterEnabled(true);
 	}
-    
-	
-
-	private String getJsonString() throws Exception{
-		FileInputStream stream  = openFileInput(JTDFile);
-		int length = stream.available();
-		byte[] buffer = new byte[length];
-		stream.read(buffer);
-		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-		arrayOutputStream.write(buffer, 0,length);
-		String json = new String(arrayOutputStream.toByteArray());
-		return json;
-	}
-	
-	/*private boolean saveJsonStringToFile(String json) throws Exception{
-		 try{ 
-
-		        FileOutputStream fout =openFileOutput(JTDFile, MODE_PRIVATE);
-		        byte [] bytes = json.getBytes(); 
-		        fout.write(bytes); 
-		        fout.close(); 
-		        } 
-		       catch(Exception e){ 
-		        e.printStackTrace(); 
-Android五种数据传递方法汇总		       } 
-		return true;
-	}*/
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*SubMenu sub = menu.addSubMenu("Theme");
-        sub.add(0, R.style.Theme_Sherlock, 0, "Default");
-        sub.add(0, R.style.Theme_Sherlock_Light, 0, "Light");
-        sub.add(0, R.style.Theme_Sherlock_Light_DarkActionBar, 0, "Light (Dark Action Bar)");
-        sub.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
+        menu.add(0,MENU_ID_SETTING,MENU_ID_SETTING,this.getString(R.string.menu_main_setting))
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
-
-
-        menu.add(0,MENU_ID_TAG,0,this.getString(R.string.menu_main_tag))
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-        menu.add(0,MENU_ID_SETTING,0,this.getString(R.string.menu_main_setting))
+        menu.add(0,MENU_ID_STATISTICS,MENU_ID_STATISTICS,this.getString(R.string.menu_main_statistics))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        menu.add(0,MENU_ID_SYNC,0,this.getString(R.string.menu_main_sync))
+        /*menu.add(0,MENU_ID_SYNC,0,this.getString(R.string.menu_main_sync))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
         menu.add(0,MENU_ID_CLEAN,0,this.getString(R.string.menu_main_clean))
         .setIcon(R.drawable.ic_refresh)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         
         return true;
         
@@ -194,17 +141,39 @@ Android五种数据传递方法汇总		       }
         Intent intent = new Intent(this,TaskFolderActivity.class);
         Integer index = (Integer)map.get(Name.Index);
         intent.putExtra(Name.Index, index.intValue());
-        startActivity(intent);
+        startActivityForResult(intent,0);
     }
 
-	@Override
-	public List<Map<String, Object>> listItems(ArrayList<TaskFolder> folders) {
-		List<Map<String, Object>> myData = new ArrayList<Map<String, Object>>();
+	public List<Map<String, Object>> listItems(List<Map<String, Object>> myData) {
+		if(myData == null){
+			myData = new ArrayList<Map<String, Object>>();
+		}
 		TaskFolder folder;
-		for (int index = 0; index < folders.size();index++){
-			folder = folders.get(index);
-			addItem(myData, folder.getSimpleInfo(), index);
+		try {
+			for (int index = 0; index < TaskFolderHandler.getFolders().size();index++){
+				folder = TaskFolderHandler.getFolders().get(index);
+				addItem(myData, folder.getSimpleInfo(), index);
+			}
+		} catch (ServiceException e) {
+			
+			e.printStackTrace();
 		}
 		return myData;
 	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		//super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 0 && resultCode == RESULT_OK){
+			Log.d("MainActivity", "onActivityResult");
+			m_listData.clear();
+			listItems(m_listData);
+			((BaseAdapter) getListView().getAdapter()).notifyDataSetChanged();
+		}
+	}
+	
+	
 }

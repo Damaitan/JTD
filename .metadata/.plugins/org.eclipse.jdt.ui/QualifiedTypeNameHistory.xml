@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="android.widget.Button"/>
+<fullyQualifiedTypeName name="com.damaitan.datamodel.Task.Status"/>
+<fullyQualifiedTypeName name="android.widget.CompoundButton"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
+<fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
+<fullyQualifiedTypeName name="com.damaitan.mobileUI.R.string"/>
+<fullyQualifiedTypeName name="com.actionbarsherlock.internal.widget.IcsAdapterView.AdapterContextMenuInfo"/>
+<fullyQualifiedTypeName name="com.damaitan.service.TaskFolderHandler"/>
+</qualifiedTypeNameHistroy>

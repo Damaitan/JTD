@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="application_name">JTD ActionBarSherlock Demos</string>
+    <string name="activity_name">JTD</string>
+    <string name="app_name">JTD</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_section1">摘要</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="action_modes">Action Modes</string>
+    <string name="action_modes_content">Action modes are used to display contextual information based on some interaction made by the user (long press, checkbox selection, etc). Like the normal action bar they also support splitting the action items to the bottom of the screen on small devices.</string>
+     <string name="action_items">Action Items</string>
+    <string name="action_items_content">The action bar creates a unified and persistent navigation experience for your application and action items are a great way to provide a clear indication of what the user can do.</string>
+    <string name="split">Split Action Items</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
+    <string name="split_content">This activity is a demonstration of how split action items work. When you are concerned about the available room for items on small screens you should use this feature.</string>
+    <string name="create">创建</string>
+    
+    <!-- Main Activity-->
+    <string name="menu_main_tag">标签</string>
+    <string name="menu_main_setting">设置</string>
+    <string name="menu_main_sync">同步</string>
+    <string name="menu_main_clean">清空完成任务</string>
+    <string name="menu_main_statistics">统计</string>
+    
+    <!--  Task Activity -->
+    <string name="menu_task_tag">标签</string>
+    <string name="menu_task_new">添加</string>
+    <string name="menu_task_delete">删除</string>
+    <string name="menu_task_folder">切换清单</string>
+    <string name="menu_task_finish">完成</string>
+    <string name="contextmenu_task_delete">删除</string>
+    <string name="contextmenu_task_tag">标签</string>
+   
+    
+    <!--  Task Edit Activity -->
+    <string name="title_activity_task_edit">新任务</string>
+
+    <!-- Strings related to Settings -->
+ 
+	<string name="title_taskedit_name">名称</string>
+	<string name="content_taskedit_name">点击修改名称</string>
+	<string name="dialog_taskedit_name">输入名称</string>
+	
+	<string name="title_taskedit_urgent">紧急</string>
+	<string name="summary_taskedit_urgent">紧急任务</string>
+	
+	<string name="title_taskedit_tag">标签</string>
+	<string name="content_taskedit_tag">点击选择标签</string>
+	<string name="dialog_taskedit_tag">输入标签</string>
+	
+	<string name="title_taskedit_repeat">重复</string>
+	<string name="summary_taskedit_repeat">任务在完成后重新进入列表</string>
+	
+	<string name="title_taskedit_priority">优先级</string>
+	<string name="summary_taskedit_priority">选择优先级</string>
+	<string name="dialog_title_taskedit_priority">优先级选择</string>
+    <string-array name="entries_taskedit_priority">
+        <item>低级</item>
+        <item>普通</item>
+        <item>较高</item>
+        <item>最高</item>
+    </string-array>
+    <string-array name="entryvalues_taskedit_priority">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="title_taskedit_parent">上级任务</string>
+	<string name="summary_taskedit_parent">只有上级清单有任务时才可以配置</string>
+	<string name="dialog_title_taskedit_parent">上级任务选择</string>
+    
+    <string name="title_taskedit_note">备注</string>
+	<string name="content_taskedit_note">点击修改备注</string>
+	<string name="dialog_taskedit_note">备注</string>
+	<string name="title_taskedit_expire">到期时间</string>
+	<string name="dialog_taskedit_expire">选择到期时间</string>
+	<string name="title_taskedit_repeat_peroid">重复周期</string>
+	<string name="content_taskedit_repeat_peroid">用于计算重复任务的下一个到期日</string>
+	<string name="dialog_taskedit_repeat_peroid">重复周期设定</string>
+	<string name="menu_taskedit_save">保存</string>
+	<string name="menu_taskedit_delete">删除</string>
+	<string name="menu_taskedit_relation">关联</string>
+	<string name="menu_taskedit_new">新建</string>
+	
+	<string name="txt_task_folder_expired">过期</string>
+	<string name="txt_task_folder_day">今天</string>
+	<string name="txt_task_folder_week">周计划</string>
+	<string name="txt_task_folder_month">月计划</string>
+	<string name="txt_task_folder_other">其他</string>
+	<string name="txt_task_folder_finish">已完成</string>
+	<string name="txt_task_folder_info">信息</string>
+	<string name="task_edit_choose_day">选择到期日：</string>
+	<string name="task_edit_txt_repeat">重复</string>
+	<string name="task_tag_new">添加</string>
+
+</resources>

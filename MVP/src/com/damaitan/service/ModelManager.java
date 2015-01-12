@@ -81,7 +81,6 @@ final class ModelManager{
 	public void tag(Task task){
 		if(task.getTags() == null)
 			return;
-		task.getTags().split(" ");
 		for(String item : task.getTags().split(Task.TAGSPLITTER)){
 			if(!tags.contains(item)){
 				tags.add(item);

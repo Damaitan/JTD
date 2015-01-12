@@ -1,0 +1,12 @@
+1420360608736	Move file
+1420513299793	Rename field 'task_folder_item_date_frame'
+1420513536238	Rename field 'task_folder_item_grid'
+1420514606701	Delete element
+1420514612652	Delete element
+1420623326457	Delete element
+1420846131657	Rename field 'tag'
+1420846205573	Rename field 'lst'
+1420846213673	Rename field 'edt'
+1420846230035	Rename field 'btn'
+1420846241651	Rename field 'items'
+1420901982971	Extract superclass 'JsonHelper'

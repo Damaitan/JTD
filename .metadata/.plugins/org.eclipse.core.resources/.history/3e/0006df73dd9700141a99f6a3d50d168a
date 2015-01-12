@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/task_folder_item"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="fill"
+    android:columnCount="4"
+    android:rowCount="2" >
+
+    <CheckBox
+        android:id="@+id/task_folder_item_check"
+        android:layout_width="wrap_content"
+        android:layout_column="0"
+        android:layout_gravity="top|start"
+        android:layout_row="0"
+        android:layout_rowSpan="2"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/task_folder_item_name"
+        android:layout_width="350dp"
+        android:layout_column="1"
+        android:layout_gravity="left"
+        android:layout_row="0"
+        android:gravity="fill_horizontal"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/task_folder_item_tag"
+        android:layout_width="350dp"
+        android:layout_column="1"
+        android:layout_gravity="left"
+        android:layout_row="1"
+        android:cursorVisible="false"
+        android:enabled="false"
+        android:gravity="fill_horizontal"
+        android:inputType="none"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="italic" />
+
+    <Button
+        android:id="@+id/task_folder_item_btn_date"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="fill_parent"
+        android:layout_height="36dp"
+        android:layout_column="2"
+        android:layout_gravity="right"
+        android:layout_row="0"
+        android:layout_rowSpan="2"
+        android:background="@drawable/task_folder_date"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textColor="@android:color/black" />
+
+</GridLayout>
