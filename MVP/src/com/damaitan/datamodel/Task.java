@@ -2,16 +2,6 @@
  * 
  */
 package com.damaitan.datamodel;
-
-
-/* Backlog
- *   task repeat
- *   reminder
- *   reminder repeat
- *   TaskList
- */
-
-
 /**
  * @author admin
  *
@@ -23,46 +13,17 @@ public class Task extends Model {
 	}
 	public final static String TAGSPLITTER = " ";
 	public final static String DATESPLITTER = "/";
-	
-	/*public enum Priority{
-		low,normal,high,highest
-	}*/
-	
-	private boolean urgent;
-	private String expired;
-	//private int calendarType;
-	private String note;
-	private int priority;
-	private String tags;
-	private long taskFolderId;
-	private Status status;
-	private boolean repeat;
-	private int repeat_proid;
-	private long parentTaskId;
-	
-	public int getRepeat_proid() {
-		return repeat_proid;
-	}
-
-	public void setRepeat_proid(int repeat_proid) {
-		this.repeat_proid = repeat_proid;
-	}
-
-	public long getParentTaskId() {
-		return parentTaskId;
-	}
-
-	public void setParentTaskId(long parentTaskId) {
-		this.parentTaskId = parentTaskId;
-	}
-
-	public boolean isRepeat() {
-		return repeat;
-	}
-
-	public void setRepeat(boolean repeat) {
-		this.repeat = repeat;
-	}	
+	public boolean urgent = false;
+	public String expired = "";
+	public String note = "";
+	public int priority = 0;
+	public String tags = "";
+	public long taskFolderId = 1;
+	public Status status = Task.Status.ongoing;
+	public boolean repeat = false;
+	public int repeat_proid = -1;
+	public long parentTaskId = Task.invalidId;
+	public int finishedChilden = 0;
 
 	public Task() {
 		super(Model.invalidId,Model.invalidStr);
@@ -77,111 +38,6 @@ public class Task extends Model {
 		priority = 0;
 		parentTaskId = Model.invalidId;
 	}
-	
-	/**
-	 * @return the urgent
-	 */
-	public boolean isUrgent() {
-		return urgent;
-	}
-	/**
-	 * @param urgent the urgent to set
-	 */
-	public void setUrgent(boolean urgent) {
-		this.urgent = urgent;
-	} 
-	
-	/**
-	 * @return the expired
-	 */
-	public String getExpired() {
-		return expired;
-	}
-	/**
-	 * @param expired the expired to set
-	 */
-	public void setExpired(String expired) {
-		this.expired = expired;
-	}
-
-
-	
-	/**
-	 * @return the calendarType
-	 */
-	/*public int getCalendarType() {
-		return calendarType;
-	}*/
-	/**
-	 * @param calendarType the calendarType to set
-	 */
-	/*public void setCalendarType(int calendarType) {
-		this.calendarType = calendarType;
-	}*/
-
-
-	/**
-	 * @return the note
-	 */
-	public String getNote() {
-		return note;
-	}
-	/**
-	 * @param note the note to set
-	 */
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-	/**
-	 * @return the priority
-	 */
-	public int getPriority() {
-		return priority;
-	}
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-
-	/**
-	 * @return the tags
-	 */
-	public String getTags() {
-		return tags;
-	}
-	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(String tags) {
-		this.tags = tags;
-	}
-	/**
-	 * @return the taskFolder
-	 */
-	public long getTaskFolderId() {
-		return taskFolderId;
-	}
-	/**
-	 * @param taskFolder the taskFolder to set
-	 */
-	public void setTaskFolderId(long id) {
-		this.taskFolderId = id;
-	}
-	
-	public void setStatus(Status status){
-		this.status = status;
-	}
-	
-	/**
-	 * @return the status
-	 */
-	public Status getStatus() {
-		return status;
-	}
-	
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone(),×¢ÒâcloneµÄÏÝÚå
@@ -189,37 +45,16 @@ public class Task extends Model {
 	@Override
 	public Task clone(){
 		Task task = new Task();
-		//task.setCalendarType(this.getCalendarType());
-		task.setExpired(this.getExpired());
-		task.setId(this.getId());
-		task.setName(this.getName());
-		task.setNote(this.getNote());
-		task.setPriority(this.getPriority());
-		task.setTags(this.getTags());
-		task.setTaskFolderId(this.getTaskFolderId());
-		task.setUrgent(this.isUrgent());
-		task.setParentTaskId(this.getParentTaskId());
-		task.setRepeat(this.isRepeat());
-		task.setRepeat_proid(this.getRepeat_proid());
+		task.expired = this.expired;
+		task.note = this.note;
+		task.parentTaskId = this.parentTaskId;
+		task.priority = this.priority;
+		task.repeat = this.repeat;
+		task.repeat_proid = this.repeat_proid;
+		task.status = this.status;
+		task.tags = this.tags;
+		task.taskFolderId = this.taskFolderId;
+		task.urgent = this.urgent;
 		return task;
 	}
-	
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object arg0) {
-		// TODO Auto-generated method stub
-		return super.equals(arg0);
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	/*public void setStatus(Status status) {
-		this.status = status;
-	}*/
-	
-
 }

@@ -31,8 +31,10 @@ import com.damaitan.datamodel.Model;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
-import com.damaitan.service.ServiceHandler;
-import com.damaitan.service.TaskFolderHandler;
+import com.damaitan.presentation.MainViewPresenter;
+import com.damaitan.presentation.TaskFolderPresenter;
+import com.damaitan.service.GsonHelper;
+import com.damaitan.service.ModelManager;
 
 public class TaskEditActivity extends SherlockPreferenceActivity  implements Preference.OnPreferenceChangeListener{
 	private EditTextPreference namePreference;
@@ -51,16 +53,9 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private static int MENU_ID_DELETE = MENU_ID_SAVE + 1;
 	private static int MENU_ID_RELATION = MENU_ID_SAVE + 2;
 	//private static int MENU_ID_NEW = MENU_ID_SAVE + 3;
+	TaskFolderPresenter presenter;
 	
-	private static String NAME_KEY = "taskedit_name";
-	private static String URGENT_KEY = "taskedit_urgent";
-	private static String TAG_KEY = "taskedit_tag";
-	private static String PRIORITY_KEY = "taskedit_priority";
-	private static String NOTE_KEY = "taskedit_note";
-	private static String PARENET_KEY = "taskedit_parent";
-	private static String REPEAT_KEY = "taskedit_repeat";
-	private static String EXPIRE_KEY = "taskedit_expire";
-	private static String REPEAT_PEROID_KEY = "taskedit_repeat_peroid";
+	
 	 
 	
 	public TaskEditActivity(){
@@ -76,6 +71,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     	}*/
+    	presenter = new TaskFolderPresenter(null);
     	if(this.task.getId() != Task.invalidId){
     		this.setTitle(this.task.getName());
     	}
@@ -96,22 +92,22 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        String json = this.getIntent().getStringExtra(Name.TASK_KEY);
-        this.folderindex = this.getIntent().getIntExtra(Name.Index, -1);
-        this.task = ServiceHandler.fromJson(json, Task.class);
+        String json = this.getIntent().getStringExtra(TaskFolderPresenter.KEY_TASK);
+        this.folderindex = this.getIntent().getIntExtra(MainViewPresenter.Key_Index, -1);
+        this.task = new GsonHelper().fromJson(json, Task.class);
         addPreferencesFromResource(R.xml.taskedit);
-        namePreference = (EditTextPreference)findPreference(NAME_KEY);
-        urgentPreference = (CheckBoxPreference)findPreference(URGENT_KEY);
-        tagPreference = (TagPreference)findPreference(TAG_KEY);
-        priorityPreference = (ListPreference)findPreference(PRIORITY_KEY);
-        notePreference = (EditTextPreference)findPreference(NOTE_KEY);
-        parentPreference = (ListPreference)findPreference(PARENET_KEY);
-    	repeatPreference = (CheckBoxPreference)findPreference(REPEAT_KEY);
-    	expiredPreference = (DatePreference)findPreference(EXPIRE_KEY);
-    	repeatPeroidPreference = (EditTextPreference)findPreference(REPEAT_PEROID_KEY);
+        namePreference = (EditTextPreference)findPreference(TaskFolderPresenter.NAME_KEY);
+        urgentPreference = (CheckBoxPreference)findPreference(TaskFolderPresenter.URGENT_KEY);
+        tagPreference = (TagPreference)findPreference(TaskFolderPresenter.TAG_KEY);
+        priorityPreference = (ListPreference)findPreference(TaskFolderPresenter.PRIORITY_KEY);
+        notePreference = (EditTextPreference)findPreference(TaskFolderPresenter.NOTE_KEY);
+        parentPreference = (ListPreference)findPreference(TaskFolderPresenter.PARENET_KEY);
+    	repeatPreference = (CheckBoxPreference)findPreference(TaskFolderPresenter.REPEAT_KEY);
+    	expiredPreference = (DatePreference)findPreference(TaskFolderPresenter.EXPIRE_KEY);
+    	repeatPeroidPreference = (EditTextPreference)findPreference(TaskFolderPresenter.REPEAT_PEROID_KEY);
     	TaskFolder parentFolder = null;
 		try {
-			parentFolder = TaskFolderHandler.getFolderByIndex(this.folderindex + 1);
+			parentFolder = presenter.getFolderByIndex(this.folderindex + 1);
 		} catch (ServiceException e) {
 			this.parentPreference.setEnabled(false);
 		}
@@ -132,16 +128,16 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		
         if(this.task.getId() != Task.invalidId){
         	namePreference.setDefaultValue(this.task.getName());
-        	urgentPreference.setChecked(this.task.isUrgent());
-        	tagPreference.setDefaultValue(this.task.getTags());
-        	if(!this.task.getTags().equalsIgnoreCase("")){
-        		tagPreference.setSummary(task.getTags());
+        	urgentPreference.setChecked(this.task.urgent);
+        	tagPreference.setDefaultValue(this.task.tags);
+        	if(!this.task.tags.equalsIgnoreCase("")){
+        		tagPreference.setSummary(task.tags);
         	}
-        	priorityPreference.setDefaultValue(this.task.getPriority());
-        	notePreference.setDefaultValue(this.task.getNote());
+        	priorityPreference.setDefaultValue(this.task.priority);
+			notePreference.setDefaultValue(this.task.note);
         	parentPreference.setDefaultValue(Model.invalidId);
-        	repeatPreference.setChecked(this.task.isRepeat());
-        	expiredPreference.setDefaultValue(this.task.getExpired());
+        	repeatPreference.setChecked(this.task.repeat);
+        	expiredPreference.setDefaultValue(this.task.expired);
         	repeatPeroidPreference.setDefaultValue(this.task.getRepeat_proid());
         }
         
@@ -158,33 +154,33 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     }
 
 	 public boolean onPreferenceChange(Preference preference, Object objValue) {
-		 if(preference.getKey().equals(NAME_KEY)){
+		 if(preference.getKey().equals(TaskFolderPresenter.NAME_KEY)){
 			 preference.setSummary((String)objValue);
 			 this.task.setName((String)objValue);
-		 }else if(preference.getKey().equals(URGENT_KEY)){
-			 this.task.setUrgent(((Boolean)objValue).booleanValue());
-		 }else if(preference.getKey().equals(TAG_KEY)){
+		 }else if(preference.getKey().equals(TaskFolderPresenter.URGENT_KEY)){
+			 this.task.urgent = ((Boolean)objValue).booleanValue();
+		 }else if(preference.getKey().equals(TaskFolderPresenter.TAG_KEY)){
 			 preference.setSummary((String)objValue);
-			 this.task.setTags((String)objValue);
-		 }else if(preference.getKey().equals(PRIORITY_KEY)){
+			 this.task.tags = ((String)objValue);
+		 }else if(preference.getKey().equals(TaskFolderPresenter.PRIORITY_KEY)){
 			 ListPreference lp = (ListPreference)preference;
 			 int index = lp.findIndexOfValue((String)objValue);
 			 lp.setSummary(lp.getEntries()[index]);
-			 this.task.setPriority(Integer.parseInt((String)objValue));//this code must be changed
-		 }else if(preference.getKey().equals(NOTE_KEY)){
+			 this.task.priority = (Integer.parseInt((String)objValue));//this code must be changed
+		 }else if(preference.getKey().equals(TaskFolderPresenter.NOTE_KEY)){
 			 preference.setSummary((String)objValue);
-			 this.task.setNote((String)objValue);
-		 }else if(preference.getKey().equals(PARENET_KEY)){
+			 this.task.note = ((String)objValue);
+		 }else if(preference.getKey().equals(TaskFolderPresenter.PARENET_KEY)){
 			 ListPreference lp = (ListPreference)preference;
 			 int index = lp.findIndexOfValue((String)objValue);
 			 preference.setSummary(lp.getEntries()[index]);
-			 this.task.setParentTaskId(Long.parseLong((String)objValue));
-		 }else if(preference.getKey().equals(REPEAT_PEROID_KEY)){
+			 this.task.parentTaskId = (Long.parseLong((String)objValue));
+		 }else if(preference.getKey().equals(TaskFolderPresenter.REPEAT_PEROID_KEY)){
 			 preference.setSummary((String)objValue);
-			 this.task.setRepeat_proid(Integer.parseInt((String)objValue));
-		 }else if(preference.getKey().equals(EXPIRE_KEY)){
+			 this.task.repeat_proid = (Integer.parseInt((String)objValue));
+		 }else if(preference.getKey().equals(TaskFolderPresenter.EXPIRE_KEY)){
 			 preference.setSummary((String)objValue);
-			 this.task.setExpired((String)objValue);
+			 this.task.expired = ((String)objValue);
 		 }
 		 
 		 return true;
@@ -204,10 +200,10 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 					Toast.makeText(this, "Please input task name",
 							Toast.LENGTH_SHORT).show();
 				} else {
-					TaskFolderHandler.saveTask(folderindex, task, true);
+					presenter.saveTask(folderindex, task, true);
 					this.setTitle(this.task.getName());
 					JsonHelper.saveJsonStringToFile(this, JsonHelper.JTDFile,
-							ServiceHandler.modelString());
+							ModelManager.getInstance().JsonString());
 					Intent intent = new Intent();
 					intent.putExtra("STATE", true);
 					intent.putExtra("TASKID", task.getId());

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.damaitan.datamodel.Task;
-import com.damaitan.service.TaskFolderHandler;
+import com.damaitan.service.ModelManager;
 
 import android.content.Context;
 import android.preference.DialogPreference;
@@ -117,7 +117,7 @@ public class TagPreference extends DialogPreference {
 	
 	List<? extends Map<String, ?>> getData(){
 		ArrayList<Map<String,Object>> items = new ArrayList<Map<String,Object>>(); 
-		for(String item : TaskFolderHandler.getTags()){
+		for(String item : ModelManager.getInstance().getTags()){
 			Map<String,Object> lstitem = new HashMap<String,Object>();
 			lstitem.put(checkKey, _tag != null ? _tag.contains(item) : false);
 			lstitem.put(nameKey, item);
@@ -127,7 +127,7 @@ public class TagPreference extends DialogPreference {
 			return items;
 		}
 		for(String item : _tag.split(Task.TAGSPLITTER)){
-			if(TaskFolderHandler.getTags() == null || !TaskFolderHandler.getTags().contains(item)){
+			if(ModelManager.getInstance().getTags() == null || !ModelManager.getInstance().getTags().contains(item)){
 				Map<String,Object> lstitem = new HashMap<String,Object>();
 				lstitem.put(checkKey, true);
 				lstitem.put(nameKey, item.trim());

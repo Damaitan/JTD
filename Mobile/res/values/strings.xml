@@ -86,12 +86,14 @@
 	<string name="menu_taskedit_new">新建</string>
 	
 	<string name="txt_task_folder_expired">过期</string>
+	<string name="txt_task_folder_urgent">紧急</string>
 	<string name="txt_task_folder_day">今天</string>
 	<string name="txt_task_folder_week">周计划</string>
 	<string name="txt_task_folder_month">月计划</string>
 	<string name="txt_task_folder_other">其他</string>
 	<string name="txt_task_folder_finish">已完成</string>
 	<string name="txt_task_folder_info">信息</string>
+	<string name="txt_task_folder_nothing">无</string>
 	<string name="task_edit_choose_day">选择到期日：</string>
 	<string name="task_edit_txt_repeat">重复</string>
 	<string name="task_tag_new">添加</string>

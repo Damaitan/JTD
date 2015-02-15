@@ -16,7 +16,7 @@ public class TaskFolder extends Model {
 	public final static long HideFolderId = 0;
 	private ArrayList<Task> tasks = new ArrayList<Task>();
 	private ArrayList<Task> finishedTasks = new ArrayList<Task>();
-	
+	private int m_numberForRemovedFinish = 0;
 	
 	public TaskFolder() {
 		super();
@@ -25,75 +25,68 @@ public class TaskFolder extends Model {
 	public TaskFolder(long i, String name) {
 		super(i,name);
 	}
-
-	/**
-	 * @return the allTaskNumber
-	 */
-	public int getAllTaskNumber() {
-		return tasks.size() + finishedTasks.size();
-	}
-	/**
-	 * @param allTaskNumber the allTaskNumber to set
-	 */
-	/*public void setAllTaskNumber(int allTaskNumber) {
-		this.allTaskNumber = allTaskNumber;
-	}*/
-	/**
-	 * @return the completedTaskNumber
-	 */
-	public int getCompletedTaskNumber() {
-		//return completedTaskNumber;
-		return finishedTasks.size();
-	}
-	/**
-	 * @param completedTaskNumber the completedTaskNumber to set
-	 */
-	/*public void setCompletedTaskNumber(int completedTaskNumber) {
-		this.completedTaskNumber = completedTaskNumber;
-	}*/
-	/**
-	 * @return the tasks
-	 */
-	/*public Task[] getTasks() {
-		return tasks;
-	}*/
-	/**
-	 * @param tasks the tasks to set
-	 */
-	/*public void setTasks(Task[] tasks) {
-		this.tasks = tasks;
-		this.allTaskNumber = tasks.length;
-	}*/
 	
-	/**
-	 * @param task
-	 * 
-	 */
-	public void addTask(Task task){
-		
-		if(task.getStatus() == Status.finished){
-			this.finishedTasks.add(task);
-		}else{
-			task.setTaskFolderId(this.getId());
-			this.tasks.add(task);
-			
+	public int getAllTaskNumber() {
+		return m_numberForRemovedFinish + this.tasks.size() + this.finishedTasks.size();
+	}
+	
+	public int getCompletedTaskNumber() {
+		return m_numberForRemovedFinish + this.finishedTasks.size();
+	}
+	
+	public void addTask(Task task) {
+		task.taskFolderId = this.getId();
+		this.tasks.add(task);
+	}
+	private int findTaskIndex(ArrayList<Task> tasks, long id){
+		for(int i = 0;i < tasks.size(); i++){
+			if(tasks.get(i).getId() == id){
+				return i;
+			}
 		}
-		
+		return -1;
+	}
+	
+	public void updateTask(Task task){
+		int index = findTaskIndex(this.tasks, task.getId());
+		if(task.parentTaskId != this.getId()){
+			this.tasks.remove(index);
+		}else{
+			this.tasks.add(index,task);
+		}
 	}
 	
 	public void finishTask(Task task){
-		this.tasks.remove(task);
-		task.setStatus(Status.finished);
+		removeTask(task, false);
+		task.status = Status.finished;
 		this.finishedTasks.add(task);
 	}
 	
-	public void removeTask(Task task){
-		if(task.getStatus() == Status.finished){
-			this.finishedTasks.remove(task);
-		}else{
-			this.tasks.remove(task);
-		}
+	public void activateTask(Task task){
+		removeTask(task, false);
+		task.status = Status.ongoing;
+		this.tasks.add(task);
 	}
+	
+	public boolean removeTask(Task task){
+		return removeTask(task, true);
+	}
+	
+	public boolean removeTask(Task task, boolean counting){
+		if(task == null ) return false;
+		if(task.status == Status.finished){
+			int index = findTaskIndex(this.finishedTasks, task.getId());
+			this.finishedTasks.remove(index);
+			if(counting){
+				m_numberForRemovedFinish++;
+			}
+		}else{
+			int index = findTaskIndex(this.tasks, task.getId());
+			this.tasks.remove(index);
+		}
+		return true;
+	}
+	
 	
 	public List<Task> getTasks(){
 		return this.tasks;
@@ -107,9 +100,6 @@ public class TaskFolder extends Model {
 		return this.getName() + " - " + this.getCompletedTaskNumber() + "/" + this.getAllTaskNumber(); 
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public TaskFolder clone() {
 		TaskFolder folder = new TaskFolder();
@@ -120,14 +110,9 @@ public class TaskFolder extends Model {
 		}
 		return folder;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
+	
+	public void resetRemovedFinish(){
+		m_numberForRemovedFinish = 0;
 	}
 	
 	 

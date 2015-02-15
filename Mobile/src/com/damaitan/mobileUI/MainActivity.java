@@ -18,8 +18,6 @@ package com.damaitan.mobileUI;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,18 +32,15 @@ import android.widget.SimpleAdapter;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.PresentationException;
-import com.damaitan.exception.ServiceException;
-import com.damaitan.service.ServiceHandler;
-import com.damaitan.service.TaskFolderHandler;
+import com.damaitan.presentation.MainViewPresenter;
 
 public class MainActivity extends SherlockListActivity{
     //private static int MENU_ID_TAG = 0;
     private static int MENU_ID_SETTING = 0;
     private static int MENU_ID_STATISTICS = 2;
     //private static int MENU_ID_CLEAN = 3;
-    //private MainViewPresenter presenter;
+    private MainViewPresenter presenter;
     private List<Map<String, Object>> m_listData;
     
     
@@ -54,27 +49,24 @@ public class MainActivity extends SherlockListActivity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //presenter = new MainViewPresenter(this);
+        presenter = new MainViewPresenter();
         Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JsonHelper.JTDFile);
-        
 		try {
 			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JsonHelper.JTDFile;
+			String content;
 			if (JsonHelper.isFileExist(path)) {
-				String content = JsonHelper.getJsonString(this);
+				content = JsonHelper.getJsonString(this);
 				Log.d("MainActivity FileExist", content);
-				ServiceHandler.initialization(content);
-			}else{
-				String content = ServiceHandler.initJsonString();
+			}else{content = presenter.initJsonString();
 				JsonHelper.saveJsonStringToFile(this, content);
 				Log.i("Mobile", "Create new file : " + JsonHelper.JTDFile);
 				Log.d("MainActivity No File", content);
-				ServiceHandler.initialization(content);
 			}
-			m_listData = listItems(null);
+			presenter.initialization(content);
+			presenter.getData(m_listData);
 			setListAdapter(new SimpleAdapter(this, m_listData,
 					android.R.layout.simple_list_item_1,
-					new String[] { Name.Title }, new int[] { android.R.id.text1 }));
+					new String[] { MainViewPresenter.Key_Title }, new int[] { android.R.id.text1 }));
 		} catch (PresentationException e) {
 			Log.e("Mobile", "PresentationException", e);
 		} catch (FileNotFoundException e) { // File is not found
@@ -125,12 +117,7 @@ public class MainActivity extends SherlockListActivity{
         return result;
     }
 
-    protected void addItem(List<Map<String, Object>> data, String name, int index) {
-        Map<String, Object> temp = new HashMap<String, Object>();
-        temp.put(Name.Title, name);
-        temp.put(Name.Index, Integer.valueOf(index));
-        data.add(temp);
-    }
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -139,38 +126,22 @@ public class MainActivity extends SherlockListActivity{
 
         //Intent intent = new Intent(this,TaskActivity.class);
         Intent intent = new Intent(this,TaskFolderActivity.class);
-        Integer index = (Integer)map.get(Name.Index);
-        intent.putExtra(Name.Index, index.intValue());
+        Integer index = (Integer)map.get(MainViewPresenter.Key_Index);
+        intent.putExtra(MainViewPresenter.Key_Index, index.intValue());
         startActivityForResult(intent,0);
     }
 
-	public List<Map<String, Object>> listItems(List<Map<String, Object>> myData) {
-		if(myData == null){
-			myData = new ArrayList<Map<String, Object>>();
-		}
-		TaskFolder folder;
-		try {
-			for (int index = 0; index < TaskFolderHandler.getFolders().size();index++){
-				folder = TaskFolderHandler.getFolders().get(index);
-				addItem(myData, folder.getSimpleInfo(), index);
-			}
-		} catch (ServiceException e) {
-			
-			e.printStackTrace();
-		}
-		return myData;
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		//super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == 0 && resultCode == RESULT_OK){
 			Log.d("MainActivity", "onActivityResult");
 			m_listData.clear();
-			listItems(m_listData);
+			presenter.getData(m_listData);
 			((BaseAdapter) getListView().getAdapter()).notifyDataSetChanged();
 		}
 	}

@@ -3,46 +3,59 @@
  */
 package com.damaitan.presentation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.PresentationException;
 import com.damaitan.exception.ServiceException;
-import com.damaitan.service.ServiceHandler;
-import com.damaitan.service.TaskFolderHandler;
+import com.damaitan.service.ModelManager;
 
 /**
  * @author admin
  *
  */
 public class MainViewPresenter {
-	private IViewMain mainView;
+	static boolean isInitialized = false;
+	public final static String Key_Title = "title";
+	public final static String Key_Index = "index";
+	public final static String Key_Id = "id";
 	
 	
-	public MainViewPresenter(IViewMain mainView){
-		this.mainView = mainView;
-
+	public MainViewPresenter(){
 	}
+	
 	public void initialization(String json) throws PresentationException{
-		
 		try {
-			ServiceHandler.initialization(json);
+			if(!isInitialized){
+				ModelManager.getInstance().construct(json);
+				isInitialized = true;
+			}
 		} catch (ServiceException e) {
 			throw new PresentationException("MainViewPresenter:initialization() - wrong!",e);
 		}
 		
 	}
 
-	public List<Map<String, Object>> getData() throws PresentationException{
-		try {
-			return mainView.listItems(TaskFolderHandler.getFolders());
-		} catch (ServiceException e) {
-			throw new PresentationException("MainViewPresenter:getData() can not get folders",e);
+	public void getData(List<Map<String, Object>> data){
+		if(data== null){
+			data = new ArrayList<Map<String, Object>>();
+		}
+		TaskFolder folder;
+		for (int index = 0; index < ModelManager.getInstance().getFolders()
+				.size(); index++) {
+			folder = ModelManager.getInstance().getFolders().get(index);
+			Map<String, Object> temp = new HashMap<String, Object>();
+			temp.put(Key_Title, folder.getSimpleInfo());
+			temp.put(Key_Index, Integer.valueOf(index));
+			data.add(temp);
 		}
 	}
 	
 	public String initJsonString(){
-		return ServiceHandler.initJsonString();
+		return ModelManager.getInstance().initJsonString();
 	}
 
 }

@@ -3,12 +3,14 @@
  */
 package com.damaitan.mobileUI;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,31 +19,36 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.HashMap;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.internal.widget.IcsAdapterView.AdapterContextMenuInfo;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
-import com.damaitan.exception.ServiceException;
-import com.damaitan.service.ServiceHandler;
-import com.damaitan.service.TaskFolderHandler;
+import com.damaitan.presentation.MainViewPresenter;
+import com.damaitan.presentation.OnTaskResult;
+import com.damaitan.presentation.TaskFolderPresenter;
+import com.damaitan.service.GsonHelper;
+import com.damaitan.service.ModelManager;
 import com.damaitan.datamodel.CommonString;
 
 /**
  * @author admin
  *
  */
-public class TaskFolderActivity extends SherlockActivity {
+public class TaskFolderActivity extends SherlockActivity implements OnTaskResult.ITaskListener{
 	
 	private static final int MENU_ID_NEW = 0;
 	//private static int MENU_ID_DELETE = MENU_ID_NEW + 1;
@@ -54,22 +61,25 @@ public class TaskFolderActivity extends SherlockActivity {
 	private int _folderIndex;
 	private TaskFolder _folder;
 	private ListView mListTask;
+	private TaskFolderAdapter m_adapter;
+	private TaskFolderPresenter presenter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.task_folder_simple); 
-		_folderIndex = this.getIntent().getIntExtra(Name.Index, 0);
+		presenter = new TaskFolderPresenter(this);
+		_folderIndex = this.getIntent().getIntExtra(MainViewPresenter.Key_Index, 0);
         try {
-        	_folder = TaskFolderHandler.getFolderByIndex(_folderIndex);
-			this.setTitle(TaskFolderHandler.getFolderByIndex(_folderIndex).getName());
+        	_folder = presenter.getFolderByIndex(_folderIndex);
+			this.setTitle(presenter.getFolderByIndex(_folderIndex).getName());
 		} catch (Exception e) {
 			Log.e("Error", "TaskActivity onCreate", e);
 		}
         mListTask = (ListView)findViewById(R.id.lst_task_folder);
-        mListTask.setAdapter(new TaskFolderAdapter(this,_folderIndex,classifyData()));
+        m_adapter = new TaskFolderAdapter(this,_folderIndex,classifyData());
+        mListTask.setAdapter(m_adapter);
         
-        this.registerForContextMenu(mListTask);
 	}
 	
 	@Override
@@ -86,14 +96,10 @@ public class TaskFolderActivity extends SherlockActivity {
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         
         SubMenu subMenu = menu.addSubMenu(0,MENU_ID_FOLDER,1,this.getString(R.string.menu_task_folder));
-        try {
-			ArrayList<TaskFolder> folders = TaskFolderHandler.getFolders();
-			for(int i=0;i<folders.size();i++){
-				TaskFolder folder = folders.get(i);
-				subMenu.add(i,i+MENU_ID_FOLDER+1,i,folder.getName());
-			}
-		} catch (ServiceException e) {
-			Log.e("Error", "TaskActivity onCreateOptionsMenu : ServiceException", e);
+        ArrayList<TaskFolder> folders = ModelManager.getInstance().getFolders();
+		for(int i=0;i<folders.size();i++){
+			TaskFolder folder = folders.get(i);
+			subMenu.add(i,i+MENU_ID_FOLDER+1,i,folder.getName());
 		}
         MenuItem subMenuItem = subMenu.getItem();
         subMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -103,100 +109,125 @@ public class TaskFolderActivity extends SherlockActivity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
+		AdapterContextMenuInfo info;
+		if(menuInfo == null){
+			info = new AdapterContextMenuInfo(v,Integer.parseInt((String)v.getTag()), v.getId());
+		}else{
+			info = (AdapterContextMenuInfo)menuInfo;
+			info.position = Integer.parseInt((String)v.getTag());
+			info.id = v.getId();
+			info.targetView = v;
+		}
+		super.onCreateContextMenu(menu, v, info);
 		menu.setHeaderTitle(this.getString(R.string.contextmenu_task_title));
 		menu.add(0, CONTEXTMENU_ID_EDIT, 0, this.getString(R.string.contextmenu_task_edit));
 		menu.add(0, CONTEXTMENU_ID_DELETE, 0, this.getString(R.string.contextmenu_task_delete));
 		menu.add(0, CONTEXTMENU_ID_TAG, 0, this.getString(R.string.contextmenu_task_tag));
 	}
 	
-	private HashMap<String, List<Task>> classifyData(){
-		HashMap<String, List<Task>> data= new HashMap<String, List<Task>>();
-		data.put(TaskFolderAdapter.EXPIRED, new ArrayList<Task>());
-		data.put(TaskFolderAdapter.DAY, new ArrayList<Task>());
-		data.put(TaskFolderAdapter.WEEK, new ArrayList<Task>());
-		data.put(TaskFolderAdapter.MONTH, new ArrayList<Task>());
-		data.put(TaskFolderAdapter.OTHER, new ArrayList<Task>());
-		data.put(TaskFolderAdapter.FINISH, new ArrayList<Task>());
+	private HashMap<String, TaskFolderAdapter.TaskListInfo> classifyData(){
+		HashMap<String, TaskFolderAdapter.TaskListInfo> data= new HashMap<String, TaskFolderAdapter.TaskListInfo>();
 		
+		for(String item : TaskFolderAdapter.keys){
+			data.put(item, new TaskFolderAdapter.TaskListInfo(item));
+		}
 		for(Task task : _folder.getTasks()){
 			data.get(judge(task)).add(task);
     	}
 		for(Task task : _folder.getFinishedTasks()){
-			data.get(TaskFolderAdapter.FINISH).add(task);
+			data.get(TaskFolderAdapter.KEY_FINISH).add(task);
 		}
+		startPostion(data);
 		return data;
 	}
 	
-	@SuppressLint("SimpleDateFormat")
+	private void startPostion(HashMap<String, TaskFolderAdapter.TaskListInfo> data){
+		int length = 0;
+		for(int i = 0; i < TaskFolderAdapter.keys.length; i++){
+			TaskFolderAdapter.TaskListInfo info = (TaskFolderAdapter.TaskListInfo)data.get(TaskFolderAdapter.keys[i]);
+			if(info.tasks == null || info.tasks.size() == 0){
+				info.start_position = -1;
+				continue;
+			}
+			info.start_position = length;
+			length = length + info.tasks.size() + 1;
+		}
+	}
+	
 	private String judge(Task task){
-		int value = 0;
-		if(task.getExpired() != null && task.getExpired() != ""){
-			SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd");
-			int diff = df.getCalendar().compareTo(Calendar.getInstance());
-			if(diff == 0){
-				value = 2;
-				return TaskFolderAdapter.DAY;
-			}
-			if(diff < 8 && diff > 0){
-				//return TaskFolderAdapter.WEEK;
-				value = 3;
-			}
-			if(diff < 31 && diff > 0){
-				//return TaskFolderAdapter.MONTH;
-				value = 4;
-			}
+		if(task.status == Task.Status.finished) return TaskFolderAdapter.keys[5];
+		if(task.urgent) return TaskFolderAdapter.keys[0];
+		
+		int index = 0;
+		if(task.expired != null && !task.expired.trim().equalsIgnoreCase("")){
+			SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.getDefault());
+			long diff = df.getCalendar().getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
 			if(diff < 0){
-				value = 1;
-				return TaskFolderAdapter.EXPIRED;
+				return TaskFolderAdapter.keys[1];
+			} 
+			diff = diff/(1000*60*60*24);
+			if(diff < 1){
+				return TaskFolderAdapter.keys[2];
 			}
-				
+			if(diff < 7 ){
+				index = 2;
+			}else if(diff < 31){
+				index = 3;
+			}
 		}
-		if (task.getTags() != null && task.getTags() != "") {
-			if (task.getTags().contains(CommonString.InitTag[0])) {
-				if(value > 2 || value == 0){
-					return TaskFolderAdapter.DAY;
+		if (task.tags != null && !task.tags.trim().equalsIgnoreCase("")) {
+			if (task.tags.contains(CommonString.InitTag[0])) {
+					return TaskFolderAdapter.keys[2];
+			} else if (task.tags.contains(CommonString.InitTag[1])) {
+					return TaskFolderAdapter.keys[3];
+			}else if (task.tags.contains(CommonString.InitTag[2])) {
+				if(index == 2){
+					return TaskFolderAdapter.keys[3];
+				}else{
+					return TaskFolderAdapter.keys[4];
 				}
 			}
-			if (task.getTags().contains(CommonString.InitTag[1])) {
-				if(value > 3 || value == 0){
-					return TaskFolderAdapter.WEEK;
-				}
-			}
-			if (task.getTags().contains(CommonString.InitTag[2])) {
-				return TaskFolderAdapter.MONTH;
-			}
 		}
-		if(value == 3){
-			return  TaskFolderAdapter.WEEK;
-		}
-		if(value == 4){
-			return TaskFolderAdapter.MONTH;
-		}
-		return TaskFolderAdapter.OTHER;
+		return TaskFolderAdapter.keys[5];
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == MENU_ID_NEW){
-			Intent intent = new Intent(this,TaskEditActivity.class);
 			Task task = new Task();
-			task.setTaskFolderId(_folder.getId());
-			intent.putExtra(Name.TASK_KEY, ServiceHandler.toJson(task));
-			intent.putExtra(Name.Index, _folderIndex);
-	        startActivityForResult(intent, 0 );
+			startTaskActivity(task);
 		}
         return true;
 	}
 	
+	private void startTaskActivity(Task task){
+		Intent intent = new Intent(this,TaskEditActivity.class);
+		task.taskFolderId = _folder.getId();
+		intent.putExtra(TaskFolderPresenter.KEY_TASK, new GsonHelper().jsonString(task));
+		intent.putExtra(MainViewPresenter.Key_Index, _folderIndex);
+        startActivityForResult(intent, 0 );
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		//super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 0 && resultCode == RESULT_OK){
+			Log.d("TaskFolderAdapter", "onActivityResult");
+			
+			//((BaseAdapter) getListView().getAdapter()).notifyDataSetChanged();
+		}
+	}
 	
 	
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-		//AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo)item.getMenuInfo();
+		Task task = m_adapter.getTask(menuInfo.position);
 		switch(item.getItemId()){
 			case CONTEXTMENU_ID_EDIT:
-			
+				if(task != null){
+					startTaskActivity(task);
+				}
 				break;
 			case CONTEXTMENU_ID_DELETE:
 				
@@ -225,20 +256,10 @@ public class TaskFolderActivity extends SherlockActivity {
 	static public class TaskFolderAdapter extends BaseAdapter{
 		private static int ITEM_TYPE_CLASS = 0; 
 		private static int ITEM_TYPE_TASK = 1;
-		private int position_expired = -1;
-		private int position_day = -1;
-		private int position_week = -1;
-		private int position_month = -1;
-		private int position_other = -1;
-		private int position_finish = -1;
-		private int count = 0;
-		public static String EXPIRED = "expired";
-		public static String DAY = "day";
-		public static String WEEK = "week";
-		public static String MONTH = "month";
-		public static String OTHER = "other";
-		public static String FINISH = "finish";
-		HashMap<String, List<Task>> tasks = null;
+		public final static String KEY_FINISH = "finish";
+		public final static String[] keys = new String[]{"urgent", "expired", "day", "week", "month", "other",KEY_FINISH};
+		public final static int[] res_keys = new int[]{R.string.txt_task_folder_urgent,R.string.txt_task_folder_expired, R.string.txt_task_folder_day, R.string.txt_task_folder_week, R.string.txt_task_folder_month, R.string.txt_task_folder_other, R.string.txt_task_folder_finish};
+		HashMap<String,TaskListInfo> tasks = null;
 	    private LayoutInflater mLayoutInflater; 
 	    private Context context;
 	    public String tagPrefix;
@@ -250,17 +271,36 @@ public class TaskFolderActivity extends SherlockActivity {
 	    	public Button date;
 	    	
 	    }
-	    public TaskFolderAdapter(Context context, int taskFolderIndex, HashMap<String, List<Task>> tasks){
+	    
+	    public final static class TaskListInfo {
+	    	public String key = "";
+	    	public int start_position = -1;
+	    	public List<Task> tasks = null;
+	    	public TaskListInfo(String key){
+	    		this.key = key;
+	    		tasks = new ArrayList<Task>();
+	    	}
+	    	public boolean add(Task task){
+	    		return tasks.add(task);
+	    	}
+	    }
+	    
+	    public TaskFolderAdapter(Context context, int taskFolderIndex, HashMap<String,TaskListInfo> data){
 	    	this.context = context;
 	    	mLayoutInflater = LayoutInflater.from(context);
-	    	this.tasks = tasks;
-	    	init();
+	    	this.tasks = data;
 	    	tagPrefix = taskFolderIndex == 0 ? CommonString.InitJsonString[0] + " - ": "";
 	    }
 	    
 		@Override
 		public int getCount() {
-			return this.count;
+			int count = 0;
+			for(String key : keys){
+				TaskFolderAdapter.TaskListInfo info = (TaskFolderAdapter.TaskListInfo)this.tasks.get(key);
+				if(info.start_position < 0) continue;
+				count = count + info.tasks.size() + 1;
+			}
+			return count;
 		}
 
 		@Override
@@ -275,18 +315,19 @@ public class TaskFolderActivity extends SherlockActivity {
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return null;
+			return getTask(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return 0;
+			Task task = getTask(position);
+			if(task != null) return task.getId();
+			return Task.invalidId;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			Log.d("TaskFolderAdpater getView", "postion " + position);
 			int itemType = getItemType(position);
 			if(itemType == ITEM_TYPE_CLASS){
 				convertView = mLayoutInflater.inflate(R.layout.task_folder_text, null);
@@ -301,100 +342,81 @@ public class TaskFolderActivity extends SherlockActivity {
 				item.tag = (TextView)convertView.findViewById(R.id.task_folder_item_tag);
 				item.date = (Button)convertView.findViewById(R.id.task_folder_item_btn_date);
 				Task task = getTask(position);
-				item.doFinish.setChecked(task.getStatus() == Task.Status.finished);
+				item.doFinish.setChecked(task.status == Task.Status.finished);
 				item.name.setText(task.getName());
-				item.tag.setText(tagPrefix + "(" + task.getTags()+ ")");
-				item.date.setText("10.20");
+				item.name.setTag(String.valueOf(position));
+				item.tag.setText(tagPrefix + "(" + task.tags+ ")");
+				if(task.expired == null || task.expired.isEmpty()){
+					item.date.setText(R.string.txt_task_folder_nothing);
+				}else{
+					SimpleDateFormat df = new SimpleDateFormat("MM" + Task.DATESPLITTER + "dd",  Locale.getDefault());
+					try {
+						item.date.setText(df.parse(task.expired).toString());
+					} catch (ParseException e) {
+						item.date.setText(R.string.txt_task_folder_nothing);
+					}
+				}
+				if(!item.doFinish.hasOnClickListeners()){
+					item.doFinish.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+						@Override
+			            public void onCheckedChanged(CompoundButton buttonView, boolean ischecked) {
+							
+						}
+					});
+				}
+				((Activity) this.context).registerForContextMenu(item.name); 
+				//((Activity) this.context).registerForContextMenu(item.tag);
+				if(!item.date.hasOnClickListeners()){
+					item.date.setOnClickListener(new OnClickListener(){
+						@Override
+						public void onClick(View arg0) {
+							
+							
+						}
+						
+					});
+				}
+					
+				
 			}
 			return convertView;
 		}
 		
 		public int getItemType(int position){
-			if(position == position_expired || position == position_day || position == position_week || position == position_month || position == position_other || position == position_finish){
-				return ITEM_TYPE_CLASS;
-			}else{
-				return ITEM_TYPE_TASK;
+			for(String key : keys){
+				TaskFolderAdapter.TaskListInfo info = (TaskFolderAdapter.TaskListInfo)tasks.get(key);
+				if(position == info.start_position) return ITEM_TYPE_CLASS;
 			}
+			return ITEM_TYPE_TASK;
 		}
 		
-		private void init(){
-			if(this.tasks != null){
-				int nextposition = -1;
-				int length = this.tasks.get(EXPIRED).size();
-				int length_pre = 0;
-				if(length != 0){
-					position_expired = nextposition + length_pre + 1;
-					nextposition = position_expired;
-					length_pre = length;
-				}
-				
-				length = this.tasks.get(DAY).size();
-				if(length != 0){
-					position_day = nextposition + length_pre + 1;
-					nextposition = position_day;
-					length_pre = length;
-				}
-				
-				length = this.tasks.get(WEEK).size();
-				if(length != 0){
-					position_week = nextposition + length_pre + 1;
-					nextposition = position_week;
-					length_pre = length;
-				}
-				
-				length = this.tasks.get(MONTH).size();
-				if(length != 0){
-					position_month = nextposition + length_pre + 1;
-					nextposition = position_month;
-					length_pre = length;
-				}
-				
-				length = this.tasks.get(OTHER).size();
-				if(length != 0){
-					position_other = nextposition + length_pre + 1;
-					nextposition = position_other;
-					length_pre = length;
-				}
-				
-				length = this.tasks.get(FINISH).size();
-				if(length != 0){
-					position_finish = nextposition + length_pre + 1;
-				}
-				count = nextposition + length_pre + 1;
-			}
-		}
 		
 		private String getClassName(int position){
-			if(position == position_expired)
-				return this.context.getString(R.string.txt_task_folder_expired);
-			if(position == position_day)
-				return this.context.getString(R.string.txt_task_folder_day);
-			if(position == position_week)
-				return this.context.getString(R.string.txt_task_folder_week);
-			if(position == position_month)
-				return this.context.getString(R.string.txt_task_folder_month);
-			if(position == position_other)
-				return this.context.getString(R.string.txt_task_folder_other);
-			if(position == position_finish)
-				return this.context.getString(R.string.txt_task_folder_finish);
+			for(int i = 0; i < keys.length; i++){
+				TaskFolderAdapter.TaskListInfo info = (TaskFolderAdapter.TaskListInfo)tasks.get(keys[i]);
+				if(position == info.start_position){
+					return this.context.getString(res_keys[i]);
+				}
+			}
 			return null;
 		}
 		
 		private Task getTask(int position){
-			if(position_finish != -1 && position > position_finish)
-				return this.tasks.get(FINISH).get(position - position_finish - 1);
-			if(position_other != -1 && position > position_other)
-				return this.tasks.get(OTHER).get(position - position_other - 1);
-			if(position_month != -1 && position > position_month)
-				return this.tasks.get(MONTH).get(position - position_month - 1);
-			if(position_week != -1 && position > position_week)
-				return this.tasks.get(WEEK).get(position - position_week - 1);
-			if(position_day != -1 && position > position_day)
-				return this.tasks.get(DAY).get(position - position_day - 1);
-			if(position_expired != -1 && position > position_expired)
-				return this.tasks.get(EXPIRED).get(position - position_expired - 1);
+			for(String key : keys){
+				TaskFolderAdapter.TaskListInfo info = (TaskFolderAdapter.TaskListInfo)tasks.get(key);
+				if(info.start_position < 0) continue;
+				if(position > info.start_position && position < info.start_position + info.tasks.size() + 1){
+					return info.tasks.get(position - info.start_position - 1);
+				}
+			}
 			return null;
 		}
 	
+	}
+
+	@Override
+	public int act(Type arg0, TaskFolder arg1, Task arg2) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
