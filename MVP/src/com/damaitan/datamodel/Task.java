@@ -55,6 +55,30 @@ public class Task extends Model {
 		task.tags = this.tags;
 		task.taskFolderId = this.taskFolderId;
 		task.urgent = this.urgent;
+		task.finishedChilden = this.finishedChilden;
 		return task;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj instanceof Task) {
+			Task task = (Task) obj;
+		
+			return task.expired.equals(this.expired) &&
+			task.note.equals(this.note) &&
+			task.parentTaskId == this.parentTaskId &&
+			task.priority == this.priority &&
+			task.repeat == this.repeat &&
+			task.repeat_proid == this.repeat_proid &&
+			task.status == this.status &&
+			task.tags.equals(this.tags)&&
+			task.taskFolderId == this.taskFolderId &&
+			task.urgent == this.urgent;
+		}
+		return false;
+	}
+	
+	
 }

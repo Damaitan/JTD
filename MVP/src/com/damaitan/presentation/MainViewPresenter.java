@@ -3,7 +3,6 @@
  */
 package com.damaitan.presentation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ import com.damaitan.service.ModelManager;
  *
  */
 public class MainViewPresenter {
-	static boolean isInitialized = false;
+	private  boolean isInitialized = false;
 	public final static String Key_Title = "title";
 	public final static String Key_Index = "index";
 	public final static String Key_Id = "id";
@@ -39,10 +38,11 @@ public class MainViewPresenter {
 		
 	}
 
-	public void getData(List<Map<String, Object>> data){
+	public boolean getData(List<Map<String, Object>> data){
 		if(data== null){
-			data = new ArrayList<Map<String, Object>>();
+			return false;
 		}
+		data.clear();
 		TaskFolder folder;
 		for (int index = 0; index < ModelManager.getInstance().getFolders()
 				.size(); index++) {
@@ -52,6 +52,7 @@ public class MainViewPresenter {
 			temp.put(Key_Index, Integer.valueOf(index));
 			data.add(temp);
 		}
+		return true;
 	}
 	
 	public String initJsonString(){

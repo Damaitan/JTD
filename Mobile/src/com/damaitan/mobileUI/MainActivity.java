@@ -18,6 +18,7 @@ package com.damaitan.mobileUI;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class MainActivity extends SherlockListActivity{
     private static int MENU_ID_STATISTICS = 2;
     //private static int MENU_ID_CLEAN = 3;
     private MainViewPresenter presenter;
-    private List<Map<String, Object>> m_listData;
+    private List<Map<String, Object>> m_listData = null;
     
     
     
@@ -50,6 +51,7 @@ public class MainActivity extends SherlockListActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new MainViewPresenter();
+        m_listData = new ArrayList<Map<String, Object>>();
         Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JsonHelper.JTDFile);
 		try {
 			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JsonHelper.JTDFile;
@@ -57,7 +59,8 @@ public class MainActivity extends SherlockListActivity{
 			if (JsonHelper.isFileExist(path)) {
 				content = JsonHelper.getJsonString(this);
 				Log.d("MainActivity FileExist", content);
-			}else{content = presenter.initJsonString();
+			}else{
+				content = presenter.initJsonString();
 				JsonHelper.saveJsonStringToFile(this, content);
 				Log.i("Mobile", "Create new file : " + JsonHelper.JTDFile);
 				Log.d("MainActivity No File", content);

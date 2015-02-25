@@ -15,6 +15,8 @@
  */
 package com.damaitan.mobileUI;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -48,11 +50,13 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private EditTextPreference repeatPeroidPreference;
 	private Task task = null;
 	private int folderindex = -1;
+	boolean includeChilds = true;
 	
 	private static int MENU_ID_SAVE = 4;
 	private static int MENU_ID_DELETE = MENU_ID_SAVE + 1;
 	private static int MENU_ID_RELATION = MENU_ID_SAVE + 2;
 	//private static int MENU_ID_NEW = MENU_ID_SAVE + 3;
+	private static int MENU_ID_FINISH = MENU_ID_SAVE + 4;
 	TaskFolderPresenter presenter;
 	
 	
@@ -71,19 +75,26 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     		menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     	}*/
-    	presenter = new TaskFolderPresenter(null);
     	if(this.task.getId() != Task.invalidId){
     		this.setTitle(this.task.getName());
     	}
     	menu.add(0,MENU_ID_SAVE,0,this.getString(R.string.menu_taskedit_save))
 		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		
-		menu.add(0,MENU_ID_DELETE,0,this.getString(R.string.menu_taskedit_delete))
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-        menu.add(0,MENU_ID_RELATION,0,this.getString(R.string.menu_taskedit_relation))
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
+		if (this.task.getId() != Task.invalidId) {
+			menu.add(0, MENU_ID_FINISH, 0,
+					this.getString(R.string.menu_taskedit_finish))
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+	
+			menu.add(0, MENU_ID_DELETE, 0,
+					this.getString(R.string.menu_taskedit_delete))
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			
+			menu.add(0, MENU_ID_RELATION, 0,
+					this.getString(R.string.menu_taskedit_relation))
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		}
+		
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -91,7 +102,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        presenter = new TaskFolderPresenter(null);
         String json = this.getIntent().getStringExtra(TaskFolderPresenter.KEY_TASK);
         this.folderindex = this.getIntent().getIntExtra(MainViewPresenter.Key_Index, -1);
         this.task = new GsonHelper().fromJson(json, Task.class);
@@ -128,6 +139,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		
         if(this.task.getId() != Task.invalidId){
         	namePreference.setDefaultValue(this.task.getName());
+        	namePreference.setSummary(this.task.getName());
         	urgentPreference.setChecked(this.task.urgent);
         	tagPreference.setDefaultValue(this.task.tags);
         	if(!this.task.tags.equalsIgnoreCase("")){
@@ -138,7 +150,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         	parentPreference.setDefaultValue(Model.invalidId);
         	repeatPreference.setChecked(this.task.repeat);
         	expiredPreference.setDefaultValue(this.task.expired);
-        	repeatPeroidPreference.setDefaultValue(this.task.getRepeat_proid());
+        	repeatPeroidPreference.setDefaultValue(this.task.repeat_proid);
         }
         
         //Ìí¼ÓÕìÌýÊÂ¼þ
@@ -221,12 +233,26 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		}
 		if (item.getItemId() == MENU_ID_DELETE) {
 			Log.e("TaskEditActivity", "onOptionsItemSelected" + MENU_ID_DELETE);
-			if (this.task.getId() != Task.invalidId) {
-				Intent intent = new Intent();
-				intent.putExtra("STATE", true);
-				intent.putExtra("TASKID", task.getId());
-				setResult(RESULT_OK, new Intent());
-			}
+			includeChilds = true;
+			new AlertDialog.Builder(this)
+					.setTitle(this.getTitle())
+					.setMessage(R.string.alert_taskedit_delete)
+					.setPositiveButton(R.string.ok,null)
+					.setNegativeButton(R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									includeChilds = false;
+								}
+							}).show();
+
+			presenter.delete(this.folderindex, task, includeChilds);
+			finish();
+		}
+		if (item.getItemId() == MENU_ID_FINISH) {
+			Log.e("TaskEditActivity", "onOptionsItemSelected" + MENU_ID_FINISH);
+			presenter.finishTask(this.folderindex, task);
 			finish();
 		}
 		return true;

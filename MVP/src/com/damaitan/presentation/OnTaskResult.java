@@ -21,7 +21,7 @@ public class OnTaskResult {
 			add, update, delete, finish,activate
 		}
 
-		public int act(Type type, TaskFolder folder, Task task);
+		public int act(Type type, TaskFolder folder, Task oldTask, Task task);
 	}
 	
 	private OnTaskResult(){
@@ -43,9 +43,9 @@ public class OnTaskResult {
 		m_listeners.remove(listener);
 	}
 	
-	public void inform(ITaskListener.Type type, TaskFolder folder, Task task){
+	public void inform(ITaskListener.Type type, TaskFolder folder, Task olderTask, Task newTask){
 		for(ITaskListener listener : m_listeners){
-			if(listener != null) listener.act(type, folder, task);
+			if(listener != null) listener.act(type, folder, olderTask,newTask);
 		}
 	}
 }

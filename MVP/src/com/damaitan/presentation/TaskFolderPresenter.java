@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
+import com.damaitan.presentation.OnTaskResult.ITaskListener;
 import com.damaitan.service.ModelManager;
 
 public class TaskFolderPresenter {
@@ -22,10 +23,13 @@ public class TaskFolderPresenter {
 	public final static String EXPIRE_KEY = "taskedit_expire";
 	public final static String REPEAT_PEROID_KEY = "taskedit_repeat_peroid";
 	
+	private TaskListSorter m_sorter;
+	
 	public TaskFolderPresenter(OnTaskResult.ITaskListener listener){
 		if(listener != null){
 			OnTaskResult.getInstance().join(listener);
 		}
+		m_sorter = new TaskListSorter();
 	}
 	
 	public  TaskFolder getFolderByIndex(int index)throws ServiceException{
@@ -47,14 +51,14 @@ public class TaskFolderPresenter {
 			task.setId(ModelManager.getInstance().getNewTaskId(true));
 			folder.addTask(task);
 			ModelManager.getInstance().tag(task);
-			OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.add, folder, task);
+			OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.add, folder, null,task);
 		}else{
-			folder.updateTask(task);
+			Task oldTask  = folder.updateTask(task);
 			if(folderindex != task.taskFolderId){
 				TaskFolder changeTo = getFolderByIndex( (int)task.taskFolderId);
 				changeTo.addTask(task);
 			}
-			OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.add, folder, task);
+			OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.add, folder, oldTask, task);
 		}
 		return resultCode;
 	}
@@ -72,12 +76,14 @@ public class TaskFolderPresenter {
 			return false;
 		}
 		long id = task.getId();
-		folder.removeTask(task);
+		Task old = folder.removeTask(task);
+		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.delete, folder, old, task);
+		if(folderIndex == 0) return true;
+		
 		if(task.status == Task.Status.finished){
 			includeChilds = true;
 		}
 		if(includeChilds){
-			if(folderIndex == 0) return true;
 			deleteChildTasks(folderIndex - 1, id, task.status);
 		}else{
 			for(Task someone : folder.getTasks()){
@@ -86,7 +92,7 @@ public class TaskFolderPresenter {
 				}
 			}
 		}
-		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.delete, folder, task);
+		
 		return true;
 	}
 	
@@ -99,18 +105,23 @@ public class TaskFolderPresenter {
 			e.printStackTrace();
 			return false;
 		}
+		Task task = null;
 		if(status == Task.Status.finished){
-			for(Task task : folder.getFinishedTasks()){
+			for(int i = 0; i < folder.getFinishedTasks().size();i++){
+				task = folder.getFinishedTasks().get(i);
 				if(task.parentTaskId == parentTaskId){
 					deleteChildTasks(folderIndex - 1,task.getId(), status);
 					folder.removeTask(task);
+					i--;
 				}
 			}
 		}else{
-			for(Task task : folder.getTasks()){
+			for(int i = 0; i < folder.getTasks().size();i++){
+				task = folder.getTasks().get(i);
 				if(task.parentTaskId == parentTaskId){
 					deleteChildTasks(folderIndex - 1,task.getId(), status);
 					folder.removeTask(task);
+					i--;
 				}
 			}
 		}
@@ -119,7 +130,7 @@ public class TaskFolderPresenter {
 	
 	public boolean finishTask(int folderIndex,Task task){
 		if(task == null ) return false;
-		if(task.status != Task.Status.finished) return false;
+		if(task.status == Task.Status.finished) return false;
 		TaskFolder folder;
 		try {
 			folder = getFolderByIndex(folderIndex);
@@ -127,14 +138,14 @@ public class TaskFolderPresenter {
 			e.printStackTrace();
 			return false;
 		}
-		folder.finishTask(task);
-		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.finish, folder, task);
+		Task old = folder.finishTask(task);
+		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.finish, folder, old, task);
 		return true;
 	}
 	
 	public boolean activateTask(int folderIndex, Task task){
 		if(task == null ) return false;
-		if(task.status != Task.Status.ongoing) return false;
+		if(task.status == Task.Status.ongoing) return false;
 		TaskFolder folder;
 		try {
 			folder = getFolderByIndex(folderIndex);
@@ -142,9 +153,19 @@ public class TaskFolderPresenter {
 			e.printStackTrace();
 			return false;
 		}
-		folder.activateTask(task);
-		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.activate, folder, task);
+		Task old = folder.activateTask(task);
+		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.activate, folder, old, task);
 		return true;
+	}
+	
+	public void leave(ITaskListener listener){
+		if(listener != null){
+			OnTaskResult.getInstance().leave(listener);
+		}
+	}
+	
+	public TaskListSorter getSorter(){
+		return m_sorter;
 	}
 	
 }

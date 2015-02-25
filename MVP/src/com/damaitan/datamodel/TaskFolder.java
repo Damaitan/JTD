@@ -16,7 +16,7 @@ public class TaskFolder extends Model {
 	public final static long HideFolderId = 0;
 	private ArrayList<Task> tasks = new ArrayList<Task>();
 	private ArrayList<Task> finishedTasks = new ArrayList<Task>();
-	private int m_numberForRemovedFinish = 0;
+	private int numberForRemovedFinish = 0;
 	
 	public TaskFolder() {
 		super();
@@ -27,11 +27,11 @@ public class TaskFolder extends Model {
 	}
 	
 	public int getAllTaskNumber() {
-		return m_numberForRemovedFinish + this.tasks.size() + this.finishedTasks.size();
+		return numberForRemovedFinish + this.tasks.size() + this.finishedTasks.size();
 	}
 	
 	public int getCompletedTaskNumber() {
-		return m_numberForRemovedFinish + this.finishedTasks.size();
+		return numberForRemovedFinish + this.finishedTasks.size();
 	}
 	
 	public void addTask(Task task) {
@@ -47,44 +47,53 @@ public class TaskFolder extends Model {
 		return -1;
 	}
 	
-	public void updateTask(Task task){
+	public Task updateTask(Task task){
 		int index = findTaskIndex(this.tasks, task.getId());
+		Task oldTask = this.tasks.get(index);
 		if(task.parentTaskId != this.getId()){
 			this.tasks.remove(index);
 		}else{
-			this.tasks.add(index,task);
+			this.tasks.set(index, task);
 		}
+		return oldTask;
 	}
 	
-	public void finishTask(Task task){
+	public Task finishTask(Task task){
 		removeTask(task, false);
+		Task old = task.clone();
 		task.status = Status.finished;
 		this.finishedTasks.add(task);
+		return old;
 	}
 	
-	public void activateTask(Task task){
+	public Task activateTask(Task task){
 		removeTask(task, false);
+		Task old = task.clone();
 		task.status = Status.ongoing;
 		this.tasks.add(task);
+		return old;
 	}
 	
-	public boolean removeTask(Task task){
+	public Task removeTask(Task task){
 		return removeTask(task, true);
 	}
 	
-	public boolean removeTask(Task task, boolean counting){
-		if(task == null ) return false;
+	public Task removeTask(Task task, boolean counting){
+		if(task == null ) return null;
+		Task old = null;
 		if(task.status == Status.finished){
 			int index = findTaskIndex(this.finishedTasks, task.getId());
+			old = this.finishedTasks.get(index);
 			this.finishedTasks.remove(index);
 			if(counting){
-				m_numberForRemovedFinish++;
+				numberForRemovedFinish++;
 			}
 		}else{
 			int index = findTaskIndex(this.tasks, task.getId());
+			old = this.tasks.get(index);
 			this.tasks.remove(index);
 		}
-		return true;
+		return old;
 	}
 	
 	
@@ -112,7 +121,7 @@ public class TaskFolder extends Model {
 	}
 	
 	public void resetRemovedFinish(){
-		m_numberForRemovedFinish = 0;
+		numberForRemovedFinish = 0;
 	}
 	
 	 
