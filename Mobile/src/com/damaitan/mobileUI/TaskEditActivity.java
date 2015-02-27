@@ -123,11 +123,15 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 			this.parentPreference.setEnabled(false);
 		}
 		int size = parentFolder.getTasks().size();
+		String parentTaskName = "";
 		if(parentFolder != null && size > 0){
 			String entries[] = new String[size];
 			String values[] = new String[size];
 			for(int i = 0; i < size; i++){
 				Task task = parentFolder.getTasks().get(i);
+				if(task.parentTaskId == this.task.parentTaskId){
+					parentTaskName = task.getName();
+				}
 				entries[i] = task.getName();
 				values[i] = Long.toString(task.getId());
 			}
@@ -138,19 +142,32 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		}
 		
         if(this.task.getId() != Task.invalidId){
-        	namePreference.setDefaultValue(this.task.getName());
-        	namePreference.setSummary(this.task.getName());
-        	urgentPreference.setChecked(this.task.urgent);
-        	tagPreference.setDefaultValue(this.task.tags);
+        	namePreference.setDefaultValue(task.getName());
+        	namePreference.setSummary(task.getName());
+        	urgentPreference.setChecked(task.urgent);
+        	tagPreference.setDefaultValue(task.tags);
         	if(!this.task.tags.equalsIgnoreCase("")){
         		tagPreference.setSummary(task.tags);
         	}
         	priorityPreference.setDefaultValue(this.task.priority);
+        	priorityPreference.setSummary(priorityPreference.getEntries()[this.task.priority]);
 			notePreference.setDefaultValue(this.task.note);
-        	parentPreference.setDefaultValue(Model.invalidId);
+			if(!this.task.note.equalsIgnoreCase("")){
+				notePreference.setSummary(task.note);
+        	}
+        	parentPreference.setDefaultValue(task.parentTaskId);
+        	if(!parentTaskName.equalsIgnoreCase("")){
+        		parentPreference.setSummary(parentTaskName);
+        	}
         	repeatPreference.setChecked(this.task.repeat);
         	expiredPreference.setDefaultValue(this.task.expired);
+        	if(!this.task.expired.equalsIgnoreCase("")){
+        		expiredPreference.setSummary(task.expired);
+        	}
         	repeatPeroidPreference.setDefaultValue(this.task.repeat_proid);
+        	if(this.task.repeat_proid != -1){
+        		expiredPreference.setSummary(String.valueOf(task.repeat_proid));
+        	}
         }
         
         //Ìí¼ÓÕìÌýÊÂ¼þ
@@ -213,13 +230,6 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 							Toast.LENGTH_SHORT).show();
 				} else {
 					presenter.saveTask(folderindex, task, true);
-					this.setTitle(this.task.getName());
-					JsonHelper.saveJsonStringToFile(this, JsonHelper.JTDFile,
-							ModelManager.getInstance().JsonString());
-					Intent intent = new Intent();
-					intent.putExtra("STATE", true);
-					intent.putExtra("TASKID", task.getId());
-					setResult(RESULT_OK, new Intent());
 					finish();
 				}
 			} catch (ServiceException e) {
@@ -248,11 +258,6 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 							}).show();
 
 			presenter.delete(this.folderindex, task, includeChilds);
-			finish();
-		}
-		if (item.getItemId() == MENU_ID_FINISH) {
-			Log.e("TaskEditActivity", "onOptionsItemSelected" + MENU_ID_FINISH);
-			presenter.finishTask(this.folderindex, task);
 			finish();
 		}
 		return true;

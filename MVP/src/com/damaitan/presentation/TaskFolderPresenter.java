@@ -77,7 +77,7 @@ public class TaskFolderPresenter {
 		}
 		long id = task.getId();
 		Task old = folder.removeTask(task);
-		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.delete, folder, old, task);
+		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.delete, folder, old, null);
 		if(folderIndex == 0) return true;
 		
 		if(task.status == Task.Status.finished){

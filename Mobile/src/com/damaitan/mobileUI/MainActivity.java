@@ -37,10 +37,9 @@ import com.damaitan.exception.PresentationException;
 import com.damaitan.presentation.MainViewPresenter;
 
 public class MainActivity extends SherlockListActivity{
-    //private static int MENU_ID_TAG = 0;
     private static int MENU_ID_SETTING = 0;
     private static int MENU_ID_STATISTICS = 2;
-    //private static int MENU_ID_CLEAN = 3;
+    private static int MENU_ID_CLEAN = 3;
     private MainViewPresenter presenter;
     private List<Map<String, Object>> m_listData = null;
     
@@ -95,46 +94,22 @@ public class MainActivity extends SherlockListActivity{
         menu.add(0,MENU_ID_STATISTICS,MENU_ID_STATISTICS,this.getString(R.string.menu_main_statistics))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-        /*menu.add(0,MENU_ID_SYNC,0,this.getString(R.string.menu_main_sync))
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        
-        menu.add(0,MENU_ID_CLEAN,0,this.getString(R.string.menu_main_clean))
-        .setIcon(R.drawable.ic_refresh)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
+        menu.add(0,MENU_ID_CLEAN,MENU_ID_CLEAN,this.getString(R.string.menu_main_clean))
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
         return true;
         
     }
 
-
-    protected Intent activityIntent(String pkg, String componentName) {
-        Intent result = new Intent();
-        result.setClassName(pkg, componentName);
-        return result;
-    }
-
-    protected Intent browseIntent(String path) {
-        Intent result = new Intent();
-        result.setClass(this, MainActivity.class);
-        result.putExtra("com.example.android.apis.Path", path);
-        return result;
-    }
-
-
-
     @Override
     @SuppressWarnings("unchecked")
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Map<String, Object> map = (Map<String, Object>)l.getItemAtPosition(position);
-
-        //Intent intent = new Intent(this,TaskActivity.class);
         Intent intent = new Intent(this,TaskFolderActivity.class);
         Integer index = (Integer)map.get(MainViewPresenter.Key_Index);
         intent.putExtra(MainViewPresenter.Key_Index, index.intValue());
         startActivityForResult(intent,0);
     }
-
-	
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)

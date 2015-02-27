@@ -34,9 +34,14 @@ public class TaskFolder extends Model {
 		return numberForRemovedFinish + this.finishedTasks.size();
 	}
 	
-	public void addTask(Task task) {
+	public boolean addTask(Task task) {
 		task.taskFolderId = this.getId();
-		this.tasks.add(task);
+		for(Task temp : tasks){
+			if(temp.getId() == task.getId()){
+				return false;
+			}
+		}
+		return this.tasks.add(task);
 	}
 	private int findTaskIndex(ArrayList<Task> tasks, long id){
 		for(int i = 0;i < tasks.size(); i++){

@@ -45,6 +45,8 @@ public class Task extends Model {
 	@Override
 	public Task clone(){
 		Task task = new Task();
+		task.setId(this.getId());
+		task.setName(this.getName());
 		task.expired = this.expired;
 		task.note = this.note;
 		task.parentTaskId = this.parentTaskId;
@@ -65,8 +67,9 @@ public class Task extends Model {
 			return true;
 		if (obj instanceof Task) {
 			Task task = (Task) obj;
-		
-			return task.expired.equals(this.expired) &&
+			return task.getName().equals(this.getName()) &&
+			task.getId() == this.getId() &&
+			task.expired.equals(this.expired) &&
 			task.note.equals(this.note) &&
 			task.parentTaskId == this.parentTaskId &&
 			task.priority == this.priority &&

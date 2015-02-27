@@ -21,6 +21,11 @@ public class TaskListSorter {
     		tasks = new ArrayList<Task>();
     	}
     	public boolean add(Task task){
+    		for(int i = 0; i < tasks.size();i++){
+    			if(tasks.get(i).getId() == task.getId()){
+    				return false;
+    			}
+    		}
     		return tasks.add(task);
     	}
     	public boolean remove(Task task){
@@ -167,6 +172,10 @@ public class TaskListSorter {
 			}
 		}
 		return -1;
+	}
+	
+	public TaskListInfo get(String key){
+		return m_data.get(key);
 	}
 	
 	

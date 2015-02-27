@@ -20,21 +20,12 @@
             android:name="com.damaitan.mobileUI.MainActivity"
             android:label="@string/activity_name"
             android:theme="@style/Theme.Sherlock"
-            android:uiOptions="splitActionBarWhenNarrow" >
+            android:uiOptions="splitActionBarWhenNarrow" 
+             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.damaitan.mobileUI.TaskActivity"
-            android:label="@string/activity_name"
-            android:theme="@style/Theme.Sherlock"
-            android:uiOptions="splitActionBarWhenNarrow" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="com.damaitan.mobileUI" />
             </intent-filter>
         </activity>
         
@@ -42,7 +33,8 @@
             android:name="com.damaitan.mobileUI.TaskFolderActivity"
             android:label="@string/activity_name" 
             android:theme="@style/Theme.Sherlock"
-            android:uiOptions="splitActionBarWhenNarrow" >
+            android:uiOptions="splitActionBarWhenNarrow" 
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="com.damaitan.mobileUI" />
@@ -53,7 +45,8 @@
             android:name="com.damaitan.mobileUI.TaskEditActivity"
             android:label="@string/title_activity_task_edit" 
             android:theme="@style/Theme.Sherlock"
-            android:uiOptions="splitActionBarWhenNarrow" >
+            android:uiOptions="splitActionBarWhenNarrow"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="com.damaitan.mobileUI" />

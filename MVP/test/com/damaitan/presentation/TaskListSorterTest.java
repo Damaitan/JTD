@@ -55,7 +55,26 @@ public class TaskListSorterTest {
 
 	@Test
 	public void testRemove() {
-		fail("Not yet implemented");
+		Task task1 = new Task();
+		task1.setName("haha");
+		task1.urgent = true;
+		Task task2 = new Task();
+		task2.setName("ok");
+		try {
+			presenter.saveTask(1, task1, true);
+			presenter.saveTask(1, task2, true);
+			TaskListSorter sort = new TaskListSorter();
+			sort.classifyData(presenter.getFolderByIndex(1));
+			sort.remove(task1);
+			org.junit.Assert.assertEquals(sort.getCount(),2);
+			String key = sort.judge(task1);
+			org.junit.Assert.assertEquals("urgent",key);
+			org.junit.Assert.assertEquals(-1,sort.get(key).start_position);
+			org.junit.Assert.assertEquals(0,sort.get(key).tasks.size());
+			
+		} catch (ServiceException e) {
+			fail(e.getMessage());
+		}
 	}
 
 	@Test

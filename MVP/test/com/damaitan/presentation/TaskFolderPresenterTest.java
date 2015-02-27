@@ -32,6 +32,7 @@ public class TaskFolderPresenterTest {
 		mp.initialization(mp.initJsonString());
 		testListener = new TaskListenerTest();
 		presenter = new TaskFolderPresenter(testListener);
+		testListener.presenter = presenter;
 		
 	}
 
@@ -41,21 +42,49 @@ public class TaskFolderPresenterTest {
 
 	@Test
 	public void testSaveTask() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testDelete() {
-		fail("Not yet implemented");
+		Task task1 = new Task();
+		task1.setName("haha");
+		task1.urgent = true;
+		Task task2 = new Task();
+		task2.setName("ok");
+		try {
+			presenter.saveTask(1, task1, true);
+			presenter.saveTask(1, task2, true);
+			presenter.delete(1, task1, true);
+			org.junit.Assert.assertEquals(3,this.testListener.count);
+			String key = presenter.getSorter().judge(task1);
+			org.junit.Assert.assertEquals("urgent",key);
+			org.junit.Assert.assertEquals(-1,presenter.getSorter().get(key).start_position);
+			org.junit.Assert.assertEquals(0,presenter.getSorter().get(key).tasks.size());
+			String key1 = presenter.getSorter().judge(testListener.testOld);
+			org.junit.Assert.assertEquals(key,key1);
+			org.junit.Assert.assertEquals(2,presenter.getSorter().getCount());
+			
+		} catch (ServiceException e) {
+			fail(e.getMessage());
+		}
 	}
 
 	@Test
 	public void testFinishTask() {
 		try {
-			Task task = new Task();
-			task.setName("haha");
-			presenter.saveTask(1, task, true);
-			presenter.finishTask(1, task);
+			Task task1 = new Task();
+			task1.setName("haha");
+			task1.urgent = true;
+			Task task2 = new Task();
+			task2.setName("ok");
+			presenter.saveTask(1, task1, true);
+			presenter.saveTask(1, task2, true);
+			org.junit.Assert.assertEquals(task1.getId(), presenter.getSorter().getTask(1).getId());
+			org.junit.Assert.assertEquals(task2.getId(), presenter.getSorter().getTask(3).getId());
+			presenter.finishTask(1, task1);
+			org.junit.Assert.assertEquals(task2.getId(), presenter.getSorter().getTask(1).getId());
+			org.junit.Assert.assertEquals(task1.getId(), presenter.getSorter().getTask(3).getId());
 			org.junit.Assert.assertEquals(ITaskListener.Type.finish, testListener.trigger);
 			org.junit.Assert.assertEquals(testListener.testOld.status, Task.Status.ongoing);
 			org.junit.Assert.assertEquals(testListener.testTask.status, Task.Status.finished);
