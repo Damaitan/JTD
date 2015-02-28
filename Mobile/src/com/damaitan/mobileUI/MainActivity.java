@@ -100,8 +100,20 @@ public class MainActivity extends SherlockListActivity{
         return true;
         
     }
+    
+    
 
     @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+    	if(item.getItemId() == MENU_ID_CLEAN){
+    		presenter.cleanFinished();
+		}
+		
+        return true;
+	}
+
+
+	@Override
     @SuppressWarnings("unchecked")
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Map<String, Object> map = (Map<String, Object>)l.getItemAtPosition(position);

@@ -55,7 +55,7 @@ public class TaskFolder extends Model {
 	public Task updateTask(Task task){
 		int index = findTaskIndex(this.tasks, task.getId());
 		Task oldTask = this.tasks.get(index);
-		if(task.parentTaskId != this.getId()){
+		if(task.taskFolderId != this.getId()){
 			this.tasks.remove(index);
 		}else{
 			this.tasks.set(index, task);

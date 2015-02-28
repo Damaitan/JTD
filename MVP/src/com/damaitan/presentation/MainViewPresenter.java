@@ -58,5 +58,12 @@ public class MainViewPresenter {
 	public String initJsonString(){
 		return ModelManager.getInstance().initJsonString();
 	}
+	
+	public boolean cleanFinished(){
+		for(int i = 1 ; i < ModelManager.getInstance().getFolders().size();i++){
+			ModelManager.getInstance().getTaskFolder(i).getFinishedTasks().clear();
+		}
+		return true;
+	}
 
 }

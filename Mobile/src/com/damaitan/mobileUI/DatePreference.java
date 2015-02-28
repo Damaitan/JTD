@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.damaitan.datamodel.Task;
+import com.damaitan.presentation.TaskListSorter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,12 +24,10 @@ import android.widget.DatePicker;
  *
  */
 @SuppressLint("NewApi")
-public class DatePreference extends DialogPreference {
+public class DatePreference extends DialogPreference implements DatePicker.OnDateChangedListener{
 	private DatePicker picker=null;
+	private Date date;
 
-	private int year = -1;
-	private int month = -1 ;
-	private int day = -1;
 
 	public DatePreference(Context ctxt, AttributeSet attrs) {
 		super(ctxt, attrs);
@@ -39,11 +38,12 @@ public class DatePreference extends DialogPreference {
 	@Override
 	protected View onCreateDialogView() {
 		picker=new DatePicker(getContext());
-		Calendar calendar=Calendar.getInstance(Locale.CHINA);
-		if(day != -1){
-			picker.init(year, month, day,null);
+		if(date != null){
+			picker.init(date.getYear(), date.getMinutes(), date.getDay(), this);
 		}else{
-			picker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), Calendar.DAY_OF_MONTH,null);
+			Calendar calendar=Calendar.getInstance(Locale.CHINA);
+			picker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) - 1, Calendar.DAY_OF_MONTH,this);
+			//picker.init(date.getYear(), date.getMinutes(), Calendar.DAY_OF_MONTH,this);
 		}
         picker.setCalendarViewShown(false);
         return picker;
@@ -53,12 +53,8 @@ public class DatePreference extends DialogPreference {
 	protected void onDialogClosed(boolean positiveResult) {
 		super.onDialogClosed(positiveResult);
 		if (positiveResult) {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.CHINESE);
-			df.getCalendar().set(Calendar.YEAR, picker.getYear());
-			df.getCalendar().set(Calendar.MONTH, picker.getMonth());
-			df.getCalendar().set(Calendar.MONDAY, picker.getDayOfMonth());
-			df.getCalendar().toString();
-			callChangeListener(df.getCalendar().toString());
+			int month = picker.getMonth() + 1;
+			callChangeListener(picker.getYear() + Task.DATESPLITTER + month + Task.DATESPLITTER  + picker.getDayOfMonth());
 		}
 		super.onDialogClosed(positiveResult);
 	}
@@ -67,21 +63,27 @@ public class DatePreference extends DialogPreference {
 	public void setDefaultValue(Object defaultValue) {
 		if (defaultValue != null) {
 			String value = (String)defaultValue;
-			if(value == null || value.trim().equalsIgnoreCase("")){
+			if(value == null || value.trim().isEmpty()){
 				super.setDefaultValue(defaultValue);
 				return;
 			}
-			SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.CHINESE);
+			SimpleDateFormat df = TaskListSorter.dateFormat();
 			try {
-				df.parse(value);
+				date = df.parse(value);
 			} catch (ParseException e) {
 				super.setDefaultValue(defaultValue);
 				return;
 			}
-			picker.updateDate(df.getCalendar().get(Calendar.YEAR), df.getCalendar().get(Calendar.MONTH), df.getCalendar().get(Calendar.MONDAY));
+			
 		}
 			
 		super.setDefaultValue(defaultValue);
+	}
+
+	@Override
+	public void onDateChanged(DatePicker arg0, int year, int month, int dayOfMonth) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

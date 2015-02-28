@@ -3,7 +3,9 @@
  */
 package com.damaitan.presentation;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
@@ -22,6 +24,7 @@ public class TaskFolderPresenter {
 	public final static String REPEAT_KEY = "taskedit_repeat";
 	public final static String EXPIRE_KEY = "taskedit_expire";
 	public final static String REPEAT_PEROID_KEY = "taskedit_repeat_peroid";
+	public final static String TASK_FOLDER_KEY = "taskedit_folder";
 	
 	private TaskListSorter m_sorter;
 	
@@ -40,6 +43,10 @@ public class TaskFolderPresenter {
 		}
 	}
 	
+	public int getFolderCount(){
+		return ModelManager.getInstance().getFolders().size();
+	}
+	
 	public int saveTask(int folderindex, Task task,boolean isNew)throws ServiceException{
 		TaskFolder folder = getFolderByIndex(folderindex);
 		int resultCode = 0;
@@ -47,19 +54,28 @@ public class TaskFolderPresenter {
 			resultCode = 1;// Parameter is wrong
 			return resultCode;
 		}
-		if(isNew){
+		ModelManager.getInstance().tag(task);
+		if (isNew) {
 			task.setId(ModelManager.getInstance().getNewTaskId(true));
 			folder.addTask(task);
-			ModelManager.getInstance().tag(task);
-			OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.add, folder, null,task);
-		}else{
-			Task oldTask  = folder.updateTask(task);
-			if(folderindex != task.taskFolderId){
-				TaskFolder changeTo = getFolderByIndex( (int)task.taskFolderId);
-				changeTo.addTask(task);
-			}
-			OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.add, folder, oldTask, task);
+			OnTaskResult.getInstance().inform(
+					OnTaskResult.ITaskListener.Type.add, folder, null, task);
+			return resultCode;
 		}
+		if (folderindex != task.taskFolderId) {
+			Task clone = task.clone();
+			clone.taskFolderId = folderindex;
+			delete(folderindex, clone, false);
+			TaskFolder changedTofolder = getFolderByIndex((int)(task.taskFolderId));
+			changedTofolder.addTask(task);
+			OnTaskResult.getInstance().inform(
+					OnTaskResult.ITaskListener.Type.add, folder, null, task);
+			return resultCode;
+		} 
+		Task oldTask = folder.updateTask(task);
+		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.update,
+				folder, oldTask, task);
+
 		return resultCode;
 	}
 	
@@ -139,7 +155,23 @@ public class TaskFolderPresenter {
 			return false;
 		}
 		Task old = folder.finishTask(task);
+		Task repeat = old.clone();
 		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.finish, folder, old, task);
+		if(repeat != null && repeat.repeat == true){
+			if(!(repeat.expired.trim().isEmpty())){
+				SimpleDateFormat df = TaskListSorter.dateFormat();
+				try {
+					Date date = df.parse(repeat.expired);
+					Date exDate = new Date();
+					exDate.setTime(date.getTime() + repeat.repeat_proid*24*60*60*1000);
+					repeat.expired = df.format(exDate);
+					saveTask((int)(repeat.taskFolderId),repeat,true);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				} 
+			}
+		}
 		return true;
 	}
 	

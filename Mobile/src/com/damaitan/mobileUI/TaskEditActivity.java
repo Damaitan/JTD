@@ -17,7 +17,6 @@ package com.damaitan.mobileUI;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -33,10 +32,8 @@ import com.damaitan.datamodel.Model;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
-import com.damaitan.presentation.MainViewPresenter;
 import com.damaitan.presentation.TaskFolderPresenter;
 import com.damaitan.service.GsonHelper;
-import com.damaitan.service.ModelManager;
 
 public class TaskEditActivity extends SherlockPreferenceActivity  implements Preference.OnPreferenceChangeListener{
 	private EditTextPreference namePreference;
@@ -48,6 +45,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	private CheckBoxPreference repeatPreference;
 	private DatePreference expiredPreference;
 	private EditTextPreference repeatPeroidPreference;
+	private ListPreference folderPreference;
 	private Task task = null;
 	private int folderindex = -1;
 	boolean includeChilds = true;
@@ -104,8 +102,8 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         super.onCreate(savedInstanceState);
         presenter = new TaskFolderPresenter(null);
         String json = this.getIntent().getStringExtra(TaskFolderPresenter.KEY_TASK);
-        this.folderindex = this.getIntent().getIntExtra(MainViewPresenter.Key_Index, -1);
         this.task = new GsonHelper().fromJson(json, Task.class);
+        this.folderindex = (int)this.task.taskFolderId;
         addPreferencesFromResource(R.xml.taskedit);
         namePreference = (EditTextPreference)findPreference(TaskFolderPresenter.NAME_KEY);
         urgentPreference = (CheckBoxPreference)findPreference(TaskFolderPresenter.URGENT_KEY);
@@ -116,30 +114,9 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
     	repeatPreference = (CheckBoxPreference)findPreference(TaskFolderPresenter.REPEAT_KEY);
     	expiredPreference = (DatePreference)findPreference(TaskFolderPresenter.EXPIRE_KEY);
     	repeatPeroidPreference = (EditTextPreference)findPreference(TaskFolderPresenter.REPEAT_PEROID_KEY);
-    	TaskFolder parentFolder = null;
-		try {
-			parentFolder = presenter.getFolderByIndex(this.folderindex + 1);
-		} catch (ServiceException e) {
-			this.parentPreference.setEnabled(false);
-		}
-		int size = parentFolder.getTasks().size();
-		String parentTaskName = "";
-		if(parentFolder != null && size > 0){
-			String entries[] = new String[size];
-			String values[] = new String[size];
-			for(int i = 0; i < size; i++){
-				Task task = parentFolder.getTasks().get(i);
-				if(task.parentTaskId == this.task.parentTaskId){
-					parentTaskName = task.getName();
-				}
-				entries[i] = task.getName();
-				values[i] = Long.toString(task.getId());
-			}
-			this.parentPreference.setEntries(entries);
-			this.parentPreference.setEntryValues(values);
-		}else{
-			this.parentPreference.setEnabled(false);
-		}
+    	folderPreference = (ListPreference)findPreference(TaskFolderPresenter.TASK_FOLDER_KEY);
+    	
+    	String parentTaskName = loadTaskParent(this.folderindex);
 		
         if(this.task.getId() != Task.invalidId){
         	namePreference.setDefaultValue(task.getName());
@@ -161,13 +138,16 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         	}
         	repeatPreference.setChecked(this.task.repeat);
         	expiredPreference.setDefaultValue(this.task.expired);
-        	if(!this.task.expired.equalsIgnoreCase("")){
+        	if(!this.task.expired.isEmpty()){
         		expiredPreference.setSummary(task.expired);
         	}
         	repeatPeroidPreference.setDefaultValue(this.task.repeat_proid);
         	if(this.task.repeat_proid != -1){
-        		expiredPreference.setSummary(String.valueOf(task.repeat_proid));
+        		repeatPeroidPreference.setSummary(String.valueOf(task.repeat_proid));
         	}
+        	
+        	folderPreference.setDefaultValue(task.taskFolderId);
+        	
         }
         
         //Ìí¼ÓÕìÌýÊÂ¼þ
@@ -180,7 +160,36 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         repeatPreference.setOnPreferenceChangeListener(this);
         expiredPreference.setOnPreferenceChangeListener(this);
         repeatPeroidPreference.setOnPreferenceChangeListener(this);
+        folderPreference.setOnPreferenceChangeListener(this);
     }
+	
+	private String loadTaskParent(int folderIndex){
+		TaskFolder parentFolder = null;
+		try {
+			parentFolder = presenter.getFolderByIndex(folderIndex + 1);
+		} catch (ServiceException e) {
+			this.parentPreference.setEnabled(false);
+		}
+		int size = parentFolder.getTasks().size();
+		String parentTaskName = "";
+		if(parentFolder != null && size > 0){
+			String entries[] = new String[size];
+			String values[] = new String[size];
+			for(int i = 0; i < size; i++){
+				Task task = parentFolder.getTasks().get(i);
+				if(task.parentTaskId == this.task.parentTaskId){
+					parentTaskName = task.getName();
+				}
+				entries[i] = task.getName();
+				values[i] = Long.toString(task.getId());
+			}
+			this.parentPreference.setEntries(entries);
+			this.parentPreference.setEntryValues(values);
+		}else{
+			this.parentPreference.setEnabled(false);
+		}
+		return parentTaskName;
+	}
 
 	 public boolean onPreferenceChange(Preference preference, Object objValue) {
 		 if(preference.getKey().equals(TaskFolderPresenter.NAME_KEY)){
@@ -210,6 +219,17 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		 }else if(preference.getKey().equals(TaskFolderPresenter.EXPIRE_KEY)){
 			 preference.setSummary((String)objValue);
 			 this.task.expired = ((String)objValue);
+		 }else if(preference.getKey().equals(TaskFolderPresenter.TASK_FOLDER_KEY)){
+			 ListPreference lp = (ListPreference)preference;
+			 int index = lp.findIndexOfValue((String)objValue);
+			 preference.setSummary(lp.getEntries()[index]);
+			 this.task.taskFolderId = (Long.parseLong((String)objValue));
+			 if(this.task.taskFolderId != this.folderindex){
+				 this.task.parentTaskId = Task.invalidId;
+				 loadTaskParent((int)(this.task.taskFolderId));
+			 }
+		 }else if((preference.getKey().equals(TaskFolderPresenter.REPEAT_KEY))){
+			 this.task.repeat = ((Boolean)objValue).booleanValue();
 		 }
 		 
 		 return true;
@@ -229,7 +249,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 					Toast.makeText(this, "Please input task name",
 							Toast.LENGTH_SHORT).show();
 				} else {
-					presenter.saveTask(folderindex, task, true);
+					presenter.saveTask((int)(task.taskFolderId), task, true);
 					finish();
 				}
 			} catch (ServiceException e) {

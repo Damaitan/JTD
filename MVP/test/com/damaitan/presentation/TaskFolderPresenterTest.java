@@ -78,6 +78,9 @@ public class TaskFolderPresenterTest {
 			task1.urgent = true;
 			Task task2 = new Task();
 			task2.setName("ok");
+			task2.expired = 2015 + Task.DATESPLITTER + 1 + Task.DATESPLITTER + 3;
+			task2.repeat = true;
+			task2.repeat_proid = 7;
 			presenter.saveTask(1, task1, true);
 			presenter.saveTask(1, task2, true);
 			org.junit.Assert.assertEquals(task1.getId(), presenter.getSorter().getTask(1).getId());
@@ -88,6 +91,10 @@ public class TaskFolderPresenterTest {
 			org.junit.Assert.assertEquals(ITaskListener.Type.finish, testListener.trigger);
 			org.junit.Assert.assertEquals(testListener.testOld.status, Task.Status.ongoing);
 			org.junit.Assert.assertEquals(testListener.testTask.status, Task.Status.finished);
+			presenter.finishTask(1, task2);
+			org.junit.Assert.assertEquals(ITaskListener.Type.add , testListener.trigger);
+			org.junit.Assert.assertEquals(5,testListener.count);
+			
 		} catch (ServiceException e) {
 			fail();
 		}

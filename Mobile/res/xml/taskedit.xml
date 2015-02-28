@@ -16,25 +16,6 @@
                 android:defaultValue="false" />
         
         <ListPreference
-                android:key="taskedit_parent"
-                android:title="@string/title_taskedit_parent"
-                android:summary="@string/summary_taskedit_parent"
-                android:dialogTitle="@string/dialog_title_taskedit_parent" />
-        
-        
-        <com.damaitan.mobileUI.TagPreference
-                android:key="taskedit_tag"
-                android:title="@string/title_taskedit_tag"
-                android:summary="@string/content_taskedit_tag"
-                android:dialogTitle="@string/dialog_taskedit_tag" />
-        
-        <CheckBoxPreference
-                android:key="taskedit_repeat"
-                android:title="@string/title_taskedit_repeat"
-                android:summary="@string/summary_taskedit_repeat" 
-                android:defaultValue="false" />
-        
-        <ListPreference
                 android:key="taskedit_priority"
                 android:title="@string/title_taskedit_priority"
                 android:summary="@string/summary_taskedit_priority"
@@ -42,22 +23,51 @@
                 android:entryValues="@array/entryvalues_taskedit_priority"
                 android:dialogTitle="@string/dialog_title_taskedit_priority" />
         
+        <com.damaitan.mobileUI.TagPreference
+                android:key="taskedit_tag"
+                android:title="@string/title_taskedit_tag"
+                android:summary="@string/content_taskedit_tag"
+                android:dialogTitle="@string/dialog_taskedit_tag" />
+        
+        <com.damaitan.mobileUI.DatePreference 
+            	android:key="taskedit_expire" 
+            	android:title="@string/title_taskedit_expire"
+            	android:dialogTitle="@string/dialog_taskedit_expire" />
+        
+        <CheckBoxPreference
+                android:key="taskedit_repeat"
+                android:title="@string/title_taskedit_repeat"
+                android:summary="@string/summary_taskedit_repeat" 
+                android:defaultValue="false" />
+        
+        <EditTextPreference
+                android:key="taskedit_repeat_peroid"
+                android:title="@string/title_taskedit_repeat_peroid"
+                android:summary="@string/content_taskedit_repeat_peroid"
+                android:dialogTitle="@string/dialog_taskedit_repeat_peroid" 
+                android:numeric="integer" />
+        
+        <ListPreference
+                android:key="taskedit_folder"
+                android:title="@string/title_taskedit_folder"
+                android:summary="@string/summary_taskedit_folder"
+                android:entries="@array/entries_taskedit_folder"
+                android:entryValues="@array/entryvalues_taskedit_folder"
+                android:dialogTitle="@string/dialog_title_taskedit_folder" />
+        
+        <ListPreference
+                android:key="taskedit_parent"
+                android:title="@string/title_taskedit_parent"
+                android:summary="@string/summary_taskedit_parent"
+                android:dialogTitle="@string/dialog_title_taskedit_parent" />
+                
         <EditTextPreference
                 android:key="taskedit_note"
                 android:title="@string/title_taskedit_note"
                 android:summary="@string/content_taskedit_note"
                 android:dialogTitle="@string/dialog_taskedit_note" />
         
-        <com.damaitan.mobileUI.DatePreference 
-            	android:key="taskedit_expire" 
-            	android:title="@string/title_taskedit_expire"
-            	android:dialogTitle="@string/dialog_taskedit_expire" /> 
-            	
-        <EditTextPreference
-                android:key="taskedit_repeat_peroid"
-                android:title="@string/title_taskedit_repeat_peroid"
-                android:summary="@string/content_taskedit_repeat_peroid"
-                android:dialogTitle="@string/dialog_taskedit_repeat_peroid" />
+         
         
        
 </PreferenceScreen>

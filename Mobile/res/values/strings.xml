@@ -71,7 +71,28 @@
     <string name="title_taskedit_parent">上级任务</string>
 	<string name="summary_taskedit_parent">只有上级清单有任务时才可以配置</string>
 	<string name="dialog_title_taskedit_parent">上级任务选择</string>
+	
+    <string name="title_taskedit_folder">所属列表</string>
+    <string name="summary_taskedit_folder">改变所属列表</string>
+	<string name="dialog_title_taskedit_folder">选择所属列表</string>
+	<string-array name="entries_taskedit_folder">
+        <item>待办事项</item>
+        <item>项目事务</item>
+        <item>短期目标</item>
+        <item>长期目标</item>
+        <item>愿景方向</item>
+        <item>六万英尺</item>
+    </string-array>
+    <string-array name="entryvalues_taskedit_folder">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
     
+	
     <string name="title_taskedit_note">备注</string>
 	<string name="content_taskedit_note">点击修改备注</string>
 	<string name="dialog_taskedit_note">备注</string>

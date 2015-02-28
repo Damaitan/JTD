@@ -21,7 +21,7 @@ public class Task extends Model {
 	public long taskFolderId = 1;
 	public Status status = Task.Status.ongoing;
 	public boolean repeat = false;
-	public int repeat_proid = -1;
+	public int repeat_proid = 1;
 	public long parentTaskId = Task.invalidId;
 	public int finishedChilden = 0;
 

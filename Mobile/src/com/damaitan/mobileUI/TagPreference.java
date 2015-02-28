@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.damaitan.datamodel.Task;
 import com.damaitan.service.ModelManager;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -37,15 +36,21 @@ public class TagPreference extends DialogPreference {
 	private Button _btn = null;
 	private ArrayList<Map<String,Object>> _items = null;
 	private String _tag;
+	private Map<Integer, Integer> m_selects;
+	
+	
 	public TagPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setPositiveButtonText(context.getResources().getString(R.string.ok));
 		setNegativeButtonText(context.getResources().getString(R.string.cancel));
 	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see android.preference.DialogPreference#onCreateDialogView()
 	 */
+	@SuppressLint("UseSparseArrays")
 	@SuppressWarnings("unchecked")
 	@Override
 	protected View onCreateDialogView() {
@@ -55,6 +60,8 @@ public class TagPreference extends DialogPreference {
 		_edt = (EditText)view.findViewById(R.id.task_tag_txt);
 		_btn = (Button)view.findViewById(R.id.task_tag_btn_add);
 		_items = (ArrayList<Map<String, Object>>) getData();
+		m_selects = new HashMap<Integer, Integer>();
+		initSelects();
 		final SimpleAdapter adapter = new SimpleAdapter(this.getContext(),_items,R.layout.tag_list_item,new String[]{"selected"},new int[]{R.id.tag_check_listitem}){
 
 			
@@ -63,21 +70,43 @@ public class TagPreference extends DialogPreference {
 			 */
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
+				boolean setTag = false;
+				if(convertView == null){
+					setTag = true;
+				}
 				View view = super.getView(position, convertView, parent);
-				Map<String,Object> lstitem = _items.get(position);
+				
 				CheckBox chbox = (CheckBox)view.findViewById(R.id.tag_check_listitem);
+				if (m_selects.containsKey(position)) {
+					chbox.setChecked(true);
+				} else {
+					chbox.setChecked(false);
+				}
+				Map<String,Object> lstitem = _items.get(position);
 				chbox.setText((String)lstitem.get(nameKey));
-				chbox.setChecked((Boolean)lstitem.get(checkKey));
-				chbox.setTag(lstitem);
+				if(setTag){
+					chbox.setTag(position);
+				}
+				
 				if(!chbox.hasOnClickListeners()){
 					chbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 						@Override
 			            public void onCheckedChanged(CompoundButton buttonView, boolean ischecked) {
-			            	Map<String,Object> lstitem = (Map<String,Object>)buttonView.getTag();
-			            	lstitem.put(checkKey, ischecked);
+							int position  = (Integer)buttonView.getTag();
+							if(ischecked){
+								if(!m_selects.containsKey(position)){ 
+									m_selects.put(position, position);
+									Map<String,Object> lstitem = _items.get(position);
+									lstitem.put(checkKey, true);
+								}
+							}else{
+								m_selects.remove(position);
+								Map<String,Object> lstitem = _items.get(position);
+								lstitem.put(checkKey, false);
+							}
+							
 						}
 					});
-			        
 				}
 				return view;
 			}
@@ -87,26 +116,9 @@ public class TagPreference extends DialogPreference {
 			@Override
 			public void onClick(View arg0) {		
 				String name = _edt.getText().toString().trim();
+				if(name.isEmpty()) return;
 				name = name.replace("\n", Task.TAGSPLITTER);
-				for(String str : name.split(Task.TAGSPLITTER)){
-					if(!str.trim().equalsIgnoreCase("")){
-						boolean goNext = true;
-						for(Map<String,Object> item : _items){
-							if(str.trim().equalsIgnoreCase((String)item.get(nameKey))){
-								item.put(checkKey, true);
-								goNext = false;
-								break;
-							}
-						}
-						if(!goNext){
-							continue;
-						}
-						Map<String,Object> lstitem = new HashMap<String,Object>();
-						lstitem.put(checkKey, true);
-						lstitem.put(nameKey, str);
-						_items.add(lstitem);
-					}
-				}
+				addTag(name);
 				Log.d("TagPreference", "Button is clicked :" + name);
 				adapter.notifyDataSetChanged();
 				_edt.setText("");
@@ -115,24 +127,54 @@ public class TagPreference extends DialogPreference {
 		return view;
 	}
 	
+	private void initSelects(){
+    	m_selects.clear();
+    	if(_items == null) return;
+    	for(int i = 0; i < _items.size();i++){
+    		Boolean value = (Boolean)(_items.get(i).get(checkKey));
+    		if(value.booleanValue()){
+    			m_selects.put(i, i);
+    		}
+    	}
+    }
+	
+	
+	private void addTag(String tags){
+		for (String tag : tags.split(Task.TAGSPLITTER)){
+			String str = tag.trim();
+			int index = keyIsExist(str);
+			if(index != -1){
+				_items.get(index).put(checkKey, true);
+			}else{
+				Map<String,Object> lstitem = new HashMap<String,Object>();
+				lstitem.put(checkKey, true);
+				lstitem.put(nameKey, str);
+				_items.add(lstitem);
+			}
+		}
+		initSelects();
+	}
+	private int keyIsExist(String key) {
+		for (int i = 0; i < _items.size();i++) {
+			Map<String,Object> item = _items.get(i);
+			if (key.trim().equalsIgnoreCase((String) item.get(nameKey))) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	List<? extends Map<String, ?>> getData(){
 		ArrayList<Map<String,Object>> items = new ArrayList<Map<String,Object>>(); 
 		for(String item : ModelManager.getInstance().getTags()){
 			Map<String,Object> lstitem = new HashMap<String,Object>();
-			lstitem.put(checkKey, _tag != null ? _tag.contains(item) : false);
-			lstitem.put(nameKey, item);
-			items.add(lstitem); 
-		}
-		if(_tag == null){
-			return items;
-		}
-		for(String item : _tag.split(Task.TAGSPLITTER)){
-			if(ModelManager.getInstance().getTags() == null || !ModelManager.getInstance().getTags().contains(item)){
-				Map<String,Object> lstitem = new HashMap<String,Object>();
+			if(_tag != null && _tag.contains(item.trim())){
 				lstitem.put(checkKey, true);
-				lstitem.put(nameKey, item.trim());
-				items.add(lstitem); 
+			}else{
+				lstitem.put(checkKey, false);
 			}
+			lstitem.put(nameKey, item.trim());
+			items.add(lstitem); 
 		}
 		return items;
 	}
@@ -162,7 +204,7 @@ public class TagPreference extends DialogPreference {
 	 */
 	@Override
 	public void setDefaultValue(Object defaultValue) {
-		_tag = (String)defaultValue;
+		_tag = ((String)defaultValue).trim();
 		super.setDefaultValue(defaultValue);
 	}
 

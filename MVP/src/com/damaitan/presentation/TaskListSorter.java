@@ -1,8 +1,9 @@
 package com.damaitan.presentation;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -60,23 +61,10 @@ public class TaskListSorter {
 		
 		if(task.urgent) return keys[0];
 		
-		int index = 0;
-		if(task.expired != null && !task.expired.trim().equalsIgnoreCase("")){
-			SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.CHINA);
-			long diff = df.getCalendar().getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
-			if(diff < 0){
-				return keys[1];
-			} 
-			diff = diff/(1000*60*60*24);
-			if(diff < 1){
-				return keys[2];
-			}
-			if(diff < 7 ){
-				index = 2;
-			}else if(diff < 31){
-				index = 3;
-			}
-		}
+		int index = judgeDate(task);
+		if(index == 0) return  keys[1];
+		if(index == 1) return  keys[2];
+		
 		if (task.tags != null && !task.tags.trim().equalsIgnoreCase("")) {
 			if (task.tags.contains(CommonString.InitTag[0])) {
 					return keys[2];
@@ -91,6 +79,44 @@ public class TaskListSorter {
 			}
 		}
 		return keys[5];
+	}
+	
+	public final static SimpleDateFormat dateFormat(){
+		return new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.CHINA);
+	}
+	
+	public final static SimpleDateFormat monthDayFormat(){
+		return new SimpleDateFormat("MM" + Task.DATESPLITTER + "dd",  Locale.CHINA);
+	}
+	
+	private int judgeDate(Task task){
+		if(task.expired != null && !task.expired.isEmpty()){
+			SimpleDateFormat df = dateFormat();
+			long diff = 0;
+			try {
+				Date expired = df.parse(task.expired);
+				Date today = new Date();
+				diff = expired.getTime() - today.getTime();
+				diff = diff/(1000*60*60*24);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(diff < 0){
+				return 0;
+			} 
+			if(diff < 2){
+				return 1;
+			}
+			if(diff < 8 ){
+				return 2;
+			}else if(diff < 31){
+				return 3;
+			}else{
+				return 4; 
+			}
+		}
+		return -1;
 	}
 	
 	public void classifyData(TaskFolder folder){
