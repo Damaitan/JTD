@@ -43,11 +43,15 @@ public class MainViewPresenter {
 			return false;
 		}
 		data.clear();
+		Map<String, Object> temp = new HashMap<String, Object>();
+		temp.put(Key_Title, getFolder0SimpleInfo());
+		temp.put(Key_Index, Integer.valueOf(0));
+		data.add(temp);
 		TaskFolder folder;
-		for (int index = 0; index < ModelManager.getInstance().getFolders()
+		for (int index = 1; index < ModelManager.getInstance().getFolders()
 				.size(); index++) {
 			folder = ModelManager.getInstance().getFolders().get(index);
-			Map<String, Object> temp = new HashMap<String, Object>();
+			temp = new HashMap<String, Object>();
 			temp.put(Key_Title, folder.getSimpleInfo());
 			temp.put(Key_Index, Integer.valueOf(index));
 			data.add(temp);
@@ -64,6 +68,16 @@ public class MainViewPresenter {
 			ModelManager.getInstance().getTaskFolder(i).getFinishedTasks().clear();
 		}
 		return true;
+	}
+	
+	public String getFolder0SimpleInfo(){
+		int completedTasks = 0;
+		int allTasks = 0;
+		for(int i = 1 ; i < ModelManager.getInstance().getFolders().size();i++){
+			allTasks = allTasks + ModelManager.getInstance().getTaskFolder(i).getAllTaskNumber();
+			completedTasks = completedTasks + ModelManager.getInstance().getTaskFolder(i).getCompletedTaskNumber();
+		}
+		return ModelManager.getInstance().getTaskFolder(0).getName() + " - " + completedTasks + "/" + allTasks;
 	}
 
 }

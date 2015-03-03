@@ -13,7 +13,6 @@ import com.damaitan.exception.ServiceException;
 public final class ModelManager{
 	
 	private ModelStruct modelStruct = new ModelStruct();
-	private ArrayList<Task> allTasks = new ArrayList<Task>(); //Tasks are got from all task folders.
 	private ArrayList<String> tags = new ArrayList<String>(); // Tags are got from all taks tags
 	private long taskId = 0;
 	private static ModelManager uniqueInstance = null;
@@ -70,17 +69,15 @@ public final class ModelManager{
 		for(String str : CommonString.InitTag){
 			tags.add(str);
 		}
-		for(TaskFolder item : modelStruct.getFolders()){
-			if(item.getTasks() != null){
-				allTasks.addAll(item.getTasks());
+		for(TaskFolder folder : modelStruct.getFolders()){
+			for(Task item : folder.getTasks()){
+				tag(item);
+				if(item.getId() > taskId){
+					taskId = item.getId();
+				}
 			}
 		}
-		for(Task item : allTasks){
-			tag(item);
-			if(item.getId() > taskId){
-				taskId = item.getId();
-			}
-		}
+		
 	}
 	public TaskFolder getTaskFolder(int index){
 		return modelStruct.getFolders().get(index);

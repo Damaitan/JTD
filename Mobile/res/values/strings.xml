@@ -113,6 +113,7 @@
 	<string name="txt_task_folder_day">今天</string>
 	<string name="txt_task_folder_week">周计划</string>
 	<string name="txt_task_folder_month">月计划</string>
+	<string name="txt_task_folder_year">年计划</string>
 	<string name="txt_task_folder_other">其他</string>
 	<string name="txt_task_folder_finish">已完成</string>
 	<string name="txt_task_folder_info">信息</string>

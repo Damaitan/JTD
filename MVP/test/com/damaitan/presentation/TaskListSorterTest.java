@@ -2,6 +2,9 @@ package com.damaitan.presentation;
 
 import static org.junit.Assert.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,7 +29,7 @@ public class TaskListSorterTest {
 	public void setUp() throws Exception {
 		MainViewPresenter mp = new MainViewPresenter();
 		mp.initialization(mp.initJsonString());
-		presenter = new TaskFolderPresenter(null);
+		presenter = new TaskFolderPresenter(true);
 	}
 
 	@After
@@ -64,11 +67,11 @@ public class TaskListSorterTest {
 			presenter.saveTask(1, task1, true);
 			presenter.saveTask(1, task2, true);
 			TaskListSorter sort = new TaskListSorter();
-			sort.classifyData(presenter.getFolderByIndex(1));
+			//sort.classifyData(presenter.getFolderByIndex(1));
 			sort.remove(task1);
 			org.junit.Assert.assertEquals(sort.getCount(),2);
-			String key = sort.judge(task1);
-			org.junit.Assert.assertEquals("urgent",key);
+			int key = sort.judge(task1);
+			org.junit.Assert.assertEquals(1,key);
 			org.junit.Assert.assertEquals(-1,sort.get(key).start_position);
 			org.junit.Assert.assertEquals(0,sort.get(key).tasks.size());
 			
@@ -88,7 +91,7 @@ public class TaskListSorterTest {
 			presenter.saveTask(1, task1, true);
 			presenter.saveTask(1, task2, true);
 			TaskListSorter sort = new TaskListSorter();
-			sort.classifyData(presenter.getFolderByIndex(1));
+			//sort.classifyData(presenter.getFolderByIndex(1));
 			sort.remove(task2);
 			org.junit.Assert.assertEquals(sort.getCount(),2);
 			task2.status = Task.Status.finished;
@@ -101,7 +104,23 @@ public class TaskListSorterTest {
 
 	@Test
 	public void testGetTask() {
-		fail("Not yet implemented");
+		SimpleDateFormat df = TaskListSorter.dateFormat();
+		try {
+			Date exDate = df.parse("2015/2/1"); //过去
+			Date date = new Date();   //现在
+			long msNow = date.getTime(); //现在
+			long msEx = exDate.getTime();    //过去
+			long n = 0;
+			if(msEx < msNow){
+				n = (int) ((msNow - msEx)/(24*60*60*1000*7));
+			}
+			long temp = (n + 1) *7*24*60*60*1000;
+			date.setTime(msEx + temp);
+			String result = df.format(date);
+			org.junit.Assert.assertEquals(false,result.isEmpty());
+		} catch (Exception e) {
+			fail();
+		} 
 	}
 
 	@Test
@@ -117,6 +136,16 @@ public class TaskListSorterTest {
 	@Test
 	public void testGetClassIndex() {
 		fail("Not yet implemented");
+	}
+	
+	
+	@Test
+	public void testInit() {
+		try {
+			presenter.getSorter().init(presenter.getFolderByIndex(1));
+		} catch (ServiceException e) {
+			fail();
+		}
 	}
 
 }

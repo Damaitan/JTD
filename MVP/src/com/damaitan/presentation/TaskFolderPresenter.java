@@ -10,7 +10,6 @@ import java.util.Date;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
-import com.damaitan.presentation.OnTaskResult.ITaskListener;
 import com.damaitan.service.ModelManager;
 
 public class TaskFolderPresenter {
@@ -26,14 +25,12 @@ public class TaskFolderPresenter {
 	public final static String REPEAT_PEROID_KEY = "taskedit_repeat_peroid";
 	public final static String TASK_FOLDER_KEY = "taskedit_folder";
 	
-	private TaskListSorter m_sorter;
+	private TaskListSorter m_sorter = null;
 	
-	public TaskFolderPresenter(OnTaskResult.ITaskListener listener){
-		if(listener != null){
-			OnTaskResult.getInstance().join(listener);
-		}
+	public TaskFolderPresenter(boolean isSetSortListener){
 		m_sorter = new TaskListSorter();
 	}
+	
 	
 	public  TaskFolder getFolderByIndex(int index)throws ServiceException{
 		try{
@@ -49,10 +46,8 @@ public class TaskFolderPresenter {
 	
 	public int saveTask(int folderindex, Task task,boolean isNew)throws ServiceException{
 		TaskFolder folder = getFolderByIndex(folderindex);
-		int resultCode = 0;
-		if(task.getName() == null || task.getName().equals("null")){
-			resultCode = 1;// Parameter is wrong
-			return resultCode;
+		if(task.getName() == null || task.getName().isEmpty() || task.getName().equals(Task.invalidStr)){
+			return 1;// Parameter is wrong
 		}
 		ModelManager.getInstance().tag(task);
 		if (isNew) {
@@ -60,23 +55,25 @@ public class TaskFolderPresenter {
 			folder.addTask(task);
 			OnTaskResult.getInstance().inform(
 					OnTaskResult.ITaskListener.Type.add, folder, null, task);
-			return resultCode;
+			return 0;
 		}
 		if (folderindex != task.taskFolderId) {
 			Task clone = task.clone();
 			clone.taskFolderId = folderindex;
-			delete(folderindex, clone, false);
+			boolean result = delete(folderindex, clone, false);
 			TaskFolder changedTofolder = getFolderByIndex((int)(task.taskFolderId));
 			changedTofolder.addTask(task);
 			OnTaskResult.getInstance().inform(
 					OnTaskResult.ITaskListener.Type.add, folder, null, task);
-			return resultCode;
+			return result ? 0 : 1;
 		} 
 		Task oldTask = folder.updateTask(task);
-		OnTaskResult.getInstance().inform(OnTaskResult.ITaskListener.Type.update,
-				folder, oldTask, task);
+		if (oldTask == null)
+			return 2;
 
-		return resultCode;
+		OnTaskResult.getInstance().inform(
+				OnTaskResult.ITaskListener.Type.update, folder, oldTask, task);
+		return 0;
 	}
 	
 	public ArrayList<String> getTags(){
@@ -163,7 +160,17 @@ public class TaskFolderPresenter {
 				try {
 					Date date = df.parse(repeat.expired);
 					Date exDate = new Date();
-					exDate.setTime(date.getTime() + repeat.repeat_proid*24*60*60*1000);
+					long msNow = exDate.getTime();
+					long msEx = date.getTime(); 
+					long n = 0;
+					if(msEx < msNow){
+						n = (msNow - msEx)/(24*60*60*1000*repeat.repeat_proid);
+					}
+					long temp = (n+1)*repeat.repeat_proid*24*60*60*1000;
+					msEx = msEx + temp;
+					temp = 24*60*60*1000;
+					if(msEx < msNow) msEx = msEx + temp;				
+					exDate.setTime(msEx);
 					repeat.expired = df.format(exDate);
 					saveTask((int)(repeat.taskFolderId),repeat,true);
 				} catch (Exception e) {
@@ -190,11 +197,6 @@ public class TaskFolderPresenter {
 		return true;
 	}
 	
-	public void leave(ITaskListener listener){
-		if(listener != null){
-			OnTaskResult.getInstance().leave(listener);
-		}
-	}
 	
 	public TaskListSorter getSorter(){
 		return m_sorter;

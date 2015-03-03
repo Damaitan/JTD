@@ -11,12 +11,14 @@ import java.util.Locale;
 import com.damaitan.datamodel.CommonString;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
+import com.damaitan.service.ModelManager;
 
-public class TaskListSorter {
+
+public class TaskListSorter implements OnTaskResult.ITaskListener {
 	public final static class TaskListInfo {
     	public String key = "";
     	public int start_position = -1;
-    	public List<Task> tasks = null;
+    	public List<Task> tasks;
     	public TaskListInfo(String key){
     		this.key = key;
     		tasks = new ArrayList<Task>();
@@ -36,49 +38,60 @@ public class TaskListSorter {
     				break;
     			}
     		}
-    		if(tasks.size() == 0){
-    			start_position = -1;
+    		return true;
+    	}
+    	
+    	public boolean update(Task task){
+    		for(int i = 0; i < tasks.size();i++){
+    			if(tasks.get(i).getId() == task.getId()){
+    				return tasks.set(i, task) != null;
+    			}
     		}
     		return true;
     	}
+    	
     }
 	
-	public final static String KEY_FINISH = "finish";
-	public final static String[] keys = new String[]{"urgent", "expired", "day", "week", "month", "other",KEY_FINISH};
-	private HashMap<String, TaskListInfo> m_data;
+	public final static int KEY_FINISH = 7;
+	public final static String keys[] = {"urgent", "expired", "day", "week", "month", "year", "other","finish"};
+	private HashMap<Integer, TaskListInfo> m_data;
 	public static int ITEM_TYPE_CLASS = 0; 
 	public static int ITEM_TYPE_TASK = 1;
+	private TaskFolder m_folder = null;
 	
 	public TaskListSorter(){
-		m_data = new HashMap<String, TaskListInfo>();
-		for(String item : keys){
-			m_data.put(item, new TaskListInfo(item));
+		OnTaskResult.getInstance().join(this);
+		m_data = new HashMap<Integer, TaskListInfo>();
+		for(int i = 0; i < keys.length; i++){
+			m_data.put(i, new TaskListInfo(keys[i]));
 		}
 	}
 	
-	public String judge(Task task){
+	public int judge(Task task){
 		if(task.status == Task.Status.finished) return KEY_FINISH;
 		
-		if(task.urgent) return keys[0];
+		if(task.urgent) return 0;
 		
 		int index = judgeDate(task);
-		if(index == 0) return  keys[1];
-		if(index == 1) return  keys[2];
+		if(index == 0) return  1;
+		if(index == 1) return  2;
 		
-		if (task.tags != null && !task.tags.trim().equalsIgnoreCase("")) {
+		if (task.tags != null && !task.tags.isEmpty()) {
 			if (task.tags.contains(CommonString.InitTag[0])) {
-					return keys[2];
+					return 2;
 			} else if (task.tags.contains(CommonString.InitTag[1])) {
-					return keys[3];
+					return 3;
 			}else if (task.tags.contains(CommonString.InitTag[2])) {
 				if(index == 2){
-					return keys[3];
+					return 3;
 				}else{
-					return keys[4];
+					return 4;
 				}
+			}else if (task.tags.contains(CommonString.InitTag[3])) {
+				return 5;
 			}
 		}
-		return keys[5];
+		return 6;
 	}
 	
 	public final static SimpleDateFormat dateFormat(){
@@ -119,7 +132,21 @@ public class TaskListSorter {
 		return -1;
 	}
 	
-	public void classifyData(TaskFolder folder){
+	public boolean init(TaskFolder folder){
+		clearData();
+		m_folder = folder; 
+		if(m_folder.getId() == 0){
+			for(int i = 1; i < ModelManager.getInstance().getFolders().size();i++){
+				classifyData(ModelManager.getInstance().getFolders().get(i));
+			}
+		}else{
+			classifyData(m_folder);
+		}
+		startPostion();
+		return true;
+	}
+	
+	private void classifyData(TaskFolder folder){
 		
 		for(Task task : folder.getTasks()){
 			m_data.get(judge(task)).add(task);
@@ -127,14 +154,14 @@ public class TaskListSorter {
 		for(Task task : folder.getFinishedTasks()){
 			m_data.get(KEY_FINISH).add(task);
 		}
-		startPostion();
+		
 	}
 	
 	private void startPostion(){
 		int length = 0;
 		for(int i = 0; i < keys.length; i++){
-			TaskListInfo info = (TaskListInfo)m_data.get(keys[i]);
-			if(info.tasks == null || info.tasks.size() == 0){
+			TaskListInfo info = (TaskListInfo)m_data.get(i);
+			if(info.tasks.size() == 0){
 				info.start_position = -1;
 				continue;
 			}
@@ -144,8 +171,8 @@ public class TaskListSorter {
 	}
 	
 	public void clearData(){
-		for(String item : keys){
-			m_data.get(item).tasks.clear();
+		for(int i = 0; i < KEY_FINISH + 1; i++){
+			m_data.get(i).tasks.clear();
 		}
 	}
 	
@@ -160,10 +187,16 @@ public class TaskListSorter {
 		startPostion();
 		return result;
 	}
+	public boolean update(Task task){
+		boolean result = m_data.get(judge(task)).update(task);
+		startPostion();
+		return result;
+	}
+	
 	
 	public Task getTask(int position){
-		for(String key : keys){
-			TaskListInfo info = (TaskListInfo)m_data.get(key);
+		for(int i = 0; i < KEY_FINISH + 1; i++){
+			TaskListInfo info = (TaskListInfo)m_data.get(i);
 			if(info.start_position < 0) continue;
 			if(position > info.start_position && position < info.start_position + info.tasks.size() + 1){
 				return info.tasks.get(position - info.start_position - 1);
@@ -173,8 +206,8 @@ public class TaskListSorter {
 	}
 	
 	public int getItemType(int position){
-		for(String key : keys){
-			TaskListInfo info = (TaskListInfo)m_data.get(key);
+		for(int i = 0; i < KEY_FINISH + 1; i++){
+			TaskListInfo info = (TaskListInfo)m_data.get(i);
 			if(position == info.start_position) return ITEM_TYPE_CLASS;
 		}
 		return ITEM_TYPE_TASK;
@@ -182,8 +215,8 @@ public class TaskListSorter {
 	
 	public int getCount() {
 		int count = 0;
-		for(String key : keys){
-			TaskListInfo info = (TaskListInfo)m_data.get(key);
+		for(int i = 0; i < KEY_FINISH + 1; i++){
+			TaskListInfo info = (TaskListInfo)m_data.get(i);
 			if(info.start_position < 0) continue;
 			count = count + info.tasks.size() + 1;
 		}
@@ -192,7 +225,7 @@ public class TaskListSorter {
 	
 	public int getClassIndex(int position){
 		for(int i = 0; i < keys.length; i++){
-			TaskListInfo info = (TaskListInfo)m_data.get(keys[i]);
+			TaskListInfo info = (TaskListInfo)m_data.get(i);
 			if(position == info.start_position){
 				return i;
 			}
@@ -200,9 +233,57 @@ public class TaskListSorter {
 		return -1;
 	}
 	
-	public TaskListInfo get(String key){
+	public TaskListInfo get(int key){
 		return m_data.get(key);
 	}
+
+	@Override
+	public int act(Type type, TaskFolder folder, Task oldTask, Task task) {
+		if (m_folder == null)
+			return 0;
+		if ((m_folder.getId() != folder.getId()) && m_folder.getId() != 0)
+			return 0;
+
+		if (type == Type.add) {
+			add(task);
+			return 0;
+		}
+		if (type == Type.update) {
+			if(judge(oldTask) != (judge(task))){
+				remove(oldTask);
+				add(task);
+			}else{
+				update(task);
+			}
+			return 0;
+		}
+		remove(oldTask);
+		if (type == Type.finish || type == Type.activate) {
+			add(task);
+		}
+		return 0;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		OnTaskResult.getInstance().leave(this);
+		super.finalize();
+	}
+	
+	public String log(){
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("Sort count: " + getCount() + "\n");
+		for(int i = 0; i < getCount(); i++){
+			if(getItemType(i) == ITEM_TYPE_CLASS){
+				buffer.append("type class pos : " + i + " " + keys[getClassIndex(i)] + "\n");
+			}else{
+				buffer.append("type task  pos : " + i + " " + getTask(i).getName() + "\n");
+			}
+		}
+		return buffer.toString();
+	}
+	
+	
 	
 	
 }

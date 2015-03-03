@@ -17,6 +17,7 @@ package com.damaitan.mobileUI;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -100,7 +101,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new TaskFolderPresenter(null);
+        presenter = new TaskFolderPresenter(false);
         String json = this.getIntent().getStringExtra(TaskFolderPresenter.KEY_TASK);
         this.task = new GsonHelper().fromJson(json, Task.class);
         this.folderindex = (int)this.task.taskFolderId;
@@ -249,7 +250,13 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 					Toast.makeText(this, "Please input task name",
 							Toast.LENGTH_SHORT).show();
 				} else {
-					presenter.saveTask((int)(task.taskFolderId), task, true);
+					if (this.task.getId() != Task.invalidId) {
+						setResult(presenter.saveTask((int) (task.taskFolderId),
+								task, false), new Intent());
+					} else {
+						setResult(presenter.saveTask((int) (task.taskFolderId),
+								task, true), new Intent());
+					}
 					finish();
 				}
 			} catch (ServiceException e) {
@@ -278,6 +285,13 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 							}).show();
 
 			presenter.delete(this.folderindex, task, includeChilds);
+			setResult(RESULT_OK, new Intent());
+			finish();
+		}
+		if (item.getItemId() == MENU_ID_FINISH){
+			presenter.finishTask(this.folderindex,
+					task);
+			setResult(RESULT_OK, new Intent());
 			finish();
 		}
 		return true;

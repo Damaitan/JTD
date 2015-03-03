@@ -5,10 +5,8 @@ package com.damaitan.mobileUI;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,9 +31,7 @@ import com.actionbarsherlock.view.SubMenu;
 import com.damaitan.datamodel.CommonString;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
-import com.damaitan.exception.ServiceException;
 import com.damaitan.presentation.MainViewPresenter;
-import com.damaitan.presentation.OnTaskResult;
 import com.damaitan.presentation.TaskFolderPresenter;
 import com.damaitan.presentation.TaskListSorter;
 import com.damaitan.service.GsonHelper;
@@ -45,56 +41,43 @@ import com.damaitan.service.ModelManager;
  * @author admin
  *
  */
-public class TaskFolderActivity extends SherlockActivity implements OnTaskResult.ITaskListener{
+public class TaskFolderActivity extends SherlockActivity {
 	
 	private static final int MENU_ID_NEW = 0;
 	private static final int MENU_ID_FOLDER = MENU_ID_NEW + 10;
 	
-	private int _folderIndex;
-	private TaskFolder _folder;
+	private int m_folderIndex;
+	private TaskFolder m_folder;
 	private ListView mListTask;
 	private TaskFolderAdapter m_adapter;
-	private TaskFolderPresenter presenter;
-	private boolean mSync = false;
+	private TaskFolderPresenter m_presenter;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.task_folder_simple); 
-		presenter = new TaskFolderPresenter(this);
-		_folderIndex = this.getIntent().getIntExtra(MainViewPresenter.Key_Index, 0);
+		m_presenter = new TaskFolderPresenter(true);
+		m_folderIndex = this.getIntent().getIntExtra(MainViewPresenter.Key_Index, 0);
 		mListTask = (ListView)findViewById(R.id.lst_task_folder);
-        m_adapter = new TaskFolderAdapter(this,_folderIndex, presenter);
-        load(_folderIndex,false);
+        m_adapter = new TaskFolderAdapter(this,m_folderIndex, m_presenter);
+        load(m_folderIndex,false);
         mListTask.setAdapter(m_adapter);
     
 	}
 	
 	private boolean load(int folderIndex, boolean reload) {
-		_folderIndex = folderIndex;
+		m_folderIndex = folderIndex;
 		try {
-			_folder = presenter.getFolderByIndex(_folderIndex);
-			this.setTitle(presenter.getFolderByIndex(_folderIndex).getName());
+			m_folder = m_presenter.getFolderByIndex(m_folderIndex);
+			this.setTitle(m_presenter.getFolderByIndex(m_folderIndex).getName());
 		} catch (Exception e) {
 			Log.e("Error", "TaskActivity onCreate", e);
 		}
-		presenter.getSorter().clearData();
-		if(_folderIndex != 0){
-			presenter.getSorter().classifyData(_folder);
-		}else{
-			for(int i = 1 ; i < presenter.getFolderCount();i++){
-				try {
-					TaskFolder folder = presenter.getFolderByIndex(i);
-					presenter.getSorter().classifyData(folder);
-				} catch (ServiceException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		m_adapter.initSelects();
+		m_presenter.getSorter().init(m_folder);
+		//m_adapter.initSelects();
 		m_adapter.taskFolderIndex = folderIndex;
+		Log.d("TaskFolderActivity sort", m_presenter.getSorter().log());
 		if(reload){
 			m_adapter.notifyDataSetChanged();
 		}
@@ -123,14 +106,22 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 		persist();		
 		super.onDestroy();
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == 0 ){
+			m_adapter.notifyDataSetChanged();
+		}
+	}
+	
 
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == MENU_ID_NEW){
-			if(_folder.getId() != 0){
+			if(m_folder.getId() != 0){
 				Task task = new Task();
-				task.taskFolderId = _folder.getId();
+				task.taskFolderId = m_folder.getId();
 				m_adapter.startTaskActivity(task);
 			}
 		}
@@ -144,64 +135,33 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 	
 	
 	private void persist(){
-		if(mSync){
-			try {
-				JsonHelper.saveJsonStringToFile(this, ModelManager.getInstance().JsonString());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			mSync = false;
+		try {
+			JsonHelper.saveJsonStringToFile(this, ModelManager.getInstance().JsonString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		presenter.leave(this);
 	}
 
 	@Override
 	public void onBackPressed() {
 		Log.d("TaskFolderActivity", "onBackPressed");
 		setResult(RESULT_OK, new Intent());
-		finish();
+		//finish();
 		persist();	
 		super.onBackPressed();
 	}
 	
-	@Override
-	public int act(Type actType, TaskFolder folder, Task oldTask, Task task){
-		mSync = true;
-		if(this._folderIndex != folder.getId() && this._folderIndex != 0) return 0;
-		if(actType == Type.add){
-			presenter.getSorter().add(task);
-		}else if(actType == Type.update){
-			boolean updated = oldTask.tags.equalsIgnoreCase(task.tags) && oldTask.urgent == task.urgent && oldTask.expired.equalsIgnoreCase(task.expired);
-			if(!updated){
-				presenter.getSorter().remove(oldTask);
-				presenter.getSorter().add(task);
-			}
-		}
-		else {
-			presenter.getSorter().remove(oldTask);
-			if(actType == Type.finish || actType == Type.activate ){
-				presenter.getSorter().add(task);
-			}
-		}
-		m_adapter.initSelects();
-		Log.d("TaskFolderActivity act count",String.valueOf(presenter.getSorter().getCount()));
-		m_adapter.notifyDataSetChanged();
-		return 0;
-	}
-	
-	
-	
 	
 
 	static public class TaskFolderAdapter extends BaseAdapter{
-		public final static int[] res_keys = new int[]{R.string.txt_task_folder_urgent,R.string.txt_task_folder_expired, R.string.txt_task_folder_day, R.string.txt_task_folder_week, R.string.txt_task_folder_month, R.string.txt_task_folder_other, R.string.txt_task_folder_finish};
+		public final static int res_keys[] = {R.string.txt_task_folder_urgent,R.string.txt_task_folder_expired, R.string.txt_task_folder_day, R.string.txt_task_folder_week, R.string.txt_task_folder_month, R.string.txt_task_folder_year,R.string.txt_task_folder_other, R.string.txt_task_folder_finish};
 		HashMap<String,TaskListInfo> tasks = null;
 	    private LayoutInflater mLayoutInflater; 
 	    private Context context;
     	public  int taskFolderIndex;
     	private TaskFolderPresenter m_presenter;
-    	private Map<Integer, Integer> m_selects;
+    	//private Map<Integer, Integer> m_selects;
     	
 	    public final static  class TaskFolderGridItem{
 	    	public int type;
@@ -231,11 +191,11 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 	    	mLayoutInflater = LayoutInflater.from(context);
 	    	this.taskFolderIndex = taskFolderIndex;
 	    	m_presenter = presenter;
-	    	m_selects = new HashMap<Integer, Integer>();
-	    	initSelects();
+	    	//m_selects = new HashMap<Integer, Integer>();
+	    	//initSelects();
 	    }
 	    
-	    public void initSelects(){
+	    /*public void initSelects(){
 	    	m_selects.clear();
 	    	for(int i = 0; i < m_presenter.getSorter().getCount();i++){
 	    		if(getItemViewType(i) == TaskListSorter.ITEM_TYPE_CLASS) continue;
@@ -244,7 +204,7 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 	    			m_selects.put(i, i);
 	    		}
 	    	}
-	    }
+	    }*/
 	    
 		@Override
 		public int getCount() {
@@ -330,9 +290,9 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 		}
 		
 		private void taskToShow(int position , TaskFolderGridItem item) {
+			Log.d("TaskFolderActivity sort", m_presenter.getSorter().log());
 			Task task = (Task) getItem(position);
-			Log.d("TaskFolderActivity taskToShow", position + "-" + task.getName());
-			Log.d("TaskFolderActivity taskToShow item", item.name.getText().toString());
+			Log.d("TaskFolderActivity taskToShow", "pos:"+ position + "-t:" + task.getName() + "-txt:" + item.name.getText().toString());
 			
 			String tagPrefix = "";
 			if (this.taskFolderIndex == 0) {
@@ -345,14 +305,21 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 			item.tag.setText(tagPrefix + "(" + task.tags + ")" + " - " + CommonString.PriorityString[task.priority]);
 			
 			
-			if (m_selects.containsKey(position)) {
+			/*if (m_selects.containsKey(position)) {
 				item.doFinish.setChecked(true);
 				item.name.getPaint().setStrikeThruText(true);
 			} else {
 				item.doFinish.setChecked(false);
 				item.name.getPaint().setStrikeThruText(false);
-			}
+			}*/
 			item.doFinish.setTag(position);
+			if(task.status == Task.Status.finished){
+				item.doFinish.setChecked(true);
+				item.name.getPaint().setStrikeThruText(true);
+			}else{
+				item.doFinish.setChecked(false);
+				item.name.getPaint().setStrikeThruText(false);
+			}
 			if (!item.doFinish.hasOnClickListeners()) {
 				item.doFinish
 						.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -361,8 +328,10 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 									CompoundButton buttonView, boolean ischecked) {
 								int position = ((Integer) buttonView.getTag())
 										.intValue();
+								Task task = m_presenter.getSorter().getTask(position);
+								if(ischecked == (task.status == Task.Status.finished)) return;
 								if (ischecked) {
-									if (!m_selects.containsKey(buttonView
+									/*if (!m_selects.containsKey(buttonView
 											.getTag())) {
 										Task changedTask = (Task) getItem(position);
 										m_selects.put(
@@ -370,17 +339,23 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 												position);
 										m_presenter.finishTask((int)(changedTask.taskFolderId),
 												changedTask);
-									}
+									}*/
+									m_presenter.finishTask((int)(task.taskFolderId),
+											task);
+									notifyDataSetChanged();
 
 								} else {
-									if (m_selects.containsKey(buttonView
+									/*if (m_selects.containsKey(buttonView
 											.getTag())) {
 										Task changedTask = (Task) getItem(position);
 										m_selects.remove((Integer) buttonView
 												.getTag());
 										m_presenter.activateTask(
 												(int)(changedTask.taskFolderId), changedTask);
-									}
+									}*/
+									m_presenter.activateTask(
+											(int)(task.taskFolderId), task);
+									notifyDataSetChanged();
 
 								}
 							}
@@ -392,7 +367,6 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 				item.name.setText(task.getName() + " - " + task.expired.substring(task.expired.indexOf(Task.DATESPLITTER) + 1));
 			}
 			item.name.setTag(task);
-			((Activity) this.context).registerForContextMenu(item.name);
 			if (!item.name.hasOnClickListeners()) {
 				item.name.setOnClickListener(new OnClickListener() {
 					@Override
@@ -412,6 +386,7 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 					public void onClick(View arg0) {
 						Task task = (Task) arg0.getTag();
 						m_presenter.delete((int)(task.taskFolderId), task, false);
+						notifyDataSetChanged();
 					}
 
 				});
@@ -431,9 +406,12 @@ public class TaskFolderActivity extends SherlockActivity implements OnTaskResult
 		}
 		
 		public void startTaskActivity(Task task){
-			Intent intent = new Intent(this.context,TaskEditActivity.class);
-			intent.putExtra(TaskFolderPresenter.KEY_TASK, new GsonHelper().jsonString(task));
-			this.context.startActivity(intent);
+			if(this.context instanceof TaskFolderActivity){
+				TaskFolderActivity activity = (TaskFolderActivity)context;
+				Intent intent = new Intent(this.context,TaskEditActivity.class);
+				intent.putExtra(TaskFolderPresenter.KEY_TASK, new GsonHelper().jsonString(task));
+				activity.startActivityForResult(intent,0);
+			}
 		}
 
 		@Override

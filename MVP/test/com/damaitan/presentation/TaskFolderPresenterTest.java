@@ -11,12 +11,10 @@ import org.junit.Test;
 import com.damaitan.datamodel.Task;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.presentation.MainViewPresenter;
-import com.damaitan.presentation.OnTaskResult.ITaskListener;
 import com.damaitan.presentation.TaskFolderPresenter;
 
 public class TaskFolderPresenterTest {
 	TaskFolderPresenter presenter; 
-	TaskListenerTest testListener;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -30,9 +28,9 @@ public class TaskFolderPresenterTest {
 	public void setUp() throws Exception {
 		MainViewPresenter mp = new MainViewPresenter();
 		mp.initialization(mp.initJsonString());
-		testListener = new TaskListenerTest();
-		presenter = new TaskFolderPresenter(testListener);
-		testListener.presenter = presenter;
+		//testListener = new TaskListenerTest();
+		presenter = new TaskFolderPresenter(true);
+		presenter.getSorter().init(presenter.getFolderByIndex(1));
 		
 	}
 
@@ -42,6 +40,32 @@ public class TaskFolderPresenterTest {
 
 	@Test
 	public void testSaveTask() {
+		Task task1 = new Task();
+		task1.setName("haha");
+		//task1.urgent = true;
+		task1.priority = 0;
+		try {
+			presenter.saveTask(1, task1, true);
+			int key1 = presenter.getSorter().judge(task1);
+			//task1.priority = 1;
+			task1.tags = "year";
+			presenter.saveTask(1, task1, false);
+			org.junit.Assert.assertEquals(1, presenter.getFolderByIndex(1).getTasks().size());
+			org.junit.Assert.assertEquals(6,key1);
+			//org.junit.Assert.assertEquals(-1,presenter.getSorter().get(key).start_position);
+			//org.junit.Assert.assertEquals(0,presenter.getSorter().get(key).tasks.size());
+			org.junit.Assert.assertEquals(2,presenter.getSorter().getCount());
+			/*task1.urgent = true;
+			presenter.saveTask(1, task1, false);
+			key1 = presenter.getSorter().judge(task1);
+			org.junit.Assert.assertEquals(1, presenter.getFolderByIndex(1).getTasks().size());
+			org.junit.Assert.assertEquals("urgent",key1);
+			org.junit.Assert.assertEquals(2,presenter.getSorter().getCount());*/
+			
+			
+		} catch (ServiceException e) {
+			fail(e.getMessage());
+		}
 		
 	}
 
@@ -56,13 +80,10 @@ public class TaskFolderPresenterTest {
 			presenter.saveTask(1, task1, true);
 			presenter.saveTask(1, task2, true);
 			presenter.delete(1, task1, true);
-			org.junit.Assert.assertEquals(3,this.testListener.count);
-			String key = presenter.getSorter().judge(task1);
+			int key = presenter.getSorter().judge(task1);
 			org.junit.Assert.assertEquals("urgent",key);
 			org.junit.Assert.assertEquals(-1,presenter.getSorter().get(key).start_position);
 			org.junit.Assert.assertEquals(0,presenter.getSorter().get(key).tasks.size());
-			String key1 = presenter.getSorter().judge(testListener.testOld);
-			org.junit.Assert.assertEquals(key,key1);
 			org.junit.Assert.assertEquals(2,presenter.getSorter().getCount());
 			
 		} catch (ServiceException e) {
@@ -78,22 +99,20 @@ public class TaskFolderPresenterTest {
 			task1.urgent = true;
 			Task task2 = new Task();
 			task2.setName("ok");
-			task2.expired = 2015 + Task.DATESPLITTER + 1 + Task.DATESPLITTER + 3;
-			task2.repeat = true;
-			task2.repeat_proid = 7;
+			//task2.expired = 2015 + Task.DATESPLITTER + 1 + Task.DATESPLITTER + 3;
+			//task2.repeat = true;
+			//task2.repeat_proid = 7;
+			task2.urgent = true;
 			presenter.saveTask(1, task1, true);
 			presenter.saveTask(1, task2, true);
 			org.junit.Assert.assertEquals(task1.getId(), presenter.getSorter().getTask(1).getId());
-			org.junit.Assert.assertEquals(task2.getId(), presenter.getSorter().getTask(3).getId());
+			org.junit.Assert.assertEquals(task2.getId(), presenter.getSorter().getTask(2).getId());
+			org.junit.Assert.assertEquals(3, presenter.getSorter().getCount());
 			presenter.finishTask(1, task1);
 			org.junit.Assert.assertEquals(task2.getId(), presenter.getSorter().getTask(1).getId());
 			org.junit.Assert.assertEquals(task1.getId(), presenter.getSorter().getTask(3).getId());
-			org.junit.Assert.assertEquals(ITaskListener.Type.finish, testListener.trigger);
-			org.junit.Assert.assertEquals(testListener.testOld.status, Task.Status.ongoing);
-			org.junit.Assert.assertEquals(testListener.testTask.status, Task.Status.finished);
-			presenter.finishTask(1, task2);
-			org.junit.Assert.assertEquals(ITaskListener.Type.add , testListener.trigger);
-			org.junit.Assert.assertEquals(5,testListener.count);
+			org.junit.Assert.assertEquals(4, presenter.getSorter().getCount());
+			//presenter.finishTask(1, task2);
 			
 		} catch (ServiceException e) {
 			fail();
@@ -109,9 +128,6 @@ public class TaskFolderPresenterTest {
 			presenter.saveTask(1, task, true);
 			presenter.finishTask(1, task);
 			presenter.activateTask(1, task);
-			org.junit.Assert.assertEquals(ITaskListener.Type.activate, testListener.trigger);
-			org.junit.Assert.assertEquals(testListener.testOld.status, Task.Status.finished);
-			org.junit.Assert.assertEquals(testListener.testTask.status, Task.Status.ongoing);
 		} catch (ServiceException e) {
 			fail();
 		}
