@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.damaitan.presentation;
+package com.damaitan.service;
 
 import java.util.ArrayList;
 

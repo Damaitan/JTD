@@ -10,6 +10,7 @@ import android.content.Context;
 public class JsonHelper{
 
 	public static final String JTDFile = "JTD.json";
+	public static final String StatisticsFile = "statistics.json";
 	
 	public JsonHelper() {
 	}
@@ -35,13 +36,18 @@ public class JsonHelper{
 	}
 	
 
-	public static boolean saveJsonStringToFile(Context handler, String json ) throws Exception {
+	public static boolean saveContentToFile(Context handler, String json ) throws Exception {
 		return saveJsonStringToFile(handler, JTDFile, json);
 	}
 	
+	public static boolean saveStatisticsToFile(Context handler, String json ) throws Exception {
+		return saveJsonStringToFile(handler, StatisticsFile, json);
+	}
+	
+	
 	public static boolean saveJsonStringToFile(Context handler, String filename, String json ) throws Exception {
 		try {
-			FileOutputStream fout = handler.openFileOutput(filename, Context.MODE_PRIVATE);
+			FileOutputStream fout = handler.openFileOutput(filename, Context.MODE_WORLD_READABLE);
 			byte[] bytes = json.getBytes();
 			fout.write(bytes);
 			fout.close();

@@ -12,6 +12,7 @@ import com.damaitan.datamodel.CommonString;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.service.ModelManager;
+import com.damaitan.service.OnTaskResult;
 
 
 public class TaskListSorter implements OnTaskResult.ITaskListener {

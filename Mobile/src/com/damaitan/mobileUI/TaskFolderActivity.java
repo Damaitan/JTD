@@ -36,6 +36,7 @@ import com.damaitan.presentation.TaskFolderPresenter;
 import com.damaitan.presentation.TaskListSorter;
 import com.damaitan.service.GsonHelper;
 import com.damaitan.service.ModelManager;
+import com.damaitan.service.StatisticsService;
 
 /**
  * @author admin
@@ -136,7 +137,8 @@ public class TaskFolderActivity extends SherlockActivity {
 	
 	private void persist(){
 		try {
-			JsonHelper.saveJsonStringToFile(this, ModelManager.getInstance().JsonString());
+			JsonHelper.saveContentToFile(this, ModelManager.getInstance().JsonString());
+			JsonHelper.saveStatisticsToFile(this, StatisticsService.getInstance().JsonString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

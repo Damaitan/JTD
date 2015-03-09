@@ -11,6 +11,7 @@ import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.ModelManager;
+import com.damaitan.service.OnTaskResult;
 
 public class TaskFolderPresenter {
 	public final static String KEY_TASK = "TASK";

@@ -35,6 +35,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.damaitan.exception.PresentationException;
 import com.damaitan.presentation.MainViewPresenter;
+import com.damaitan.service.ModelManager;
+import com.damaitan.service.StatisticsService;
 
 public class MainActivity extends SherlockListActivity{
     private static int MENU_ID_SETTING = 0;
@@ -60,11 +62,16 @@ public class MainActivity extends SherlockListActivity{
 				Log.d("MainActivity FileExist", content);
 			}else{
 				content = presenter.initJsonString();
-				JsonHelper.saveJsonStringToFile(this, content);
+				JsonHelper.saveContentToFile(this, content);
 				Log.i("Mobile", "Create new file : " + JsonHelper.JTDFile);
 				Log.d("MainActivity No File", content);
 			}
 			presenter.initialization(content);
+			if (JsonHelper.isFileExist(JsonHelper.StatisticsFile)) {
+				StatisticsService.getInstance().init(JsonHelper.getJsonString(this, JsonHelper.StatisticsFile));
+			}else{
+				StatisticsService.getInstance().init(ModelManager.getInstance().getFolders());
+			}
 			presenter.getData(m_listData);
 			setListAdapter(new SimpleAdapter(this, m_listData,
 					android.R.layout.simple_list_item_1,
