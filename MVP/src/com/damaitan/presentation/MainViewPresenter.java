@@ -11,6 +11,7 @@ import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.exception.PresentationException;
 import com.damaitan.exception.ServiceException;
 import com.damaitan.service.ModelManager;
+import com.damaitan.service.StatisticsService;
 
 /**
  * @author admin
@@ -78,6 +79,10 @@ public class MainViewPresenter {
 			completedTasks = completedTasks + ModelManager.getInstance().getTaskFolder(i).getCompletedTaskNumber();
 		}
 		return ModelManager.getInstance().getTaskFolder(0).getName() + " - " + completedTasks + "/" + allTasks;
+	}
+	
+	public String getStatisticsCSV(){
+		return StatisticsService.getInstance().getCSV();
 	}
 
 }

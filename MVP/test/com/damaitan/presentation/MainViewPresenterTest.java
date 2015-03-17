@@ -59,6 +59,7 @@ public class MainViewPresenterTest {
 		
 		SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.CHINA);
 		test = df.format(calendar.getTime());
+		int weeks = calendar.get(Calendar.WEEK_OF_YEAR);
 		df = new SimpleDateFormat("MM" + Task.DATESPLITTER + "dd",  Locale.CHINA);
 		test = df.format(calendar.getTime());
 		

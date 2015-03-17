@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
@@ -39,7 +40,7 @@ import com.damaitan.service.ModelManager;
 import com.damaitan.service.StatisticsService;
 
 public class MainActivity extends SherlockListActivity{
-    private static int MENU_ID_SETTING = 0;
+    //private static int MENU_ID_SETTING = 0;
     private static int MENU_ID_STATISTICS = 2;
     private static int MENU_ID_CLEAN = 3;
     private MainViewPresenter presenter;
@@ -95,8 +96,8 @@ public class MainActivity extends SherlockListActivity{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0,MENU_ID_SETTING,MENU_ID_SETTING,this.getString(R.string.menu_main_setting))
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        /*menu.add(0,MENU_ID_SETTING,MENU_ID_SETTING,this.getString(R.string.menu_main_setting))
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         
         menu.add(0,MENU_ID_STATISTICS,MENU_ID_STATISTICS,this.getString(R.string.menu_main_statistics))
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -114,6 +115,20 @@ public class MainActivity extends SherlockListActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
     	if(item.getItemId() == MENU_ID_CLEAN){
     		presenter.cleanFinished();
+		}
+    	
+    	if(item.getItemId() == MENU_ID_STATISTICS){
+    		String cvs = presenter.getStatisticsCSV();
+    		Log.d("MainActivity csv" , cvs);
+    		try {
+				JsonHelper.saveJsonStringToFile(this, "gtd.csv", cvs);
+				Toast.makeText(this,this.getString(R.string.info_main_statistics),
+						Toast.LENGTH_SHORT).show();
+			} catch (Exception e) {
+				Log.e("MainActivity csv", "csv",e);
+				Toast.makeText(this,this.getString(R.string.fail_main_statistics),
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 		
         return true;

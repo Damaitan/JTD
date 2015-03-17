@@ -1,6 +1,9 @@
 package com.damaitan.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
@@ -32,27 +35,27 @@ public class StatisticsService implements OnTaskResult.ITaskListener{
 		TaskFoldersSatistics.Satistics all = new TaskFoldersSatistics.Satistics();
 		all.taskFolderId = 0;
 		all.folderName = folders.get(0).getName();
+		mTaskFoldersSatistics.satistics.add(all);
 		for(int i = 1; i < folders.size(); i++){
 			TaskFolder folder = folders.get(i);
 			TaskFoldersSatistics.Satistics satistics = new TaskFoldersSatistics.Satistics();
 			satistics.taskFolderId = folder.getId();
 			satistics.folderName = folder.getName();
 			satistics.allTasksNumber = folder.getAllTaskNumber();
-			all.allTasksNumber = all.allTasksNumber + satistics.allTasksNumber;
 			satistics.finishTasksNumber = folder.getCompletedTaskNumber();
-			all.finishTasksNumber = all.finishTasksNumber + satistics.finishTasksNumber;
-			mTaskFoldersSatistics.satistics.add(all);
 			for(Task task : folder.getTasks()){
 				if(task.priority == 3) satistics.TopPriorityTasksNumber++;
 				if(task.priority == 2) satistics.highPriorityTasksNumber++;
 				if(task.priority == 1) satistics.NormalPriorityTasksNumber++;
 				if(task.priority == 0) satistics.lowPriorityTasksNumber++;
 			}
+			mTaskFoldersSatistics.satistics.add(satistics);
+			all.allTasksNumber = all.allTasksNumber + satistics.allTasksNumber;
+			all.finishTasksNumber = all.finishTasksNumber + satistics.finishTasksNumber;
 			all.TopPriorityTasksNumber = all.TopPriorityTasksNumber + satistics.TopPriorityTasksNumber;
 			all.highPriorityTasksNumber = all.highPriorityTasksNumber + satistics.highPriorityTasksNumber;
 			all.NormalPriorityTasksNumber = all.NormalPriorityTasksNumber + satistics.NormalPriorityTasksNumber;
 			all.lowPriorityTasksNumber = all.lowPriorityTasksNumber + satistics.lowPriorityTasksNumber;
-			mTaskFoldersSatistics.satistics.add(satistics);
 		}
 	}
 	
@@ -124,6 +127,29 @@ public class StatisticsService implements OnTaskResult.ITaskListener{
 	
 	public String JsonString(){
 		return new GsonHelper().jsonString(mTaskFoldersSatistics);
+	}
+	
+	
+	public String getCSV(){
+		StringBuffer buffer = new StringBuffer();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy" + Task.DATESPLITTER + "MM" + Task.DATESPLITTER + "dd",  Locale.CHINA);
+		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		String splitter = ",";
+		buffer.append(df.format(calendar.getTime()));
+		buffer.append(splitter + calendar.get(Calendar.WEEK_OF_YEAR));
+		TaskFoldersSatistics.Satistics  all = mTaskFoldersSatistics.satistics.get(0);
+		buffer.append(splitter + all.allTasksNumber);
+		buffer.append(splitter + all.finishTasksNumber);
+		buffer.append(splitter + all.TopPriorityTasksNumber);
+		buffer.append(splitter + all.highPriorityTasksNumber);
+		buffer.append(splitter + all.NormalPriorityTasksNumber);
+		buffer.append(splitter + all.lowPriorityTasksNumber);
+		for(int i = 1; i < mTaskFoldersSatistics.satistics.size(); i++){
+			buffer.append(splitter + mTaskFoldersSatistics.satistics.get(i).allTasksNumber);
+			buffer.append(splitter + mTaskFoldersSatistics.satistics.get(i).finishTasksNumber);
+		}
+		return buffer.toString();
+		
 	}
 
 }

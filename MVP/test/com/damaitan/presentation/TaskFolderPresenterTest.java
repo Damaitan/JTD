@@ -133,5 +133,41 @@ public class TaskFolderPresenterTest {
 		}
 		
 	}
+	
+	@Test
+	public void testSaveTask_Expired() {
+		Task task = new Task();
+		task.setName("haha");
+		task.expired = "2015/3/25";
+		try {
+			presenter.saveTask(1, task, true);
+			org.junit.Assert.assertEquals(3, presenter.getSorter().judge(task));
+			org.junit.Assert.assertNotNull(presenter.getSorter().getTask(1));
+			org.junit.Assert.assertSame(presenter.getSorter().getTaskKey(1), "week");
+		} catch (ServiceException e) {
+			fail();
+		}
+		
+	}
+	
+	@Test
+	public void testFinishTask_Repeat() {
+		Task task = new Task();
+		task.setName("haha");
+		task.repeat = true;
+		task.repeat_proid = 2;
+		task.expired = "2015/3/16";
+		try {
+			presenter.saveTask(1, task, true);
+			presenter.finishTask(1, task);
+			org.junit.Assert.assertEquals(4, presenter.getSorter().getCount());
+			org.junit.Assert.assertEquals(presenter.getSorter().getTask(1).expired, "2015/03/18");
+			org.junit.Assert.assertSame("finish",presenter.getSorter().getTaskKey(3));
+		} catch (ServiceException e) {
+			fail();
+		}
+		
+	}
+	
 
 }

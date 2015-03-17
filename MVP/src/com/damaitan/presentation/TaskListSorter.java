@@ -3,6 +3,7 @@ package com.damaitan.presentation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
     				break;
     			}
     		}
+    		
     		return true;
     	}
     	
@@ -74,8 +76,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 		if(task.urgent) return 0;
 		
 		int index = judgeDate(task);
-		if(index == 0) return  1;
-		if(index == 1) return  2;
+		if(index == 1 || index == 2) return  index;
 		
 		if (task.tags != null && !task.tags.isEmpty()) {
 			if (task.tags.contains(CommonString.InitTag[0])) {
@@ -83,7 +84,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 			} else if (task.tags.contains(CommonString.InitTag[1])) {
 					return 3;
 			}else if (task.tags.contains(CommonString.InitTag[2])) {
-				if(index == 2){
+				if(index == 3){
 					return 3;
 				}else{
 					return 4;
@@ -92,6 +93,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 				return 5;
 			}
 		}
+		if(index != -1) return index;
 		return 6;
 	}
 	
@@ -117,17 +119,17 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 				e.printStackTrace();
 			}
 			if(diff < 0){
-				return 0;
+				return 1;
 			} 
 			if(diff < 2){
-				return 1;
+				return 2;
 			}
 			if(diff < 8 ){
-				return 2;
-			}else if(diff < 31){
 				return 3;
+			}else if(diff < 31){
+				return 4;
 			}else{
-				return 4; 
+				return 5; 
 			}
 		}
 		return -1;
@@ -143,6 +145,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 		}else{
 			classifyData(m_folder);
 		}
+		sort();
 		startPostion();
 		return true;
 	}
@@ -156,6 +159,12 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 			m_data.get(KEY_FINISH).add(task);
 		}
 		
+	}
+	
+	private void sort(){
+		for(int i = 0; i < KEY_FINISH + 1; i++){
+			Collections.sort(m_data.get(i).tasks, new SortByPriorityForTaskList());
+		}
 	}
 	
 	private void startPostion(){
@@ -184,7 +193,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 	}
 	
 	public boolean add(Task task){
-		boolean result = m_data.get(judge(task)).add(task);
+		boolean result = m_data.get(judge(task)).add(task);		
 		startPostion();
 		return result;
 	}
@@ -204,6 +213,17 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 			}
 		}
 		return null;
+	}
+	
+	public String getTaskKey(int position){
+		for(int i = 0; i < KEY_FINISH + 1; i++){
+			TaskListInfo info = (TaskListInfo)m_data.get(i);
+			if(info.start_position < 0) continue;
+			if(position > info.start_position && position < info.start_position + info.tasks.size() + 1){
+				return info.key;
+			}
+		}
+		return "";
 	}
 	
 	public int getItemType(int position){

@@ -9,6 +9,7 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -149,7 +150,6 @@ public class TaskFolderActivity extends SherlockActivity {
 	public void onBackPressed() {
 		Log.d("TaskFolderActivity", "onBackPressed");
 		setResult(RESULT_OK, new Intent());
-		//finish();
 		persist();	
 		super.onBackPressed();
 	}
@@ -163,7 +163,6 @@ public class TaskFolderActivity extends SherlockActivity {
 	    private Context context;
     	public  int taskFolderIndex;
     	private TaskFolderPresenter m_presenter;
-    	//private Map<Integer, Integer> m_selects;
     	
 	    public final static  class TaskFolderGridItem{
 	    	public int type;
@@ -193,20 +192,7 @@ public class TaskFolderActivity extends SherlockActivity {
 	    	mLayoutInflater = LayoutInflater.from(context);
 	    	this.taskFolderIndex = taskFolderIndex;
 	    	m_presenter = presenter;
-	    	//m_selects = new HashMap<Integer, Integer>();
-	    	//initSelects();
 	    }
-	    
-	    /*public void initSelects(){
-	    	m_selects.clear();
-	    	for(int i = 0; i < m_presenter.getSorter().getCount();i++){
-	    		if(getItemViewType(i) == TaskListSorter.ITEM_TYPE_CLASS) continue;
-	    		Task task = m_presenter.getSorter().getTask(i);
-	    		if(task.status == Task.Status.finished){
-	    			m_selects.put(i, i);
-	    		}
-	    	}
-	    }*/
 	    
 		@Override
 		public int getCount() {
@@ -268,6 +254,8 @@ public class TaskFolderActivity extends SherlockActivity {
 		private void prepareViewData(int type, int position, TaskFolderGridItem item){
 			if (type == TaskListSorter.ITEM_TYPE_CLASS) {
 				item.className.setText(getClassName(position));
+				item.className.setBackgroundColor(Color.WHITE);
+				item.className.setTextColor(Color.BLACK);
 			} else {
 				taskToShow(position, item);
 			}
@@ -296,6 +284,12 @@ public class TaskFolderActivity extends SherlockActivity {
 			Task task = (Task) getItem(position);
 			Log.d("TaskFolderActivity taskToShow", "pos:"+ position + "-t:" + task.getName() + "-txt:" + item.name.getText().toString());
 			
+			String key = m_presenter.getSorter().getTaskKey(position);
+			if(key.equalsIgnoreCase(TaskListSorter.keys[0]) || key.equalsIgnoreCase(TaskListSorter.keys[1])){
+				item.name.setTextColor(Color.RED);
+				item.tag.setTextColor(Color.RED);
+			}
+			
 			String tagPrefix = "";
 			if (this.taskFolderIndex == 0) {
 				TaskFolder folder = ModelManager.getInstance().getTaskFolder(
@@ -305,15 +299,6 @@ public class TaskFolderActivity extends SherlockActivity {
 				}
 			}
 			item.tag.setText(tagPrefix + "(" + task.tags + ")" + " - " + CommonString.PriorityString[task.priority]);
-			
-			
-			/*if (m_selects.containsKey(position)) {
-				item.doFinish.setChecked(true);
-				item.name.getPaint().setStrikeThruText(true);
-			} else {
-				item.doFinish.setChecked(false);
-				item.name.getPaint().setStrikeThruText(false);
-			}*/
 			item.doFinish.setTag(position);
 			if(task.status == Task.Status.finished){
 				item.doFinish.setChecked(true);
@@ -333,28 +318,11 @@ public class TaskFolderActivity extends SherlockActivity {
 								Task task = m_presenter.getSorter().getTask(position);
 								if(ischecked == (task.status == Task.Status.finished)) return;
 								if (ischecked) {
-									/*if (!m_selects.containsKey(buttonView
-											.getTag())) {
-										Task changedTask = (Task) getItem(position);
-										m_selects.put(
-												(Integer) buttonView.getTag(),
-												position);
-										m_presenter.finishTask((int)(changedTask.taskFolderId),
-												changedTask);
-									}*/
 									m_presenter.finishTask((int)(task.taskFolderId),
 											task);
 									notifyDataSetChanged();
 
 								} else {
-									/*if (m_selects.containsKey(buttonView
-											.getTag())) {
-										Task changedTask = (Task) getItem(position);
-										m_selects.remove((Integer) buttonView
-												.getTag());
-										m_presenter.activateTask(
-												(int)(changedTask.taskFolderId), changedTask);
-									}*/
 									m_presenter.activateTask(
 											(int)(task.taskFolderId), task);
 									notifyDataSetChanged();

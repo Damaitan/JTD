@@ -15,14 +15,6 @@ public class TaskFoldersSatistics {
 		public int highPriorityTasksNumber = 0;
 		public int NormalPriorityTasksNumber = 0;
 		public int lowPriorityTasksNumber = 0;
-		
-		public String getCSV(){
-			return "";
-		}
-	}
-	
-	public String getCSV(){
-		return "";
 	}
 
 }
