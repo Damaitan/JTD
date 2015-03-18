@@ -121,7 +121,7 @@ public class TaskListSorter implements OnTaskResult.ITaskListener {
 			if(diff < 0){
 				return 1;
 			} 
-			if(diff < 2){
+			if(diff < 1){
 				return 2;
 			}
 			if(diff < 8 ){

@@ -13,7 +13,7 @@ public class StatisticsService implements OnTaskResult.ITaskListener{
 	
 	private static StatisticsService uniqueInstance = null;
 	private StatisticsService(){
-		OnTaskResult.getInstance().leave(this);
+		OnTaskResult.getInstance().join(this);
 	}
 	
 	public static StatisticsService getInstance() {
@@ -43,7 +43,7 @@ public class StatisticsService implements OnTaskResult.ITaskListener{
 			satistics.folderName = folder.getName();
 			satistics.allTasksNumber = folder.getAllTaskNumber();
 			satistics.finishTasksNumber = folder.getCompletedTaskNumber();
-			for(Task task : folder.getTasks()){
+			for(Task task : folder.getFinishedTasks()){
 				if(task.priority == 3) satistics.TopPriorityTasksNumber++;
 				if(task.priority == 2) satistics.highPriorityTasksNumber++;
 				if(task.priority == 1) satistics.NormalPriorityTasksNumber++;
@@ -112,8 +112,8 @@ public class StatisticsService implements OnTaskResult.ITaskListener{
 		}
 		if (type == Type.delete) {
 			if (oldTask.status != Task.Status.finished) {
-				mTaskFoldersSatistics.satistics.get(0).allTasksNumber++;
-				mTaskFoldersSatistics.satistics.get((int) (folder.getId())).allTasksNumber++;
+				mTaskFoldersSatistics.satistics.get(0).allTasksNumber--;
+				mTaskFoldersSatistics.satistics.get((int) (folder.getId())).allTasksNumber--;
 			}
 		}
 		return 0;

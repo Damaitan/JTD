@@ -138,7 +138,7 @@ public class TaskFolderPresenterTest {
 	public void testSaveTask_Expired() {
 		Task task = new Task();
 		task.setName("haha");
-		task.expired = "2015/3/25";
+		task.expired = "2015/3/20";
 		try {
 			presenter.saveTask(1, task, true);
 			org.junit.Assert.assertEquals(3, presenter.getSorter().judge(task));
@@ -168,6 +168,23 @@ public class TaskFolderPresenterTest {
 		}
 		
 	}
+	
+	@Test
+	public void testChangeTaskFolder() {
+		Task task = new Task();
+		task.setName("haha");
+		try {
+			presenter.saveTask(1, task, true);
+			task.taskFolderId = task.taskFolderId + 1;
+			presenter.saveTask(1, task, false);
+			org.junit.Assert.assertEquals(0, presenter.getSorter().getCount());
+			org.junit.Assert.assertEquals(0,presenter.getFolderByIndex(1).getTasks().size());
+		} catch (ServiceException e) {
+			fail();
+		}
+		
+	}
+	
 	
 
 }

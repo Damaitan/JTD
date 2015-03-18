@@ -65,7 +65,7 @@ public class TaskFolderPresenter {
 			TaskFolder changedTofolder = getFolderByIndex((int)(task.taskFolderId));
 			changedTofolder.addTask(task);
 			OnTaskResult.getInstance().inform(
-					OnTaskResult.ITaskListener.Type.add, folder, null, task);
+					OnTaskResult.ITaskListener.Type.add, changedTofolder, null, task);
 			return result ? 0 : 1;
 		} 
 		Task oldTask = folder.updateTask(task);
