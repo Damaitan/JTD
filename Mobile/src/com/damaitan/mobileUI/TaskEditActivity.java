@@ -251,7 +251,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 							Toast.LENGTH_SHORT).show();
 				} else {
 					if (this.mTask.getId() != Task.invalidId) {
-						setResult(presenter.saveTask((int) (mTask.taskFolderId),
+						setResult(presenter.saveTask(folderindex,
 								mTask, false), new Intent());
 					} else {
 						setResult(presenter.saveTask((int) (mTask.taskFolderId),

@@ -9,6 +9,7 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -163,6 +164,8 @@ public class TaskFolderActivity extends SherlockActivity {
 	    private Context context;
     	public  int taskFolderIndex;
     	private TaskFolderPresenter m_presenter;
+    	private boolean m_isGetsystemColor = false;
+    	private ColorStateList m_sysColor;
     	
 	    public final static  class TaskFolderGridItem{
 	    	public int type;
@@ -276,6 +279,11 @@ public class TaskFolderActivity extends SherlockActivity {
 						.findViewById(R.id.task_folder_item_tag);
 				item.delete = (Button) convertView
 						.findViewById(R.id.task_folder_item_btn_date);
+				
+				if(!m_isGetsystemColor){
+					m_sysColor = item.name.getTextColors();
+					m_isGetsystemColor = true;
+				}
 			}
 		}
 		
@@ -285,9 +293,12 @@ public class TaskFolderActivity extends SherlockActivity {
 			Log.d("TaskFolderActivity taskToShow", "pos:"+ position + "-t:" + task.getName() + "-txt:" + item.name.getText().toString());
 			
 			String key = m_presenter.getSorter().getTaskKey(position);
-			if(key.equalsIgnoreCase(TaskListSorter.keys[0]) || key.equalsIgnoreCase(TaskListSorter.keys[1])){
+			if(key.equals(TaskListSorter.keys[0]) || key.equals(TaskListSorter.keys[1])){
 				item.name.setTextColor(Color.RED);
-				item.tag.setTextColor(Color.RED);
+				//item.tag.setTextColor(Color.RED);
+			}else{
+				item.name.setTextColor(m_sysColor);
+				//item.tag.setTextColor(m_sysColor);
 			}
 			
 			String tagPrefix = "";
