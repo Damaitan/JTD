@@ -123,7 +123,7 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
         	namePreference.setDefaultValue(mTask.getName());
         	namePreference.setSummary(mTask.getName());
         	urgentPreference.setChecked(mTask.urgent);
-        	tagPreference.setDefaultValue(mTask.tags);
+        	tagPreference.setDefaultValue(mTask.tags.trim());
         	if(!this.mTask.tags.equalsIgnoreCase("")){
         		tagPreference.setSummary(mTask.tags);
         	}
@@ -133,17 +133,17 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 			if(!this.mTask.note.equalsIgnoreCase("")){
 				notePreference.setSummary(mTask.note);
         	}
-        	parentPreference.setDefaultValue(mTask.parentTaskId);
-        	if(!parentTaskName.equalsIgnoreCase("")){
+        	if(!parentTaskName.isEmpty()){
         		parentPreference.setSummary(parentTaskName);
         	}
-        	repeatPreference.setChecked(this.mTask.repeat);
+        	
+        	repeatPreference.setChecked(mTask.repeat);
         	expiredPreference.setDefaultValue(this.mTask.expired);
-        	if(!this.mTask.expired.isEmpty()){
+        	if(mTask.repeat && !this.mTask.expired.isEmpty()){
         		expiredPreference.setSummary(mTask.expired);
         	}
         	repeatPeroidPreference.setDefaultValue(this.mTask.repeat_proid);
-        	if(this.mTask.repeat_proid != -1){
+        	if(mTask.repeat){
         		repeatPeroidPreference.setSummary(String.valueOf(mTask.repeat_proid));
         	}
         	
@@ -172,24 +172,27 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 			this.parentPreference.setEnabled(false);
 		}
 		int size = parentFolder.getTasks().size();
-		String parentTaskName = "";
+		Task parentTask = null;
 		if(parentFolder != null && size > 0){
 			String entries[] = new String[size];
 			String values[] = new String[size];
 			for(int i = 0; i < size; i++){
 				Task task = parentFolder.getTasks().get(i);
-				if(task.parentTaskId == this.mTask.parentTaskId){
-					parentTaskName = task.getName();
+				if(task.getId() == mTask.parentTaskId){
+					parentTask = task;
 				}
 				entries[i] = task.getName();
 				values[i] = Long.toString(task.getId());
 			}
 			this.parentPreference.setEntries(entries);
 			this.parentPreference.setEntryValues(values);
+			if(parentTask != null){
+				this.parentPreference.setDefaultValue(Long.toString(parentTask.getId()));
+			}
 		}else{
 			this.parentPreference.setEnabled(false);
 		}
-		return parentTaskName;
+		return parentTask != null ? parentTask.getName(): "";
 	}
 
 	 public boolean onPreferenceChange(Preference preference, Object objValue) {
@@ -199,8 +202,11 @@ public class TaskEditActivity extends SherlockPreferenceActivity  implements Pre
 		 }else if(preference.getKey().equals(TaskFolderPresenter.URGENT_KEY)){
 			 this.mTask.urgent = ((Boolean)objValue).booleanValue();
 		 }else if(preference.getKey().equals(TaskFolderPresenter.TAG_KEY)){
-			 preference.setSummary((String)objValue);
-			 this.mTask.tags = ((String)objValue);
+			 String value = (String)objValue;
+			 if(value != null && !value.trim().isEmpty()){
+				 preference.setSummary(value);
+				 this.mTask.tags = value;
+			 }
 		 }else if(preference.getKey().equals(TaskFolderPresenter.PRIORITY_KEY)){
 			 ListPreference lp = (ListPreference)preference;
 			 int index = lp.findIndexOfValue((String)objValue);

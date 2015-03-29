@@ -33,6 +33,7 @@ import com.actionbarsherlock.view.SubMenu;
 import com.damaitan.datamodel.CommonString;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
+import com.damaitan.exception.ServiceException;
 import com.damaitan.presentation.MainViewPresenter;
 import com.damaitan.presentation.TaskFolderPresenter;
 import com.damaitan.presentation.TaskListSorter;
@@ -342,10 +343,22 @@ public class TaskFolderActivity extends SherlockActivity {
 							}
 						});
 			}
+			String folderName = "";
+			if(task.parentTaskId != Task.invalidId){
+				try {
+					TaskFolder parentFolder = m_presenter.getFolderByIndex((int)task.taskFolderId + 1);
+					Task parent = parentFolder.findTask(task.parentTaskId);
+					if(parent != null){
+						folderName = " : "  + parent.getName();
+					}
+				} catch (ServiceException e) {
+					folderName = "";
+				}
+			}
 			if(task.expired.isEmpty()){
-				item.name.setText(task.getName());
+				item.name.setText(task.getName() + folderName);
 			}else{
-				item.name.setText(task.getName() + " - " + task.expired.substring(task.expired.indexOf(Task.DATESPLITTER) + 1));
+				item.name.setText(task.getName() + folderName + " - " + task.expired.substring(task.expired.indexOf(Task.DATESPLITTER) + 1));
 			}
 			item.name.setTag(task);
 			if (!item.name.hasOnClickListeners()) {

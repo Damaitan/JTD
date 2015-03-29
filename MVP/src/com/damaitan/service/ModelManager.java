@@ -12,9 +12,9 @@ import com.damaitan.exception.ServiceException;
 
 public final class ModelManager{
 	
-	private ModelStruct modelStruct = new ModelStruct();
-	private ArrayList<String> tags = new ArrayList<String>(); // Tags are got from all taks tags
-	private long taskId = 0;
+	private ModelStruct m_modelStruct = new ModelStruct();
+	private ArrayList<String> m_tags = new ArrayList<String>(); // Tags are got from all taks tags
+	private long m_taskId = 0;
 	private static ModelManager uniqueInstance = null;
 	private ModelManager(){
 	}
@@ -41,53 +41,54 @@ public final class ModelManager{
 	}
 	
 	public String JsonString(){
-		return new GsonHelper().jsonString(modelStruct);
+		return new GsonHelper().jsonString(m_modelStruct);
 	}
 	
 	public ArrayList<TaskFolder> getFolders(){
-		return modelStruct.getFolders();
+		return m_modelStruct.getFolders();
 
 	}
 	
 	public void tag(Task task){
-		if(task.tags == null)
-			return;
-		for(String item : task.tags.split(Task.TAGSPLITTER)){
+		if(task.tags == null) return;
+		if(task.tags.trim().isEmpty()) return;
+		for(String item : task.tags.trim().split(Task.TAGSPLITTER)){
 			if(item.trim().isEmpty())continue;
-			if(!tags.contains(item.trim())){
-				tags.add(item.trim());
+			if(!m_tags.contains(item.trim())){
+				m_tags.add(item.trim());
 			}
 		}
 	}
 
 	public ArrayList<String> getTags(){
-		return this.tags;
+		return this.m_tags;
 	}
 	
 	public void construct(String json) throws ServiceException {
-		this.modelStruct = new GsonHelper().fromJson(json, ModelStruct.class);
+		this.m_modelStruct = new GsonHelper().fromJson(json, ModelStruct.class);
+		m_tags.clear();
 		for(String str : CommonString.InitTag){
-			tags.add(str);
+			m_tags.add(str);
 		}
-		for(TaskFolder folder : modelStruct.getFolders()){
+		for(TaskFolder folder : m_modelStruct.getFolders()){
 			for(Task item : folder.getTasks()){
 				tag(item);
-				if(item.getId() > taskId){
-					taskId = item.getId();
+				if(item.getId() > m_taskId){
+					m_taskId = item.getId();
 				}
 			}
 		}
 		
 	}
 	public TaskFolder getTaskFolder(int index){
-		return modelStruct.getFolders().get(index);
+		return m_modelStruct.getFolders().get(index);
 	}
 	public long getNewTaskId(boolean updateId){
 		if(updateId){
-			taskId++;
-			return taskId;
+			m_taskId++;
+			return m_taskId;
 		}
-		return taskId+1;
+		return m_taskId+1;
 	}
 	
 }

@@ -114,6 +114,14 @@ public class TaskFolder extends Model {
 	public String getSimpleInfo(){
 		return this.getName() + " - " + this.getCompletedTaskNumber() + "/" + this.getAllTaskNumber(); 
 	}
+	
+	public Task findTask(long id){
+		int index = findTaskIndex(this.tasks,id);
+		if (-1 != index) return this.tasks.get(index);
+		index = findTaskIndex(this.finishedTasks,id);
+		if (-1 != index) return this.finishedTasks.get(index);
+		return null;
+	}
 
 	@Override
 	public TaskFolder clone() {
