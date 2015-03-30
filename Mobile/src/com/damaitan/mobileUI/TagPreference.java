@@ -63,12 +63,18 @@ public class TagPreference extends DialogPreference {
 			 */
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
+				boolean setTag = false;
+				if(convertView == null){
+					setTag = true;
+				}
 				View view = super.getView(position, convertView, parent);
 				CheckBox chbox = (CheckBox)view.findViewById(R.id.tag_check_listitem);
 				Map<String,Object> lstitem = m_items.get(position);
 				chbox.setChecked((Boolean)lstitem.get(checkKey));
 				chbox.setText((String)lstitem.get(nameKey));
-				chbox.setTag(position);
+				if(setTag){
+					chbox.setTag(position);
+				}
 				if(!chbox.hasOnClickListeners()){
 					chbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 						@Override
