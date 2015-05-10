@@ -44,7 +44,6 @@ public class JsonHelper{
 		return saveJsonStringToFile(handler, StatisticsFile, json);
 	}
 	
-	
 	public static boolean saveJsonStringToFile(Context handler, String filename, String json ) throws Exception {
 		try {
 			FileOutputStream fout = handler.openFileOutput(filename, Context.MODE_WORLD_READABLE);

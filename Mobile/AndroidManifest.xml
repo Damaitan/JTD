@@ -24,7 +24,6 @@
         <activity
             android:name="com.damaitan.mobileUI.MainActivity"
             android:label="@string/activity_name"
-            android:theme="@style/Theme.Sherlock"
             android:uiOptions="splitActionBarWhenNarrow" 
              android:screenOrientation="portrait" >
             <intent-filter>
@@ -37,7 +36,6 @@
         <activity
             android:name="com.damaitan.mobileUI.TaskFolderActivity"
             android:label="@string/activity_name" 
-            android:theme="@style/Theme.Sherlock"
             android:uiOptions="splitActionBarWhenNarrow" 
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -49,7 +47,6 @@
         <activity
             android:name="com.damaitan.mobileUI.TaskEditActivity"
             android:label="@string/title_activity_task_edit" 
-            android:theme="@style/Theme.Sherlock"
             android:uiOptions="splitActionBarWhenNarrow"
             android:screenOrientation="portrait" >
             <intent-filter>

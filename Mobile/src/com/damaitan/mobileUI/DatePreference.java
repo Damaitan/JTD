@@ -26,7 +26,7 @@ import android.widget.DatePicker;
 @SuppressLint("NewApi")
 public class DatePreference extends DialogPreference implements DatePicker.OnDateChangedListener{
 	private DatePicker picker=null;
-	private Date date;
+	private Date m_date;
 
 
 	public DatePreference(Context ctxt, AttributeSet attrs) {
@@ -38,11 +38,11 @@ public class DatePreference extends DialogPreference implements DatePicker.OnDat
 	@Override
 	protected View onCreateDialogView() {
 		picker=new DatePicker(getContext());
-		if(date != null){
-			picker.init(date.getYear(), date.getMinutes(), date.getDay(), this);
+		if(m_date != null){
+			picker.init(m_date.getYear()  + 1900, m_date.getMonth(), m_date.getDay(), this);
 		}else{
 			Calendar calendar=Calendar.getInstance(Locale.CHINA);
-			picker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) - 1, Calendar.DAY_OF_MONTH,this);
+			picker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),this);
 			//picker.init(date.getYear(), date.getMinutes(), Calendar.DAY_OF_MONTH,this);
 		}
         picker.setCalendarViewShown(false);
@@ -69,7 +69,7 @@ public class DatePreference extends DialogPreference implements DatePicker.OnDat
 			}
 			SimpleDateFormat df = TaskListSorter.dateFormat();
 			try {
-				date = df.parse(value);
+				m_date = df.parse(value);
 			} catch (ParseException e) {
 				super.setDefaultValue(defaultValue);
 				return;

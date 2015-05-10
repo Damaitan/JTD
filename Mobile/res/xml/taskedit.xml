@@ -1,73 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-        <EditTextPreference
-                android:key="taskedit_name"
-                android:title="@string/title_taskedit_name"
-                android:summary="@string/content_taskedit_name"
-                android:dialogTitle="@string/dialog_taskedit_name" 
-                android:defaultValue=""/>
-        
-        <CheckBoxPreference
-                android:key="taskedit_urgent"
-                android:title="@string/title_taskedit_urgent"
-                android:summary="@string/summary_taskedit_urgent" 
-                android:defaultValue="false" />
-        
-        <ListPreference
-                android:key="taskedit_priority"
-                android:title="@string/title_taskedit_priority"
-                android:summary="@string/summary_taskedit_priority"
-                android:entries="@array/entries_taskedit_priority"
-                android:entryValues="@array/entryvalues_taskedit_priority"
-                android:dialogTitle="@string/dialog_title_taskedit_priority" />
-        
-        <com.damaitan.mobileUI.TagPreference
-                android:key="taskedit_tag"
-                android:title="@string/title_taskedit_tag"
-                android:summary="@string/content_taskedit_tag"
-                android:dialogTitle="@string/dialog_taskedit_tag" />
-        
-        <com.damaitan.mobileUI.DatePreference 
-            	android:key="taskedit_expire" 
-            	android:title="@string/title_taskedit_expire"
-            	android:dialogTitle="@string/dialog_taskedit_expire" />
-        
-        <CheckBoxPreference
-                android:key="taskedit_repeat"
-                android:title="@string/title_taskedit_repeat"
-                android:summary="@string/summary_taskedit_repeat" 
-                android:defaultValue="false" />
-        
-        <EditTextPreference
-                android:key="taskedit_repeat_peroid"
-                android:title="@string/title_taskedit_repeat_peroid"
-                android:summary="@string/content_taskedit_repeat_peroid"
-                android:dialogTitle="@string/dialog_taskedit_repeat_peroid" 
-                android:numeric="integer" />
-        
-        <ListPreference
-                android:key="taskedit_folder"
-                android:title="@string/title_taskedit_folder"
-                android:summary="@string/summary_taskedit_folder"
-                android:entries="@array/entries_taskedit_folder"
-                android:entryValues="@array/entryvalues_taskedit_folder"
-                android:dialogTitle="@string/dialog_title_taskedit_folder" />
-        
-        <ListPreference
-                android:key="taskedit_parent"
-                android:title="@string/title_taskedit_parent"
-                android:summary="@string/summary_taskedit_parent"
-                android:dialogTitle="@string/dialog_title_taskedit_parent" />
-                
-        <EditTextPreference
-                android:key="taskedit_note"
-                android:title="@string/title_taskedit_note"
-                android:summary="@string/content_taskedit_note"
-                android:dialogTitle="@string/dialog_taskedit_note" />
-        
-         
-        
-       
+    <EditTextPreference
+        android:defaultValue=""
+        android:dialogTitle="@string/dialog_taskedit_name"
+        android:key="taskedit_name"
+        android:summary="@string/content_taskedit_name"
+        android:title="@string/title_taskedit_name" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="taskedit_urgent"
+        android:summary="@string/summary_taskedit_urgent"
+        android:title="@string/title_taskedit_urgent" />
+
+    <ListPreference
+        android:dialogTitle="@string/dialog_title_taskedit_priority"
+        android:entries="@array/entries_taskedit_priority"
+        android:entryValues="@array/entryvalues_taskedit_priority"
+        android:key="taskedit_priority"
+        android:summary="@string/summary_taskedit_priority"
+        android:title="@string/title_taskedit_priority" />
+
+    <com.damaitan.mobileUI.TagPreference
+        android:dialogTitle="@string/dialog_taskedit_tag"
+        android:key="taskedit_tag"
+        android:summary="@string/content_taskedit_tag"
+        android:title="@string/title_taskedit_tag" />
+
+    <com.damaitan.mobileUI.DatePreference
+        android:dialogTitle="@string/dialog_taskedit_expire"
+        android:key="taskedit_expire"
+        android:title="@string/title_taskedit_expire" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="taskedit_repeat"
+        android:summary="@string/summary_taskedit_repeat"
+        android:title="@string/title_taskedit_repeat" />
+
+    <EditTextPreference
+        android:dialogTitle="@string/dialog_taskedit_repeat_peroid"
+        android:key="taskedit_repeat_peroid"
+        android:numeric="integer"
+        android:summary="@string/content_taskedit_repeat_peroid"
+        android:title="@string/title_taskedit_repeat_peroid" />
+
+    <ListPreference
+        android:dialogTitle="@string/dialog_title_taskedit_folder"
+        android:entries="@array/entries_taskedit_folder"
+        android:entryValues="@array/entryvalues_taskedit_folder"
+        android:key="taskedit_folder"
+        android:summary="@string/summary_taskedit_folder"
+        android:title="@string/title_taskedit_folder" />
+    <ListPreference
+        android:dialogTitle="@string/dialog_title_taskedit_parent"
+        android:key="taskedit_parent"
+        android:summary="@string/summary_taskedit_parent"
+        android:title="@string/title_taskedit_parent" />
+
+    <EditTextPreference
+        android:dialogTitle="@string/dialog_taskedit_note"
+        android:key="taskedit_note"
+        android:summary="@string/content_taskedit_note"
+        android:title="@string/title_taskedit_note" />
+
 </PreferenceScreen>

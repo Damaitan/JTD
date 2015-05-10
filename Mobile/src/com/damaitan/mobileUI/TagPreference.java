@@ -6,8 +6,10 @@ package com.damaitan.mobileUI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.damaitan.datamodel.Task;
 import com.damaitan.service.ModelManager;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.preference.DialogPreference;

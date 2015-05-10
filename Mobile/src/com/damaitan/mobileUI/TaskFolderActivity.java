@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -14,6 +15,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,13 +27,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.HashMap;
-
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 import com.damaitan.datamodel.CommonString;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
@@ -45,10 +43,10 @@ import com.damaitan.service.StatisticsService;
  * @author admin
  *
  */
-public class TaskFolderActivity extends SherlockActivity {
+public class TaskFolderActivity extends Activity {
 	
 	private static final int MENU_ID_NEW = 0;
-	private static final int MENU_ID_FOLDER = MENU_ID_NEW + 10;
+	private static final int MENU_ID_FOLDER = MENU_ID_NEW + 100;
 	
 	private int m_folderIndex;
 	private TaskFolder m_folder;
@@ -71,6 +69,7 @@ public class TaskFolderActivity extends SherlockActivity {
 	}
 	
 	private boolean load(int folderIndex, boolean reload) {
+		boolean remenu = m_folderIndex != folderIndex && ( folderIndex == 0 || m_folderIndex == 0);
 		m_folderIndex = folderIndex;
 		try {
 			m_folder = m_presenter.getFolderByIndex(m_folderIndex);
@@ -79,21 +78,32 @@ public class TaskFolderActivity extends SherlockActivity {
 			Log.e("Error", "TaskActivity onCreate", e);
 		}
 		m_presenter.getSorter().init(m_folder);
-		//m_adapter.initSelects();
 		m_adapter.taskFolderIndex = folderIndex;
 		Log.d("TaskFolderActivity sort", m_presenter.getSorter().log());
 		if(reload){
+			if(remenu){
+				invalidateOptionsMenu();
+			}
 			m_adapter.notifyDataSetChanged();
 		}
 		return true;
 	}
 	
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	
-        menu.add(0,MENU_ID_NEW,0,this.getString(R.string.menu_task_new))
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (this.m_folderIndex != 0) {
+			menu.add(0, MENU_ID_NEW, 0, this.getString(R.string.menu_task_new))
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		} else {
+			SubMenu subMenu = menu.addSubMenu(0,MENU_ID_NEW,0,this.getString(R.string.menu_task_new));
+	        ArrayList<TaskFolder> folders = ModelManager.getInstance().getFolders();
+			for(int i=1;i<folders.size();i++){
+				TaskFolder folder = folders.get(i);
+				subMenu.add(i,i+MENU_ID_NEW+1,i,folder.getName());
+			}
+	        MenuItem subMenuItem = subMenu.getItem();
+	        subMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		}
+	
         SubMenu subMenu = menu.addSubMenu(0,MENU_ID_FOLDER,1,this.getString(R.string.menu_task_folder));
         ArrayList<TaskFolder> folders = ModelManager.getInstance().getFolders();
 		for(int i=0;i<folders.size();i++){
@@ -120,18 +130,28 @@ public class TaskFolderActivity extends SherlockActivity {
 	
 
 	
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getItemId() == MENU_ID_NEW){
-			if(m_folder.getId() != 0){
-				Task task = new Task();
-				task.taskFolderId = m_folder.getId();
-				m_adapter.startTaskActivity(task);
+		if (item.getItemId() > MENU_ID_FOLDER) {
+			int folderIndex = item.getItemId() - MENU_ID_FOLDER;
+			if (folderIndex > 0) {
+				load(folderIndex - 1, true);
 			}
+			return true;
 		}
-		int folderIndex = item.getItemId() - MENU_ID_FOLDER;
-		if(folderIndex > 0){
-			load(folderIndex - 1, true);
+		if(item.getItemId() == MENU_ID_FOLDER) return true;
+		
+		if (item.getItemId() > MENU_ID_NEW && m_folderIndex == 0) {
+			Task task = new Task();
+			task.taskFolderId = item.getItemId() - MENU_ID_NEW - 1;
+			m_adapter.startTaskActivity(task);
+			return true;
+		}
+		if(item.getItemId() == MENU_ID_NEW && m_folderIndex != 0){
+			Task task = new Task();
+			task.taskFolderId = m_folder.getId();
+			m_adapter.startTaskActivity(task);
+			return true;
+			
 		}
         return true;
 	}

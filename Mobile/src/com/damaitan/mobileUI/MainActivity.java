@@ -22,24 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.damaitan.exception.PresentationException;
 import com.damaitan.presentation.MainViewPresenter;
 import com.damaitan.service.ModelManager;
 import com.damaitan.service.StatisticsService;
 
-public class MainActivity extends SherlockListActivity{
+public class MainActivity extends ListActivity{
     //private static int MENU_ID_SETTING = 0;
     private static int MENU_ID_STATISTICS = 2;
     private static int MENU_ID_CLEAN = 3;
@@ -94,7 +94,6 @@ public class MainActivity extends SherlockListActivity{
 	}
 
 
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /*menu.add(0,MENU_ID_SETTING,MENU_ID_SETTING,this.getString(R.string.menu_main_setting))
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
@@ -111,8 +110,7 @@ public class MainActivity extends SherlockListActivity{
     
     
 
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
     	if(item.getItemId() == MENU_ID_CLEAN){
     		presenter.cleanFinished();
 		}
