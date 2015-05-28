@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.damaitan.datamodel.Task;
 import com.damaitan.exception.PresentationException;
+import com.damaitan.exception.ServiceException;
 import com.damaitan.presentation.MainViewPresenter;
 
 public class MainViewPresenterTest {
@@ -46,6 +47,7 @@ public class MainViewPresenterTest {
 		test = calendar.getTime().toLocaleString();
 		Date date3 = calendar.getTime();
 		long a1 = calendar.getTimeInMillis();//xianzai
+		
 		
 		calendar.set(Calendar.YEAR, 2015);
 		calendar.set(Calendar.MONTH, 1);
@@ -83,5 +85,34 @@ public class MainViewPresenterTest {
 		presenter.getData(m_listData);
 		org.junit.Assert.assertEquals(m_listData.size(), 7);
 	}
+	
+	@Test
+	public void test_cleanFinished(){
+		MainViewPresenter mp = new MainViewPresenter();
+		try {
+			mp.initialization(mp.initJsonString());
+		} catch (PresentationException e) {
+			fail();
+		}
+		TaskFolderPresenter presenter = new TaskFolderPresenter(false);
+		Task task1 = new Task();
+		Task task2 = new Task();
+		task1.setName("haha");
+		task2.setName("yeah");
+		task1.priority = 0;
+		task2.priority = 0;
+		try {
+			presenter.saveTask(1, task1, true);
+			presenter.saveTask(1, task2, true);
+			presenter.finishTask(1, task1);
+			mp.cleanFinished();
+			org.junit.Assert.assertEquals(1,presenter.getFolderByIndex(1).getCompletedTaskNumber());
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 
 }

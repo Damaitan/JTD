@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 public class JsonHelper{
@@ -44,8 +44,10 @@ public class JsonHelper{
 		return saveJsonStringToFile(handler, StatisticsFile, json);
 	}
 	
+	@SuppressLint("WorldReadableFiles")
 	public static boolean saveJsonStringToFile(Context handler, String filename, String json ) throws Exception {
 		try {
+			@SuppressWarnings("deprecation")
 			FileOutputStream fout = handler.openFileOutput(filename, Context.MODE_WORLD_READABLE);
 			byte[] bytes = json.getBytes();
 			fout.write(bytes);

@@ -34,7 +34,6 @@ public class TaskEditPreferenceFragment extends android.preference.PreferenceFra
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.taskedit);
 		namePreference = (EditTextPreference)findPreference(TaskFolderPresenter.NAME_KEY);
@@ -69,7 +68,7 @@ public class TaskEditPreferenceFragment extends android.preference.PreferenceFra
         	
         	repeatPreference.setChecked(_task.repeat);
         	expiredPreference.setDefaultValue(this._task.expired);
-        	if(_task.repeat && !this._task.expired.isEmpty()){
+        	if(!this._task.expired.isEmpty()){
         		expiredPreference.setSummary(_task.expired);
         	}
         	repeatPeroidPreference.setDefaultValue(this._task.repeat_proid);

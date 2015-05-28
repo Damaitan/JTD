@@ -66,7 +66,7 @@ public class MainViewPresenter {
 	
 	public boolean cleanFinished(){
 		for(int i = 1 ; i < ModelManager.getInstance().getFolders().size();i++){
-			ModelManager.getInstance().getTaskFolder(i).getFinishedTasks().clear();
+			ModelManager.getInstance().getTaskFolder(i).cleanFinished();
 		}
 		return true;
 	}

@@ -38,13 +38,11 @@ public class DatePreference extends DialogPreference implements DatePicker.OnDat
 	@Override
 	protected View onCreateDialogView() {
 		picker=new DatePicker(getContext());
+		Calendar calendar=Calendar.getInstance(Locale.CHINA);
 		if(m_date != null){
-			picker.init(m_date.getYear()  + 1900, m_date.getMonth(), m_date.getDay(), this);
-		}else{
-			Calendar calendar=Calendar.getInstance(Locale.CHINA);
-			picker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),this);
-			//picker.init(date.getYear(), date.getMinutes(), Calendar.DAY_OF_MONTH,this);
+			calendar.setTime(m_date);
 		}
+		picker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),this);
         picker.setCalendarViewShown(false);
         return picker;
 	}

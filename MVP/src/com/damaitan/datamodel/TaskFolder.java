@@ -138,6 +138,11 @@ public class TaskFolder extends Model {
 		numberForRemovedFinish = 0;
 	}
 	
+	public void cleanFinished(){
+		numberForRemovedFinish = numberForRemovedFinish + getFinishedTasks().size();
+		getFinishedTasks().clear();
+	}
+	
 	 
 
 	
