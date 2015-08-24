@@ -3,7 +3,6 @@ package com.damaitan.presentation;
 import com.damaitan.datamodel.Task;
 import com.damaitan.datamodel.TaskFolder;
 import com.damaitan.service.OnTaskResult.ITaskListener;
-import com.damaitan.service.OnTaskResult.ITaskListener.Type;
 
 public class TaskListenerTest implements ITaskListener{
 	

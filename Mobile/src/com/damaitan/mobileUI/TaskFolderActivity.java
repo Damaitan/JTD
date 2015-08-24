@@ -160,8 +160,8 @@ public class TaskFolderActivity extends Activity {
 	
 	private void persist(){
 		try {
-			JsonHelper.saveContentToFile(this, ModelManager.getInstance().JsonString());
-			JsonHelper.saveStatisticsToFile(this, StatisticsService.getInstance().JsonString());
+			JsonHelper.saveContentToFile(ModelManager.getInstance().JsonString());
+			JsonHelper.saveStatisticsToFile(StatisticsService.getInstance().JsonString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

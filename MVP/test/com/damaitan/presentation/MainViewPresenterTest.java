@@ -39,6 +39,7 @@ public class MainViewPresenterTest {
 	public void tearDown() throws Exception {
 	}
 
+	@SuppressWarnings({ "unused", "deprecation" })
 	@Test
 	public void test_initialization() {
 		

@@ -56,20 +56,22 @@ public class MainActivity extends ListActivity{
         m_listData = new ArrayList<Map<String, Object>>();
         Log.i("Mobile", "MainActivity is starting...., Path is " + getApplicationContext().getFilesDir().getAbsolutePath() + JsonHelper.JTDFile);
 		try {
-			String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + JsonHelper.JTDFile;
+			//JsonHelper.RootPath = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
+			//String path =  + JsonHelper.JTDFile;
 			String content;
-			if (JsonHelper.isFileExist(path)) {
-				content = JsonHelper.getJsonString(this);
+			if (JsonHelper.isFileExist(JsonHelper.Type.jtd)) {
+				content = JsonHelper.getJsonString();
 				Log.d("MainActivity FileExist", content);
 			}else{
 				content = presenter.initJsonString();
-				JsonHelper.saveContentToFile(this, content);
+				JsonHelper.initFolder();
+				JsonHelper.saveContentToFile(content);
 				Log.i("Mobile", "Create new file : " + JsonHelper.JTDFile);
 				Log.d("MainActivity No File", content);
 			}
 			presenter.initialization(content);
-			if (JsonHelper.isFileExist(JsonHelper.StatisticsFile)) {
-				StatisticsService.getInstance().init(JsonHelper.getJsonString(this, JsonHelper.StatisticsFile));
+			if (JsonHelper.isFileExist(JsonHelper.Type.statistics)) {
+				StatisticsService.getInstance().init(JsonHelper.getJsonString(JsonHelper.StatisticsFile));
 			}else{
 				StatisticsService.getInstance().init(ModelManager.getInstance().getFolders());
 			}
@@ -119,7 +121,7 @@ public class MainActivity extends ListActivity{
     		String cvs = presenter.getStatisticsCSV();
     		Log.d("MainActivity csv" , cvs);
     		try {
-				JsonHelper.saveJsonStringToFile(this, "gtd.csv", cvs);
+				JsonHelper.saveJsonStringToFile("gtd.csv", cvs);
 				Toast.makeText(this,this.getString(R.string.info_main_statistics),
 						Toast.LENGTH_SHORT).show();
 			} catch (Exception e) {
